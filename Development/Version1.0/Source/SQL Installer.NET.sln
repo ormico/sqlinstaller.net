@@ -13,9 +13,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Console", "SQL
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SQLInstaller.Setup", "SQLInstaller.Setup\SQLInstaller.Setup.wixproj", "{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SQLInstaller.Sample", "SQLInstaller.Sample\SQLInstaller.Sample.wixproj", "{449F2BA2-ADE4-4389-A519-30AFEBB42B85}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs05.codeplex.com/
 		SccLocalPath0 = .
@@ -25,6 +37,12 @@ Global
 		SccProjectUniqueName2 = SQLInstaller.Console\\SQLInstaller.Console.csproj
 		SccProjectName2 = SQLInstaller.Console
 		SccLocalPath2 = SQLInstaller.Console
+		SccProjectUniqueName3 = SQLInstaller.Setup\\SQLInstaller.Setup.wixproj
+		SccProjectName3 = SQLInstaller.Setup
+		SccLocalPath3 = SQLInstaller.Setup
+		SccProjectUniqueName4 = SQLInstaller.Sample\\SQLInstaller.Sample.wixproj
+		SccProjectName4 = SQLInstaller.Sample
+		SccLocalPath4 = SQLInstaller.Sample
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +57,10 @@ Global
 		{4CF8B29F-A9C0-458C-BA99-4C2334EC6EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CF8B29F-A9C0-458C-BA99-4C2334EC6EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CF8B29F-A9C0-458C-BA99-4C2334EC6EFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449F2BA2-ADE4-4389-A519-30AFEBB42B85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449F2BA2-ADE4-4389-A519-30AFEBB42B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

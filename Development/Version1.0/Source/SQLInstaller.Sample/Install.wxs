@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment Id="Install">
+		<DirectoryRef Id="INSTALL" FileSource="$(var.SolutionDir)SQLInstaller.Sample\Scripts\Install">
+			<Component Id="Scripts.Install" Guid="{3B834889-61C4-4df1-9A2A-CFEC590432DC}">
+				<File Id="ChangeLog.txt" KeyPath="yes"/>
+				<File Id="Categories.PostInstall.sql"/>
+				<File Id="Categories.Table.sql"/>
+				<File Id="CustomerCustomerDemo.ForeignKey.sql"/>
+				<File Id="CustomerCustomerDemo.Table.sql"/>
+				<File Id="CustomerDemographics.Table.sql"/>
+				<File Id="Customers.PostInstall.sql"/>
+				<File Id="Customers.Table.sql"/>
+				<File Id="Employees.ForeignKey.sql"/>
+				<File Id="Employees.PostInstall.sql"/>
+				<File Id="Employees.Table.sql"/>
+				<File Id="EmployeeTerritories.ForeignKey.sql"/>
+				<File Id="EmployeeTerritories.Table.sql"/>
+				<File Id="OrderDetails.ForeignKey.sql"/>
+				<File Id="OrderDetails.PostInstall.sql"/>
+				<File Id="OrderDetails.Table.sql"/>
+				<File Id="Orders.ForeignKey.sql"/>
+				<File Id="Orders.PostInstall.sql"/>
+				<File Id="Orders.Table.sql"/>
+				<File Id="Products.ForeignKey.sql"/>
+				<File Id="Products.PostInstall.sql"/>
+				<File Id="Products.Table.sql"/>
+				<File Id="Region.PostInstall.sql"/>
+				<File Id="Region.Table.sql"/>
+				<File Id="Shippers.PostInstall.sql"/>
+				<File Id="Shippers.Table.sql"/>
+				<File Id="Suppliers.PostInstall.sql"/>
+				<File Id="Suppliers.Table.sql"/>
+				<File Id="Territories.ForeignKey.sql"/>
+				<File Id="Territories.PostInstall.sql"/>
+				<File Id="Territories.Table.sql"/>
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+</Wix>
