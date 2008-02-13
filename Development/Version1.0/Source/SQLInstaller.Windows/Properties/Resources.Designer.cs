@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SQLInstaller.Core {
+namespace SQLInstaller.Windows.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SQLInstaller.Core {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SQLInstaller.Core.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SQLInstaller.Windows.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,50 +60,10 @@ namespace SQLInstaller.Core {
             }
         }
         
-        internal static System.Drawing.Bitmap back {
+        internal static System.Drawing.Icon data_replace {
             get {
-                object obj = ResourceManager.GetObject("back", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  Database [{0}]    Script Date: 03/29/2007 12:50:49 ******/
-        ///USE [master]
-        ///GO
-        ///-- Get default data path
-        ///DECLARE @data_path nvarchar(512);
-        ///SET @data_path = (SELECT SUBSTRING(physical_name, 1, CHARINDEX(N&apos;master.mdf&apos;, LOWER(physical_name)) - 1)
-        ///                  FROM master.sys.master_files
-        ///                  WHERE database_id = 1 AND file_id = 1);
-        ///-- Create database                  
-        ///EXECUTE( &apos;CREATE DATABASE [{0}] ON  PRIMARY 
-        ///( NAME = {0}, FILENAME = &apos;&apos;&apos; + @data_path + &apos;{0}.mdf&apos;&apos; , SI [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string DbCreate {
-            get {
-                return ResourceManager.GetString("DbCreate", resourceCulture);
-            }
-        }
-        
-        internal static System.Drawing.Bitmap icon {
-            get {
-                object obj = ResourceManager.GetObject("icon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap left {
-            get {
-                object obj = ResourceManager.GetObject("left", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap Top {
-            get {
-                object obj = ResourceManager.GetObject("Top", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("data_replace", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

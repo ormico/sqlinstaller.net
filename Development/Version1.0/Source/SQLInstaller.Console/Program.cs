@@ -67,6 +67,8 @@ namespace SQLInstaller.Console
 					installer = new Runtime(path, flags);
 					Schema schema = installer.Prepare(server, cl.Parameters["database"]);
 
+					System.Console.WriteLine("Done.");
+
 					if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 					{
 						if (schema.ScriptsTotal == 0)
