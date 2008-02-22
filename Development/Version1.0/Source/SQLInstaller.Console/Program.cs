@@ -66,7 +66,7 @@ namespace SQLInstaller.Console
 
 					installer = new Runtime(path, flags);
 					Schema schema = installer.Prepare(server, cl.Parameters["database"]);
-
+					spin.Stop();
 					System.Console.WriteLine("Done.");
 
 					if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
@@ -93,6 +93,7 @@ namespace SQLInstaller.Console
 						}
 					}
 
+					spin.Start(250);
 					InstallMethod im = new InstallMethod(installer.Create);
 					AsyncCallback cb = new AsyncCallback(InstallCallback);
 

@@ -8,10 +8,10 @@ namespace SQLInstaller.Core
 {
 	/// <summary>
 	/// <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	///   <UsingTask TaskName="SqlBuild" AssemblyFile="C:\Program Files\SQLInstaller\SQLInstaller.Core.dll"/>
+	///   <UsingTask TaskName="SQLInstaller.Core.SqlBuild" AssemblyFile="C:\Program Files\SQLInstaller\SQLInstaller.Core.dll" />
 	///   ...
 	///   <Target Name="AfterBuild">
-	///      <SqlBuild Database="mydb" Server="myserver" Path="$(ProjectDir)Scripts" Drop="true" Retry="true" />
+	///      <SqlBuild Database="mytestdb" Server="myserver" Path="$(SolutionRoot)\Scripts" Drop="true" />
 	///   </Target>
 	/// </summary>
 	public class SqlBuild : Task
@@ -80,6 +80,7 @@ namespace SQLInstaller.Core
 			try
 			{
 				Runtime installer = new Runtime(path, flags);
+				Log.LogMessage("Processing: " + path + ".");
 				Log.LogMessage("Connecting to " + server + ".");
 
 				Schema schema = installer.Prepare(server, database);
@@ -102,10 +103,11 @@ namespace SQLInstaller.Core
 					{
 						case StatusMessage.Start:
 						case StatusMessage.Detail:
-							Log.LogMessage(prog.Message + ".");
+							if ( prog.Message.Length > 0 )
+								Log.LogMessage(prog.Message + ".");
 							break;
 						case StatusMessage.Exit:
-							if (prog.Percent > 0)
+							if (prog.Percent == 0)
 								Log.LogMessage("Completed successfully.");
 							else
 								Log.LogError("Completed with " + prog.Percent + " errors.");

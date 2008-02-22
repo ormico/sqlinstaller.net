@@ -8,12 +8,17 @@
 		</Directory>
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Core.TargetDir)">
 			<Component Id="SQLInstaller.Core.dll" Guid="{807BEB2A-AC36-4f90-9126-074B5C10C2A1}">
-				<File Id="SQLInstaller.Core.dll"/>
+				<File Id="SQLInstaller.Core.dll" KeyPath="yes"/>
 			</Component>
 		</DirectoryRef>
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Console.TargetDir)">
 			<Component Id="SqlInstaller.exe" Guid="{E4A5EE25-AFC4-4409-945A-04262EF63492}">
 				<File Id="SqlInstaller.exe"/>
+			</Component>
+			<Component Id="SQLInstaller.reg" Guid="{A082D4E0-E238-43bd-915A-54734039DFCE}">
+				<RegistryKey Id="SQLInstaller.regkey" Root="HKLM" Key="SOFTWARE\JHOB Technologies\SQLInstaller" Action="createAndRemoveOnUninstall">
+					<RegistryValue Id="SQLInstaller.regval" Name="Path" Value="[ROOTINSTALL]SQLInstaller.exe" Type="string" />
+				</RegistryKey>
 			</Component>
 		</DirectoryRef>
 		<!--<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Windows.TargetDir)">
@@ -22,47 +27,24 @@
 			</Component>
 		</DirectoryRef>-->
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(env.ProgramFiles)\Microsoft SQL Server\90\SDK\Assemblies">
-			<Component Id="Microsoft.SqlServer.RegSvrEnum.dll" Guid="{CB5E92F6-2EB2-4684-ABA7-34642EC5CF13}">
+			<Component Id="Microsoft.SqlServer.SMO" Guid="{CB5E92F6-2EB2-4684-ABA7-34642EC5CF13}">
 				<File Id="Microsoft.SqlServer.RegSvrEnum.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.SmoEnum.dll" Guid="{BFD9708D-7861-4ab7-8FEF-384F7D6707F6}">
 				<File Id="Microsoft.SqlServer.SmoEnum.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.SqlEnum.dll" Guid="{B78A68C2-8372-4822-A874-8754AFCC78E6}">
 				<File Id="Microsoft.SqlServer.SqlEnum.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.Smo.dll" Guid="{E7B71123-7E4D-4813-A999-60E9FFA79467}">
 				<File Id="Microsoft.SqlServer.Smo.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.ServiceBrokerEnum.dll" Guid="{50F4A91C-5DCA-46f3-89F3-47361131AEDD}">
 				<File Id="Microsoft.SqlServer.ServiceBrokerEnum.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.ConnectionInfo.dll" Guid="{661EE3F0-A784-4c3d-BD3C-E9F9E6979812}">
 				<File Id="Microsoft.SqlServer.ConnectionInfo.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.WmiEnum.dll" Guid="{CB1AEC0C-2DAF-4d2e-B238-518A988DCE19}">
 				<File Id="Microsoft.SqlServer.WmiEnum.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.Rmo.dll" Guid="{ECE6E7BD-E5F5-4853-84C1-DF87B1C8386B}">
 				<File Id="Microsoft.SqlServer.Rmo.dll"/>
-			</Component>
-			<Component Id="Microsoft.SqlServer.BatchParser.dll" Guid="{276B434F-3E7C-4205-A51C-66438E160994}">
 				<File Id="Microsoft.SqlServer.BatchParser.dll"/>
 			</Component>
 		</DirectoryRef>
 		<ComponentGroup Id="Binaries">
-			<ComponentRef Id="Microsoft.SqlServer.RegSvrEnum.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.SmoEnum.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.SqlEnum.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.Smo.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.ServiceBrokerEnum.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.ConnectionInfo.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.WmiEnum.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.Rmo.dll"/>
-			<ComponentRef Id="Microsoft.SqlServer.BatchParser.dll"/>
+			<ComponentRef Id="Microsoft.SqlServer.SMO"/>
 			<ComponentRef Id="SqlInstaller.exe"/>
 			<!--<ComponentRef Id="SqlInstallerWin.exe"/>-->
 			<ComponentRef Id="SQLInstaller.Core.dll"/>
+			<ComponentRef Id="SQLInstaller.reg"/>
 		</ComponentGroup>
 	</Fragment>
 </Wix>
