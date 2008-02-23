@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment Id="Ver101">
-		<DirectoryRef Id="UPGRADE" FileSource="$(var.SolutionDir)SQLInstaller.Sample\Scripts\Upgrade">
-			<Directory Id="Ver101" Name="1.0.1" FileSource="$(var.SolutionDir)SQLInstaller.Sample\Scripts\Upgrade\1.0.1">
+		<DirectoryRef Id="UPGRADE" FileSource="Scripts\Upgrade">
+			<Directory Id="Ver101" Name="1.0.1" FileSource="Scripts\Upgrade\1.0.1">
 				<Component Id="Scripts.Upgrade.Ver101" Guid="{D6363210-57F6-4478-B9A6-718CEEDC6F94}">
 					<File Id="Ver101.ChangeLog.txt" Name="ChangeLog.txt" KeyPath="yes"/>
 				</Component>

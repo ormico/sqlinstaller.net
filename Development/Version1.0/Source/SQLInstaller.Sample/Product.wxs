@@ -27,7 +27,7 @@
 			<Custom Action="QtExec" After="InstallFinalize">NOT Installed OR PATCH</Custom>
 		</InstallExecuteSequence>
 
-		<Icon Id="Database.Icon.exe" SourceFile="$(var.SolutionDir)SQLInstaller.Sample\data_replace.ico"/>
+		<Icon Id="Database.Icon.exe" SourceFile="data_replace.ico"/>
 
 		<UIRef Id="WixUI_Common" />
 		<UIRef Id="WixUI_ErrorProgressText" />
