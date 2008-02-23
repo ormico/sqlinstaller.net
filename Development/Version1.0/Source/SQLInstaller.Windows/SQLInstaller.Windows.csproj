@@ -16,10 +16,11 @@
     <ApplicationIcon>Resources\data_replace.ico</ApplicationIcon>
     <StartupObject>SQLInstaller.Windows.Program</StartupObject>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <ManifestCertificateThumbprint>AB6F0196541FF467AFD94576B16DA44D75C2C701</ManifestCertificateThumbprint>
-    <ManifestKeyFile>SQLInstaller.Windows_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>D9DE20AA5D088C7772D5F4293F391912BA5EEDF9</ManifestCertificateThumbprint>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
     <PublishUrl>.\Publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
