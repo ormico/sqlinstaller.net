@@ -5,6 +5,9 @@
 			<Directory Id="ProgramFilesFolder" Name="PFiles">
 				<Directory Id="ROOTINSTALL" Name="SQLInstaller" />
 			</Directory>
+			<Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
+				<Directory Id="RootShortcut" Name="SQL Installer.NET" />
+			</Directory>
 		</Directory>
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Core.TargetDir)">
 			<Component Id="SQLInstaller.Core.dll" Guid="{807BEB2A-AC36-4f90-9126-074B5C10C2A1}">
@@ -21,11 +24,12 @@
 				</RegistryKey>
 			</Component>
 		</DirectoryRef>
-		<!--<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Windows.TargetDir)">
+		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Windows.TargetDir)">
 			<Component Id="SqlInstallerWin.exe" Guid="{A7D34CEE-58EC-44f2-9ACF-570AD430F8FE}">
 				<File Id="SqlInstallerWin.exe"/>
+				<Shortcut Id="SqlInstallerWin.exe" Directory="RootShortcut" Name="SQL Installer.NET Wizard" Advertise="yes" Icon="Install.Icon.exe" />
 			</Component>
-		</DirectoryRef>-->
+		</DirectoryRef>
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(env.ProgramFiles)\Microsoft SQL Server\90\SDK\Assemblies">
 			<Component Id="Microsoft.SqlServer.SMO" Guid="{CB5E92F6-2EB2-4684-ABA7-34642EC5CF13}">
 				<File Id="Microsoft.SqlServer.RegSvrEnum.dll"/>
@@ -42,7 +46,7 @@
 		<ComponentGroup Id="Binaries">
 			<ComponentRef Id="Microsoft.SqlServer.SMO"/>
 			<ComponentRef Id="SqlInstaller.exe"/>
-			<!--<ComponentRef Id="SqlInstallerWin.exe"/>-->
+			<ComponentRef Id="SqlInstallerWin.exe"/>
 			<ComponentRef Id="SQLInstaller.Core.dll"/>
 			<ComponentRef Id="SQLInstaller.reg"/>
 		</ComponentGroup>

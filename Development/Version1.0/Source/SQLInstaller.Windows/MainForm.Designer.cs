@@ -30,6 +30,7 @@ namespace SQLInstaller.Windows
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.wizardUpgrade = new SQLInstaller.Core.Wizard.WizardControl();
 			this.startStep = new SQLInstaller.Core.Wizard.StartStep();
 			this.stepSettings = new SQLInstaller.Core.Wizard.IntermediateStep();
@@ -41,14 +42,8 @@ namespace SQLInstaller.Windows
 			this.lblDatabase = new System.Windows.Forms.Label();
 			this.lblServer = new System.Windows.Forms.Label();
 			this.stepConfirm = new SQLInstaller.Core.Wizard.IntermediateStep();
-			this.labelSummary = new System.Windows.Forms.Label();
-			this.stepProgress = new SQLInstaller.Core.Wizard.IntermediateStep();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.stepFinish = new SQLInstaller.Core.Wizard.FinishStep();
-			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.panelSummary = new System.Windows.Forms.Panel();
+			this.labelUpgradeBy = new System.Windows.Forms.Label();
 			this.labelConfirmUpgradeBy = new System.Windows.Forms.Label();
 			this.labelConfirmServer = new System.Windows.Forms.Label();
 			this.labelConfirmDatabase = new System.Windows.Forms.Label();
@@ -58,14 +53,19 @@ namespace SQLInstaller.Windows
 			this.labelConfirmVersion = new System.Windows.Forms.Label();
 			this.labelUpgrade = new System.Windows.Forms.Label();
 			this.labelVersion = new System.Windows.Forms.Label();
-			this.labelUpgradeBy = new System.Windows.Forms.Label();
-			this.labelFinish = new System.Windows.Forms.Label();
+			this.labelSummary = new System.Windows.Forms.Label();
+			this.stepProgress = new SQLInstaller.Core.Wizard.IntermediateStep();
+			this.label4 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.stepFinish = new SQLInstaller.Core.Wizard.FinishStep();
 			this.linkLog = new System.Windows.Forms.LinkLabel();
+			this.labelFinish = new System.Windows.Forms.Label();
 			this.stepSettings.SuspendLayout();
 			this.stepConfirm.SuspendLayout();
+			this.panelSummary.SuspendLayout();
 			this.stepProgress.SuspendLayout();
 			this.stepFinish.SuspendLayout();
-			this.panelSummary.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// backgroundWorker1
@@ -77,7 +77,7 @@ namespace SQLInstaller.Windows
 			// 
 			// wizardUpgrade
 			// 
-			this.wizardUpgrade.BackButtonEnabled = true;
+			this.wizardUpgrade.BackButtonEnabled = false;
 			this.wizardUpgrade.BackButtonVisible = true;
 			this.wizardUpgrade.CancelButtonEnabled = true;
 			this.wizardUpgrade.CancelButtonVisible = true;
@@ -110,9 +110,7 @@ namespace SQLInstaller.Windows
 			this.startStep.LeftPair = ((SQLInstaller.Core.Wizard.ColorPair)(resources.GetObject("startStep.LeftPair")));
 			this.startStep.Name = "startStep";
 			this.startStep.Subtitle = "Click next to begin the installation.";
-			this.startStep.SubtitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("startStep.SubtitleAppearence")));
-			this.startStep.Title = "Database Install Wizard";
-			this.startStep.TitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("startStep.TitleAppearence")));
+			this.startStep.Title = "Database Upgrade Wizard";
 			// 
 			// stepSettings
 			// 
@@ -127,31 +125,31 @@ namespace SQLInstaller.Windows
 			this.stepSettings.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.stepSettings.Name = "stepSettings";
 			this.stepSettings.Subtitle = "Enter name of SQL Server and Database.";
-			this.stepSettings.SubtitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("stepSettings.SubtitleAppearence")));
 			this.stepSettings.Title = "Database Settings";
 			this.stepSettings.TitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("stepSettings.TitleAppearence")));
 			// 
 			// buttonScriptFolder
 			// 
-			this.buttonScriptFolder.Location = new System.Drawing.Point(444, 146);
+			this.buttonScriptFolder.Location = new System.Drawing.Point(470, 137);
 			this.buttonScriptFolder.Name = "buttonScriptFolder";
 			this.buttonScriptFolder.Size = new System.Drawing.Size(24, 21);
-			this.buttonScriptFolder.TabIndex = 6;
+			this.buttonScriptFolder.TabIndex = 1;
+			this.buttonScriptFolder.TabStop = false;
 			this.buttonScriptFolder.Text = "...";
 			this.buttonScriptFolder.UseVisualStyleBackColor = true;
 			this.buttonScriptFolder.Click += new System.EventHandler(this.buttonScriptFolder_Click);
 			// 
 			// textScripts
 			// 
-			this.textScripts.Location = new System.Drawing.Point(215, 146);
+			this.textScripts.Location = new System.Drawing.Point(167, 138);
 			this.textScripts.Name = "textScripts";
-			this.textScripts.Size = new System.Drawing.Size(225, 20);
-			this.textScripts.TabIndex = 5;
+			this.textScripts.Size = new System.Drawing.Size(297, 20);
+			this.textScripts.TabIndex = 0;
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(131, 149);
+			this.label1.Location = new System.Drawing.Point(83, 141);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(81, 13);
 			this.label1.TabIndex = 4;
@@ -159,24 +157,24 @@ namespace SQLInstaller.Windows
 			// 
 			// txtDatabase
 			// 
-			this.txtDatabase.Location = new System.Drawing.Point(215, 201);
+			this.txtDatabase.Location = new System.Drawing.Point(167, 193);
 			this.txtDatabase.Name = "txtDatabase";
 			this.txtDatabase.Size = new System.Drawing.Size(100, 20);
-			this.txtDatabase.TabIndex = 3;
+			this.txtDatabase.TabIndex = 2;
 			this.txtDatabase.Text = "[DatabaseName]";
 			// 
 			// txtServer
 			// 
-			this.txtServer.Location = new System.Drawing.Point(215, 174);
+			this.txtServer.Location = new System.Drawing.Point(167, 166);
 			this.txtServer.Name = "txtServer";
 			this.txtServer.Size = new System.Drawing.Size(100, 20);
-			this.txtServer.TabIndex = 2;
+			this.txtServer.TabIndex = 1;
 			this.txtServer.Text = "localhost";
 			// 
 			// lblDatabase
 			// 
 			this.lblDatabase.AutoSize = true;
-			this.lblDatabase.Location = new System.Drawing.Point(160, 204);
+			this.lblDatabase.Location = new System.Drawing.Point(112, 196);
 			this.lblDatabase.Name = "lblDatabase";
 			this.lblDatabase.Size = new System.Drawing.Size(53, 13);
 			this.lblDatabase.TabIndex = 1;
@@ -185,7 +183,7 @@ namespace SQLInstaller.Windows
 			// lblServer
 			// 
 			this.lblServer.AutoSize = true;
-			this.lblServer.Location = new System.Drawing.Point(174, 177);
+			this.lblServer.Location = new System.Drawing.Point(126, 169);
 			this.lblServer.Name = "lblServer";
 			this.lblServer.Size = new System.Drawing.Size(38, 13);
 			this.lblServer.TabIndex = 0;
@@ -199,61 +197,8 @@ namespace SQLInstaller.Windows
 			this.stepConfirm.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.stepConfirm.Name = "stepConfirm";
 			this.stepConfirm.Subtitle = "Please confirm the following action.";
-			this.stepConfirm.SubtitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("stepConfirm.SubtitleAppearence")));
 			this.stepConfirm.Title = "Database Install Summary";
 			this.stepConfirm.TitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("stepConfirm.TitleAppearence")));
-			// 
-			// labelSummary
-			// 
-			this.labelSummary.Location = new System.Drawing.Point(123, 338);
-			this.labelSummary.Name = "labelSummary";
-			this.labelSummary.Size = new System.Drawing.Size(287, 13);
-			this.labelSummary.TabIndex = 8;
-			this.labelSummary.Text = "Connecting to localhost...";
-			this.labelSummary.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// stepProgress
-			// 
-			this.stepProgress.BindingImage = ((System.Drawing.Image)(resources.GetObject("stepProgress.BindingImage")));
-			this.stepProgress.Controls.Add(this.label4);
-			this.stepProgress.Controls.Add(this.label3);
-			this.stepProgress.Controls.Add(this.progressBar1);
-			this.stepProgress.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.stepProgress.Name = "stepProgress";
-			this.stepProgress.Subtitle = "Please wait while your database is being installed/upgraded.";
-			this.stepProgress.SubtitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("stepProgress.SubtitleAppearence")));
-			this.stepProgress.Title = "Database Install Progress";
-			this.stepProgress.TitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("stepProgress.TitleAppearence")));
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(135, 184);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(265, 82);
-			this.label4.TabIndex = 2;
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(135, 142);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(0, 13);
-			this.label3.TabIndex = 1;
-			// 
-			// progressBar1
-			// 
-			this.progressBar1.Location = new System.Drawing.Point(138, 158);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(262, 23);
-			this.progressBar1.TabIndex = 0;
-			// 
-			// stepFinish
-			// 
-			this.stepFinish.BindingImage = ((System.Drawing.Image)(resources.GetObject("stepFinish.BindingImage")));
-			this.stepFinish.Controls.Add(this.linkLog);
-			this.stepFinish.Controls.Add(this.labelFinish);
-			this.stepFinish.Name = "stepFinish";
-			this.stepFinish.Pair = ((SQLInstaller.Core.Wizard.ColorPair)(resources.GetObject("stepFinish.Pair")));
 			// 
 			// panelSummary
 			// 
@@ -272,6 +217,16 @@ namespace SQLInstaller.Windows
 			this.panelSummary.Size = new System.Drawing.Size(533, 219);
 			this.panelSummary.TabIndex = 9;
 			this.panelSummary.Visible = false;
+			// 
+			// labelUpgradeBy
+			// 
+			this.labelUpgradeBy.AutoSize = true;
+			this.labelUpgradeBy.Location = new System.Drawing.Point(122, 125);
+			this.labelUpgradeBy.Name = "labelUpgradeBy";
+			this.labelUpgradeBy.Size = new System.Drawing.Size(64, 13);
+			this.labelUpgradeBy.TabIndex = 20;
+			this.labelUpgradeBy.Text = "Installed By:";
+			this.labelUpgradeBy.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelConfirmUpgradeBy
 			// 
@@ -368,26 +323,56 @@ namespace SQLInstaller.Windows
 			this.labelVersion.Text = "Current Version:";
 			this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// labelUpgradeBy
+			// labelSummary
 			// 
-			this.labelUpgradeBy.AutoSize = true;
-			this.labelUpgradeBy.Location = new System.Drawing.Point(122, 125);
-			this.labelUpgradeBy.Name = "labelUpgradeBy";
-			this.labelUpgradeBy.Size = new System.Drawing.Size(64, 13);
-			this.labelUpgradeBy.TabIndex = 20;
-			this.labelUpgradeBy.Text = "Installed By:";
-			this.labelUpgradeBy.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.labelSummary.Location = new System.Drawing.Point(123, 338);
+			this.labelSummary.Name = "labelSummary";
+			this.labelSummary.Size = new System.Drawing.Size(287, 13);
+			this.labelSummary.TabIndex = 8;
+			this.labelSummary.Text = "Connecting to localhost...";
+			this.labelSummary.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// labelFinish
+			// stepProgress
 			// 
-			this.labelFinish.BackColor = System.Drawing.SystemColors.Control;
-			this.labelFinish.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelFinish.Location = new System.Drawing.Point(31, 136);
-			this.labelFinish.Name = "labelFinish";
-			this.labelFinish.Size = new System.Drawing.Size(470, 14);
-			this.labelFinish.TabIndex = 0;
-			this.labelFinish.Text = "Congratulations! You have successfully installed/upgraded your database.";
-			this.labelFinish.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.stepProgress.BindingImage = ((System.Drawing.Image)(resources.GetObject("stepProgress.BindingImage")));
+			this.stepProgress.Controls.Add(this.label4);
+			this.stepProgress.Controls.Add(this.label3);
+			this.stepProgress.Controls.Add(this.progressBar1);
+			this.stepProgress.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.stepProgress.Name = "stepProgress";
+			this.stepProgress.Subtitle = "Please wait while your database is being installed/upgraded.";
+			this.stepProgress.Title = "Database Install Progress";
+			this.stepProgress.TitleAppearence = ((SQLInstaller.Core.Wizard.TextAppearence)(resources.GetObject("stepProgress.TitleAppearence")));
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(135, 184);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(265, 82);
+			this.label4.TabIndex = 2;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(135, 142);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(0, 13);
+			this.label3.TabIndex = 1;
+			// 
+			// progressBar1
+			// 
+			this.progressBar1.Location = new System.Drawing.Point(138, 158);
+			this.progressBar1.Name = "progressBar1";
+			this.progressBar1.Size = new System.Drawing.Size(262, 23);
+			this.progressBar1.TabIndex = 0;
+			// 
+			// stepFinish
+			// 
+			this.stepFinish.BindingImage = ((System.Drawing.Image)(resources.GetObject("stepFinish.BindingImage")));
+			this.stepFinish.Controls.Add(this.linkLog);
+			this.stepFinish.Controls.Add(this.labelFinish);
+			this.stepFinish.Name = "stepFinish";
+			this.stepFinish.Pair = ((SQLInstaller.Core.Wizard.ColorPair)(resources.GetObject("stepFinish.Pair")));
 			// 
 			// linkLog
 			// 
@@ -403,24 +388,40 @@ namespace SQLInstaller.Windows
 			this.linkLog.VisitedLinkColor = System.Drawing.Color.Blue;
 			this.linkLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLog_LinkClicked);
 			// 
+			// labelFinish
+			// 
+			this.labelFinish.BackColor = System.Drawing.SystemColors.Control;
+			this.labelFinish.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.labelFinish.Location = new System.Drawing.Point(31, 101);
+			this.labelFinish.Name = "labelFinish";
+			this.labelFinish.Size = new System.Drawing.Size(470, 120);
+			this.labelFinish.TabIndex = 0;
+			this.labelFinish.Text = "Congratulations! You have successfully installed/upgraded your database.";
+			this.labelFinish.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(533, 410);
 			this.Controls.Add(this.wizardUpgrade);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "MainForm";
-			this.Text = "Database Install Wizard";
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "SQL Installer.NET";
 			this.stepSettings.ResumeLayout(false);
 			this.stepSettings.PerformLayout();
 			this.stepConfirm.ResumeLayout(false);
+			this.panelSummary.ResumeLayout(false);
+			this.panelSummary.PerformLayout();
 			this.stepProgress.ResumeLayout(false);
 			this.stepProgress.PerformLayout();
 			this.stepFinish.ResumeLayout(false);
 			this.stepFinish.PerformLayout();
-			this.panelSummary.ResumeLayout(false);
-			this.panelSummary.PerformLayout();
 			this.ResumeLayout(false);
 
 		}

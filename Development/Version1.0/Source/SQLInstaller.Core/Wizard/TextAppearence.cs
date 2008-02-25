@@ -9,7 +9,8 @@ namespace SQLInstaller.Core.Wizard
 	/// <summary>
 	/// 
 	/// Derived from CodeProject (http://www.codeproject.com/KB/cs/WizardDemo.aspx).
-	/// 02/07/2008 - Changed namespace from WizardBase to SQLInstaller.Core.Wizard.
+	/// 02/07/2008 - Changed namespace from WizardBase to SQLInstaller.Core.Wizard. Modified 
+	///				 default appearence.
 	/// 
 	/// </summary>
 	[Editor(typeof(TextAppearenceEditor), typeof(UITypeEditor))]
@@ -19,9 +20,9 @@ namespace SQLInstaller.Core.Wizard
     {
         private Font font = new Font("Microsoft Sans", 8.25f, FontStyle.Bold, GraphicsUnit.Point);
         private Color textColor = Color.Black;
-        private Color textShadowColor = Color.LightGray;
-        private float xshift = 1.5f;
-        private float yshift = 1.5f;
+        private Color textShadowColor = Color.Black;
+        private float xshift = 0f;
+        private float yshift = 0f;
 
         public static bool operator ==(TextAppearence p1, TextAppearence p2)
         {
@@ -225,17 +226,17 @@ namespace SQLInstaller.Core.Wizard
 
         private void ResetTextShadowColor()
         {
-            textShadowColor = Color.LightGray;
+            textShadowColor = Color.Black;
         }
 
         private void ResetXshift()
         {
-            Xshift = 1.5f;
+            Xshift = 0f;
         }
 
         private void ResetYshift()
         {
-            Yshift = 1.5f;
+            Yshift = 0f;
         }
 
         private void ResetFont()

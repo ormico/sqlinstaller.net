@@ -46,17 +46,21 @@ namespace SQLInstaller.Core
 
 				schema.Exists = ((int)cmd.ExecuteScalar()) > 0;
 
+				if (!Directory.Exists(targetDir))
+					throw new ArgumentException("Script directory missing: " + targetDir);
+
 				DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
 				DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(targetDir, "Upgrade"));
-				DirectoryInfo[] candidates = null;
 
-				if (upgradeScripts.Exists)
-				{
-					candidates = upgradeScripts.GetDirectories();
-					Array.Sort(candidates, new DirInfoSorter());
-					if (candidates.Length > 0)
-						schema.Upgrade = candidates[candidates.Length - 1].Name;
-				}
+				if (!installScripts.Exists || !upgradeScripts.Exists)
+					throw new ArgumentException("Script directory missing required subfolder(s) (Install/Upgrade).");
+
+				DirectoryInfo[] candidates = upgradeScripts.GetDirectories();
+				if (candidates.Length == 0)
+					throw new ArgumentException("Upgrade folder must contain at least one subfolder for versioning.");
+
+				Array.Sort(candidates, new DirInfoSorter());
+				schema.Upgrade = candidates[candidates.Length - 1].Name;
 
 				if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 				{
@@ -79,7 +83,7 @@ namespace SQLInstaller.Core
 						}
 					}
 				}
-				else if (installScripts.Exists)
+				else
 					schema.ScriptsTotal = installScripts.GetFiles("*.sql").Length;
 
 			}

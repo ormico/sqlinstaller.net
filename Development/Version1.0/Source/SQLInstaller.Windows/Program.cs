@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Reflection;
+using System.Deployment.Application;
 
 namespace SQLInstaller.Windows
 {
