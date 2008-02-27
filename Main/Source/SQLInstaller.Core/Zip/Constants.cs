@@ -4,7 +4,8 @@ using System.Text;
 
 namespace SQLInstaller.Core.Zip
 {
-    class ZipConstants
+	// Credit this file to DotNetZip Project (http://www.codeplex.com/DotNetZip).
+	class ZipConstants
     {
         public const UInt32 EndOfCentralDirectorySignature = 0x06054b50;
         public const int ZipEntrySignature = 0x04034b50;

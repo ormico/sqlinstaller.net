@@ -1,7 +1,6 @@
 // Crc32.cs
 //
 //
-//
 // Implements the CRC algorithm, which is used in zip files.  The zip format calls for
 // the zipfile to contain a CRC for the unencrypted byte stream of each file.
 //
@@ -13,8 +12,8 @@
 // avoids the need to read through the uncompressed stream twice - once to computer CRC
 // and another time to compress.
 //
-//
 // Thu, 30 Mar 2006  13:58
+// Credit this file to DotNetZip Project (http://www.codeplex.com/DotNetZip).
 // 
 
 using System;
