@@ -5,6 +5,7 @@
 // See the file ZipFile.cs for the license and for further information.
 //
 // Tue, 27 Mar 2007  15:30
+// Credit this file to DotNetZip Project (http://www.codeplex.com/DotNetZip).
 
 
 using System;

@@ -56,6 +56,7 @@
 //  where the CRC, Compressed Size, and Uncompressed size 
 //  actually followed the compressed file data. 
 //
+// Credit this file to DotNetZip Project (http://www.codeplex.com/DotNetZip).
 
 
 using System;
