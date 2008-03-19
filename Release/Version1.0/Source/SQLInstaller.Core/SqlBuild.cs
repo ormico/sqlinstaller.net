@@ -19,6 +19,8 @@ namespace SQLInstaller.Core
 		private string database;
 		private string server;
 		private string path;
+		private string user;
+		private string password;
 		private bool create;
 		private bool drop;
 		private bool retry;
@@ -40,6 +42,18 @@ namespace SQLInstaller.Core
 		{
 			get { return path; }
 			set { path = value; }
+		}
+
+		public string User
+		{
+			get { return user; }
+			set { user = value; }
+		}
+
+		public string Password
+		{
+			get { return password; }
+			set { password = value; }
 		}
 
 		public bool Create
@@ -64,6 +78,8 @@ namespace SQLInstaller.Core
 		{
 			path = string.Empty;
 			server = "localhost";
+			user = string.Empty;
+			password = string.Empty;
 			create = true;
 		}
 
@@ -83,7 +99,7 @@ namespace SQLInstaller.Core
 				Log.LogMessage("Processing: " + path + ".");
 				Log.LogMessage("Connecting to " + server + ".");
 
-				Schema schema = installer.Prepare(server, database);
+				Schema schema = installer.Prepare(server, database, user, password);
 
 				if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 				{
