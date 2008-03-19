@@ -21,6 +21,8 @@ namespace SQLInstaller.Console
 				cl.Required.Add("database", "SQL Database name (required).");
 				cl.Optional.Add("server", "SQL Server name (defaults to localhost).");
 				cl.Optional.Add("path", "Path to the scripts directory (defaults to current directory).");
+				cl.Optional.Add("user", "SQL Server User (if not using integrated security).");
+				cl.Optional.Add("password", "SQL Server User password.");
 				cl.Optional.Add("create", "Create database if it does not exist (default).");
 				cl.Optional.Add("drop", "Drop database if it exists.");
 				cl.Optional.Add("retry", "Recovers from installation failure.");
@@ -47,11 +49,18 @@ namespace SQLInstaller.Console
 					string server = "localhost";
 					string path = string.Empty;
 					string database = cl.Parameters["database"];
+					string user = string.Empty;
+					string password = string.Empty;
 
 					if (cl.Parameters.ContainsKey("server") && cl.Parameters["server"].Length > 0)
 						server = cl.Parameters["server"];
 					if (cl.Parameters.ContainsKey("path"))
 						path = cl.Parameters["path"];
+					if (cl.Parameters.ContainsKey("user"))
+						user = cl.Parameters["user"];
+					if (cl.Parameters.ContainsKey("password"))
+						password = cl.Parameters["password"];
+
 					if (!cl.Parameters.ContainsKey("create") || string.Compare(cl.Parameters["create"], "true", true) == 0)
 						flags |= RuntimeFlag.Create;
 					if (cl.Parameters.ContainsKey("drop") && string.Compare(cl.Parameters["drop"], "true", true) == 0)
@@ -65,7 +74,7 @@ namespace SQLInstaller.Console
 					System.Console.Write("Connecting to " + server + "...");
 
 					installer = new Runtime(path, flags);
-					Schema schema = installer.Prepare(server, cl.Parameters["database"]);
+					Schema schema = installer.Prepare(server, database, user, password);
 					spin.Stop();
 					System.Console.WriteLine("Done.");
 
