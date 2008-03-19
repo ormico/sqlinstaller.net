@@ -19,6 +19,7 @@ namespace SQLInstaller.Core
 		private bool isDisposed;
 
 		private string targetDir;
+		private string connectionString;
 		private RuntimeFlag flags;
 		private Queue<Progress> messages;
 
@@ -32,8 +33,22 @@ namespace SQLInstaller.Core
 
 		public Schema Prepare(string server, string database)
 		{
+			return Prepare(server, database, string.Empty, string.Empty);
+		}
+
+		public Schema Prepare(string server, string database, string user, string password)
+		{
+			if ( server == null || server.Length == 0 | database == null || database.Length == 0)
+				throw new ArgumentException("Missing a required parameter.");
+
+			string cred = "Trusted_Connection=yes";
+			if (user != null && user.Length > 0)
+				cred = "Uid=" + user + ";" + "Pwd=" + password;
+
+			connectionString = string.Format("Server={0};Database=master;{1};", server, cred);
+
 			Schema schema = new Schema(server, database);
-			SqlConnection conn = new SqlConnection("Server=" + server + ";Database=master;Trusted_Connection=yes;");
+			SqlConnection conn = new SqlConnection(connectionString);
 
 			try
 			{
@@ -109,7 +124,7 @@ namespace SQLInstaller.Core
 				if (schema == null || schema.Database.Length == 0 || schema.Server.Length == 0)
 					throw new ArgumentException("You must prepare the schema first.", "schema");
 
-				conn = new SqlConnection("Server=" + schema.Server + ";Database=master;Trusted_Connection=yes;");
+				conn = new SqlConnection(connectionString);
 				schema = schema.Clone();
 
 				SqlCommand cmd = new SqlCommand();
