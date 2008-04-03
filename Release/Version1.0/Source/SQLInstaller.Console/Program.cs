@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.IO;
+using Microsoft.Win32;
 
 using SQLInstaller.Core;
 
@@ -9,7 +11,7 @@ namespace SQLInstaller.Console
 	class Program
 	{
 		public delegate void InstallMethod(Schema schema);
- 
+
 		static int Main(string[] args)
 		{
 			int returnCode = 0;
@@ -38,24 +40,36 @@ namespace SQLInstaller.Console
 				}
 				else
 				{
-					foreach (string key in cl.Required.Keys)
+					string database = string.Empty;
+					string server = string.Empty;
+					string path = string.Empty;
+					try
 					{
-						if (!cl.Parameters.ContainsKey(key))
-							throw new ArgumentException("Missing required parameter: /" + key);
+						using (RegistryKey installerKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JHOB Technologies\SQLInstaller"))
+						{
+							if (cl.Parameters.ContainsKey("path"))
+								path = cl.Parameters["path"];
+							if ( path.Length == 0 || string.Compare(path, "true", true) == 0 )
+								path = ".";
+							if (cl.Parameters.ContainsKey("server"))
+								server = cl.Parameters["server"];
+							if (server.Length == 0 || string.Compare(server, "true", true) == 0)
+								server = installerKey.GetValue("Server", "localhost") as string;
+							if (cl.Parameters.ContainsKey("database"))
+								database = cl.Parameters["database"];
+							installerKey.Close();
+						}
 					}
+					catch (Exception) { }
+
+					if (database.Length == 0 || string.Compare(database, "true", true) == 0)
+						throw new ArgumentException("Missing required parameter: /database");
 
 					RuntimeFlag flags = RuntimeFlag.None;
 
-					string server = "localhost";
-					string path = string.Empty;
-					string database = cl.Parameters["database"];
 					string user = string.Empty;
 					string password = string.Empty;
 
-					if (cl.Parameters.ContainsKey("server") && cl.Parameters["server"].Length > 0)
-						server = cl.Parameters["server"];
-					if (cl.Parameters.ContainsKey("path"))
-						path = cl.Parameters["path"];
 					if (cl.Parameters.ContainsKey("user"))
 						user = cl.Parameters["user"];
 					if (cl.Parameters.ContainsKey("password"))
@@ -77,6 +91,19 @@ namespace SQLInstaller.Console
 					Schema schema = installer.Prepare(server, database, user, password);
 					spin.Stop();
 					System.Console.WriteLine("Done.");
+
+					try
+					{
+						using (RegistryKey installerKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JHOB Technologies\SQLInstaller", true))
+						{
+							DirectoryInfo di = new DirectoryInfo(path);
+							installerKey.SetValue("Scripts", di.FullName, RegistryValueKind.String);
+							installerKey.SetValue("Server", server, RegistryValueKind.String);
+							installerKey.SetValue("Database", database, RegistryValueKind.String);
+							installerKey.Close();
+						}
+					}
+					catch (Exception) { }
 
 					if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 					{
@@ -144,7 +171,7 @@ namespace SQLInstaller.Console
 			}
 			finally
 			{
-				if ( spin != null )
+				if (spin != null)
 					spin.Stop();
 			}
 
