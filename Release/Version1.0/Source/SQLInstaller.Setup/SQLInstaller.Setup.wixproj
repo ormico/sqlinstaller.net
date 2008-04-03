@@ -46,6 +46,9 @@
     <LinkerVerboseOutput>False</LinkerVerboseOutput>
     <WixVariables>
     </WixVariables>
+    <CompilerAdditionalOptions>
+    </CompilerAdditionalOptions>
+    <LinkerAdditionalOptions>-sval</LinkerAdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>

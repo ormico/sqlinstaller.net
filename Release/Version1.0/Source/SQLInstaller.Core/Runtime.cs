@@ -133,7 +133,7 @@ namespace SQLInstaller.Core
 
 				if (schema.Exists && (flags & RuntimeFlag.Drop) == RuntimeFlag.Drop)
 				{
-					SetProgress(StatusMessage.Start, "Dropping Database");
+					SetProgress(StatusMessage.Start, "Dropping Database "+ schema.Database);
 					cmd.CommandText = "DROP DATABASE " + schema.Database;
 					cmd.ExecuteNonQuery();
 					SetProgress(StatusMessage.Complete, "Done.");
@@ -146,7 +146,7 @@ namespace SQLInstaller.Core
 				{
 					if ((flags & RuntimeFlag.Create) == RuntimeFlag.Create)
 					{
-						SetProgress(StatusMessage.Start, "Creating Database");
+						SetProgress(StatusMessage.Start, "Creating Database " + schema.Database);
 						Server server = new Server(new ServerConnection(conn));
 						server.ConnectionContext.ExecuteNonQuery(string.Format(Resources.DbCreate, schema.Database));
 						conn.ChangeDatabase(schema.Database);
@@ -157,7 +157,7 @@ namespace SQLInstaller.Core
 					DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
 					if (installScripts.Exists)
 					{
-						SetProgress(StatusMessage.Start, "Installing Database");
+						SetProgress(StatusMessage.Start, "Installing Database " + schema.Database);
 
 						if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 							SetProgress(StatusMessage.Detail, string.Empty);

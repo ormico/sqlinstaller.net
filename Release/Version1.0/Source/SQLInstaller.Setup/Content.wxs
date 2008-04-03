@@ -22,6 +22,7 @@
 				<RegistryKey Id="SQLInstaller.regkey" Root="HKLM" Key="SOFTWARE\JHOB Technologies\SQLInstaller" Action="createAndRemoveOnUninstall">
 					<RegistryValue Id="SQLInstaller.regval" Name="Path" Value="[ROOTINSTALL]SQLInstaller.exe" Type="string" />
 				</RegistryKey>
+				<Environment Id="SQLInstaller.setpath" Action="set" Name="PATH" Part="last" System="yes" Value="[ROOTINSTALL]" />
 			</Component>
 		</DirectoryRef>
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Windows.TargetDir)">
