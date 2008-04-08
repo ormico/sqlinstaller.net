@@ -171,18 +171,19 @@ namespace SQLInstaller.Windows
 						this.labelSummary.Text = "Connecting to " + this.txtServer.Text + "...";
 						this.Refresh();
 						installer = new Runtime(targetDir, RuntimeFlag.Create | RuntimeFlag.Verbose);
-						schema = installer.Prepare(this.txtServer.Text, this.txtDatabase.Text);
+
+						schema = installer.Prepare(ProviderType.SqlServer, this.txtServer.Text, this.txtDatabase.Text, null, null);
 
 						if (schema.Version.ToLower().Equals(schema.Upgrade.ToLower()))
 						{
 							// Set finish text to 'already at version'
-							this.labelFinish.Text = schema.Database + " is already at version " + schema.Version + ".";
+							this.labelFinish.Text = schema.Provider.Database + " is already at version " + schema.Version + ".";
 							this.wizardUpgrade.CurrentStepIndex = 4;
 							return;
 						}
 						this.panelSummary.Visible = true;
-						this.labelConfirmDatabase.Text = schema.Database;
-						this.labelConfirmServer.Text = schema.Server;
+						this.labelConfirmDatabase.Text = schema.Provider.Database;
+						this.labelConfirmServer.Text = schema.Provider.Server;
 						if (schema.Version.Length == 0)
 						{
 							this.labelConfirmVersion.Text = "*NEW INSTALL*";

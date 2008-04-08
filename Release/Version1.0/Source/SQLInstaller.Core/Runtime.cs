@@ -2,24 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Security.Principal;
-
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Common;
 
 namespace SQLInstaller.Core
 {
 	public sealed class Runtime : IDisposable
 	{
 		private bool isDisposed;
-
 		private string targetDir;
-		private string connectionString;
 		private RuntimeFlag flags;
 		private Queue<Progress> messages;
 
@@ -31,111 +24,81 @@ namespace SQLInstaller.Core
 			this.messages = new Queue<Progress>();
 		}
 
-		public Schema Prepare(string server, string database)
-		{
-			return Prepare(server, database, string.Empty, string.Empty);
-		}
-
-		public Schema Prepare(string server, string database, string user, string password)
+		public Schema Prepare(ProviderType providerType, string server, string database, string user, string password)
 		{
 			if ( server == null || server.Length == 0 | database == null || database.Length == 0)
 				throw new ArgumentException("Missing a required parameter.");
 
-			string cred = "Trusted_Connection=yes";
-			if (user != null && user.Length > 0)
-				cred = "Uid=" + user + ";" + "Pwd=" + password;
+			Schema schema = null;
 
-			connectionString = string.Format("Server={0};Database=master;{1};", server, cred);
+			if (providerType == ProviderType.PostGres)
+				schema = new Schema(new PostGresProvider());
+			else
+				schema = new Schema(new SqlProvider());
 
-			Schema schema = new Schema(server, database);
-			SqlConnection conn = new SqlConnection(connectionString);
+			schema.Provider.Server = server;
+			schema.Provider.Database = database;
+			schema.Provider.User = user;
+			schema.Provider.Password = password;
 
-			try
+			schema.Exists = schema.Provider.Exists();
+
+			if (!Directory.Exists(targetDir))
+				throw new ArgumentException("Script directory missing: " + targetDir);
+
+			DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
+			DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(targetDir, "Upgrade"));
+
+			if (!installScripts.Exists || !upgradeScripts.Exists)
+				throw new ArgumentException("Script directory missing required subfolder(s) (Install/Upgrade).");
+
+			DirectoryInfo[] candidates = upgradeScripts.GetDirectories();
+			if (candidates.Length == 0)
+				throw new ArgumentException("Upgrade folder must contain at least one subfolder for versioning.");
+
+			Array.Sort(candidates, new DirInfoSorter());
+			schema.Upgrade = candidates[candidates.Length - 1].Name;
+
+			if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 			{
-				conn.Open();
-
-				SqlCommand cmd = new SqlCommand();
-				cmd.Connection = conn;
-				cmd.CommandText = "SELECT COUNT(*) FROM sysdatabases WHERE name = @database_name";
-				cmd.Parameters.Add(new SqlParameter("@database_name", database));
-
-				schema.Exists = ((int)cmd.ExecuteScalar()) > 0;
-
-				if (!Directory.Exists(targetDir))
-					throw new ArgumentException("Script directory missing: " + targetDir);
-
-				DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
-				DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(targetDir, "Upgrade"));
-
-				if (!installScripts.Exists || !upgradeScripts.Exists)
-					throw new ArgumentException("Script directory missing required subfolder(s) (Install/Upgrade).");
-
-				DirectoryInfo[] candidates = upgradeScripts.GetDirectories();
-				if (candidates.Length == 0)
-					throw new ArgumentException("Upgrade folder must contain at least one subfolder for versioning.");
-
-				Array.Sort(candidates, new DirInfoSorter());
-				schema.Upgrade = candidates[candidates.Length - 1].Name;
-
-				if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
+				string[] version = schema.Provider.GetVersion().Split(new char[]{';'}, StringSplitOptions.RemoveEmptyEntries);
+				if (version.Length == 2)
 				{
-					conn.ChangeDatabase(schema.Database);
-					SqlParameter name = new SqlParameter("@name", "Version");
-					cmd.Parameters.Add(name);
-					cmd.CommandText = "SELECT ISNULL(value,'') FROM fn_listextendedproperty(@name, default, default, default, default, default, default)";
-					schema.Version = cmd.ExecuteScalar() as string;
-					name.Value = "UpdatedBy";
-					schema.UpgradeBy = cmd.ExecuteScalar() as string;
-
-					if (candidates != null)
+					schema.Version = version[0];
+					schema.UpgradeBy = version[1];
+				}
+				if (candidates != null)
+				{
+					foreach (DirectoryInfo di in candidates)
 					{
-						foreach (DirectoryInfo di in candidates)
-						{
-							int comp = string.Compare(schema.Version, di.Name, true);
-							bool retry = (flags & RuntimeFlag.Retry) == RuntimeFlag.Retry;
-							if ((!retry && comp < 0) || (retry && comp <= 0))
-								schema.ScriptsTotal += di.GetFiles("*.sql").Length + 1;
-						}
+						int comp = string.Compare(schema.Version, di.Name, true);
+						bool retry = (flags & RuntimeFlag.Retry) == RuntimeFlag.Retry;
+						if ((!retry && comp < 0) || (retry && comp <= 0))
+							schema.ScriptsTotal += di.GetFiles("*.sql").Length + 1;
 					}
 				}
-				else
-					schema.ScriptsTotal = installScripts.GetFiles("*.sql").Length;
+			}
+			else
+				schema.ScriptsTotal = installScripts.GetFiles("*.sql").Length;
 
-			}
-			finally
-			{
-				if (conn != null)
-				{
-					if (conn.State != ConnectionState.Closed)
-						conn.Close();
-					conn.Dispose();
-				}
-			}
 			return schema;
 		}
 
 		public void Create(Schema schema)
 		{
 			string errorMessage = string.Empty;
-			SqlConnection conn = null;
 
 			try
 			{
-				if (schema == null || schema.Database.Length == 0 || schema.Server.Length == 0)
+				if (schema == null || schema.Provider == null)
 					throw new ArgumentException("You must prepare the schema first.", "schema");
 
-				conn = new SqlConnection(connectionString);
 				schema = schema.Clone();
-
-				SqlCommand cmd = new SqlCommand();
-				conn.Open();
-				cmd.Connection = conn;
 
 				if (schema.Exists && (flags & RuntimeFlag.Drop) == RuntimeFlag.Drop)
 				{
-					SetProgress(StatusMessage.Start, "Dropping Database "+ schema.Database);
-					cmd.CommandText = "DROP DATABASE " + schema.Database;
-					cmd.ExecuteNonQuery();
+					SetProgress(StatusMessage.Start, "Dropping Database "+ schema.Provider.Database);
+					schema.Provider.DropDatabase();
 					SetProgress(StatusMessage.Complete, "Done.");
 					if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 						SetProgress(StatusMessage.Progress, string.Empty, 50);
@@ -146,10 +109,8 @@ namespace SQLInstaller.Core
 				{
 					if ((flags & RuntimeFlag.Create) == RuntimeFlag.Create)
 					{
-						SetProgress(StatusMessage.Start, "Creating Database " + schema.Database);
-						Server server = new Server(new ServerConnection(conn));
-						server.ConnectionContext.ExecuteNonQuery(string.Format(Resources.DbCreate, schema.Database));
-						conn.ChangeDatabase(schema.Database);
+						SetProgress(StatusMessage.Start, "Creating Database " + schema.Provider.Database);
+						schema.Provider.CreateDatabase();
 						if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 							SetProgress(StatusMessage.Progress, string.Empty, 100);
 						SetProgress(StatusMessage.Complete, "Done.");
@@ -157,32 +118,21 @@ namespace SQLInstaller.Core
 					DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
 					if (installScripts.Exists)
 					{
-						SetProgress(StatusMessage.Start, "Installing Database " + schema.Database);
+						SetProgress(StatusMessage.Start, "Installing Database " + schema.Provider.Database);
 
 						if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 							SetProgress(StatusMessage.Detail, string.Empty);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.PreInstallFilter), conn, true);
-						if (string.Compare(conn.Database, schema.Database, true) != 0)
-							conn.ChangeDatabase(schema.Database);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.TableFilter), conn);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.FunctionFilter), conn);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.ViewFilter), conn);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.StoredProcedureFilter), conn);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.TriggerFilter), conn);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.PostInstallFilter), conn);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.ForeignKeyFilter), conn);
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.PreInstallFilter), true);
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.TableFilter));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.FunctionFilter));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.ViewFilter));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.StoredProcedureFilter));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.TriggerFilter));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.PostInstallFilter));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.ForeignKeyFilter));
 						SetProgress(StatusMessage.Complete, "Done.");
 					}
 				}
-
-				if (string.Compare(conn.Database, schema.Database, true) != 0)
-					conn.ChangeDatabase(schema.Database);
-
-				SqlParameter propName = new SqlParameter("@propname", SqlDbType.VarChar);
-				SqlParameter propValue = new SqlParameter("@propvalue", SqlDbType.VarChar);
-				cmd.Parameters.Add(propName);
-				cmd.Parameters.Add(propValue);
-				cmd.CommandText = "IF NOT EXISTS (SELECT value FROM fn_listextendedproperty(@propname, default, default, default, default, default, default)) EXEC sp_addextendedproperty @propname, @propvalue ELSE EXEC sp_updateextendedproperty @propname, @propvalue ";
 
 				if (schema.Exists)
 				{
@@ -203,36 +153,24 @@ namespace SQLInstaller.Core
 							SetProgress(StatusMessage.Start, "Upgrading Database to version " + upgradeDir.Name);
 							if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 								SetProgress(StatusMessage.Detail, string.Empty);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PreInstallFilter), conn, true);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TableFilter), conn);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.FunctionFilter), conn);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ViewFilter), conn);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.StoredProcedureFilter), conn);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TriggerFilter), conn);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PostInstallFilter), conn);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ForeignKeyFilter), conn);
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PreInstallFilter), true);
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TableFilter));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.FunctionFilter));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ViewFilter));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.StoredProcedureFilter));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TriggerFilter));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PostInstallFilter));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ForeignKeyFilter));
 							SetProgress(StatusMessage.Complete, "Done.");
 							schema.ScriptsRun++;
 							if (schema.Errors > 0)
 								break;
-							propName.Value = "Version";
-							propValue.Value = upgradeDir.Name;
-							cmd.ExecuteNonQuery();
-							propName.Value = "UpdatedBy";
-							propValue.Value = WindowsIdentity.GetCurrent().Name + " on " + DateTime.Now;
-							cmd.ExecuteNonQuery();
+							schema.Provider.SetVersion(upgradeDir.Name, WindowsIdentity.GetCurrent().Name + " on " + DateTime.Now);
 						}
 					}
 				}
 				else
-				{
-					propName.Value = "Version";
-					propValue.Value = schema.Upgrade;
-					cmd.ExecuteNonQuery();
-					propName.Value = "UpdatedBy";
-					propValue.Value = WindowsIdentity.GetCurrent().Name + " on " + DateTime.Now;
-					cmd.ExecuteNonQuery();
-				}
+					schema.Provider.SetVersion(schema.Upgrade, WindowsIdentity.GetCurrent().Name + " on " + DateTime.Now);
 			}
 			catch (Exception ex)
 			{
@@ -243,31 +181,26 @@ namespace SQLInstaller.Core
 			}
 			finally
 			{
-				if (conn != null && conn.State != ConnectionState.Closed)
-					conn.Close();
 				SetProgress(StatusMessage.Exit, errorMessage, schema.Errors);
 			}
 		}
 
-		private void ExecuteScripts(Schema schema, FileInfo[] files, SqlConnection conn)
+		private void ExecuteScripts(Schema schema, FileInfo[] files)
 		{
-			ExecuteScripts(schema, files, conn, false);
+			ExecuteScripts(schema, files, false);
 		}
 
-		private void ExecuteScripts(Schema schema, FileInfo[] files, SqlConnection conn, bool throwOnError)
+		private void ExecuteScripts(Schema schema, FileInfo[] files, bool throwOnError)
 		{
 			foreach (FileInfo pre in files)
 			{
 				StreamReader sr = null;
-				SqlCommand cmd = null;
 				try
 				{
 					if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 						SetProgress(StatusMessage.Detail, "Executing script: " + pre.Name);
-					cmd = new SqlCommand(string.Empty, conn);
 					sr = new StreamReader(pre.FullName);
-					Server server = new Server(new ServerConnection(conn));
-					server.ConnectionContext.ExecuteNonQuery(sr.ReadToEnd());
+					schema.Provider.ExecuteScript(sr.ReadToEnd());
 					sr.Close();
 				}
 				catch (Exception ex)
