@@ -16,6 +16,7 @@ namespace SQLInstaller.Core
 	/// </summary>
 	public class SqlBuild : Task
 	{
+		private ProviderType provType;
 		private string database;
 		private string server;
 		private string path;
@@ -30,6 +31,12 @@ namespace SQLInstaller.Core
 		{
 			get { return database; }
 			set { database = value; }
+		}
+
+		public ProviderType Provider
+		{
+			get { return provType; }
+			set { provType = value; }
 		}
 
 		public string Server
@@ -99,13 +106,13 @@ namespace SQLInstaller.Core
 				Log.LogMessage("Processing: " + path + ".");
 				Log.LogMessage("Connecting to " + server + ".");
 
-				Schema schema = installer.Prepare(server, database, user, password);
+				Schema schema = installer.Prepare(provType, server, database, user, password);
 
 				if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 				{
 					if (schema.ScriptsTotal == 0)
 					{
-						Log.LogWarning(schema.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
+						Log.LogWarning(schema.Provider.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
 						return true;
 					}
 				}

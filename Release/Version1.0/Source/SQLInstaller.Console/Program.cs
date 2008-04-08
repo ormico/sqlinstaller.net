@@ -17,11 +17,13 @@ namespace SQLInstaller.Console
 			int returnCode = 0;
 			CommandLine cl = new CommandLine();
 			Runtime installer;
+			ProviderType provType = ProviderType.SqlServer;
 			Spinner spin = new Spinner();
 			try
 			{
 				cl.Required.Add("database", "SQL Database name (required).");
 				cl.Optional.Add("server", "SQL Server name (defaults to localhost).");
+				cl.Optional.Add("type", "SQL Server type: SqlServer or PostGres (defaults to SqlServer).");
 				cl.Optional.Add("path", "Path to the scripts directory (defaults to current directory).");
 				cl.Optional.Add("user", "SQL Server User (if not using integrated security).");
 				cl.Optional.Add("password", "SQL Server User password.");
@@ -47,6 +49,8 @@ namespace SQLInstaller.Console
 					{
 						using (RegistryKey installerKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JHOB Technologies\SQLInstaller"))
 						{
+							if (cl.Parameters.ContainsKey("type") && string.Compare(cl.Parameters["type"], "PostGres", true) == 0)
+								provType = ProviderType.PostGres;
 							if (cl.Parameters.ContainsKey("path"))
 								path = cl.Parameters["path"];
 							if ( path.Length == 0 || string.Compare(path, "true", true) == 0 )
@@ -88,7 +92,7 @@ namespace SQLInstaller.Console
 					System.Console.Write("Connecting to " + server + "...");
 
 					installer = new Runtime(path, flags);
-					Schema schema = installer.Prepare(server, database, user, password);
+					Schema schema = installer.Prepare(provType, server, database, user, password);
 					spin.Stop();
 					System.Console.WriteLine("Done.");
 
@@ -109,7 +113,7 @@ namespace SQLInstaller.Console
 					{
 						if (schema.ScriptsTotal == 0)
 						{
-							System.Console.WriteLine(schema.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
+							System.Console.WriteLine(schema.Provider.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
 							return 0;
 						}
 						else
@@ -119,7 +123,7 @@ namespace SQLInstaller.Console
 								ConsoleKey key = ConsoleKey.NoName;
 								while (key != ConsoleKey.N && key != ConsoleKey.Y)
 								{
-									System.Console.Write("\rUpgrade " + schema.Database + " to Version " + schema.Upgrade + " (Y/N)? ");
+									System.Console.Write("\rUpgrade " + schema.Provider.Database + " to Version " + schema.Upgrade + " (Y/N)? ");
 									key = System.Console.ReadKey(true).Key;
 								}
 								System.Console.WriteLine(key);

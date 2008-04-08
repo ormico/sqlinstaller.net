@@ -6,9 +6,8 @@ namespace SQLInstaller.Core
 {
 	public sealed class Schema
 	{
+		private Provider provider;
 		private bool exists;
-		private string database;
-		private string server;
 		private string version;
 		private string upgrade;
 		private string upgradeBy;
@@ -16,22 +15,16 @@ namespace SQLInstaller.Core
 		private int scriptsTotal;
 		private int scriptsRun;
 
+		public Provider Provider
+		{
+			get { return provider; }
+			set { provider = value; }
+		}
+
 		public bool Exists
 		{
 			get { return exists; }
 			set { exists = value; }
-		}
-
-		public string Database
-		{
-			get { return database; }
-			set { database = value; }
-		}
-
-		public string Server
-		{
-			get { return server; }
-			set { server = value; }
 		}
 
 		public string Version
@@ -70,10 +63,9 @@ namespace SQLInstaller.Core
 			set { scriptsRun = value; }
 		}
 
-		public Schema(string server, string database)
+		public Schema(Provider provider)
 		{
-			this.server = server;
-			this.database = database;
+			this.provider = provider;
 			this.version = string.Empty;
 			this.upgrade = string.Empty;
 			this.upgradeBy = string.Empty;
@@ -81,7 +73,7 @@ namespace SQLInstaller.Core
 
 		public Schema Clone()
 		{
-			Schema schema = new Schema(this.server, this.database);
+			Schema schema = new Schema(this.provider);
 			schema.Exists = this.exists;
 			schema.Version = this.version;
 			schema.Upgrade = this.upgrade;
