@@ -31,10 +31,19 @@ namespace SQLInstaller.Core
 
 			Schema schema = null;
 
-			if (providerType == ProviderType.PostGres)
-				schema = new Schema(new PostGresProvider());
-			else
-				schema = new Schema(new SqlProvider());
+			switch (providerType)
+			{
+				case ProviderType.PostGres:
+					schema = new Schema(new PostGresProvider());
+					break;
+				case ProviderType.Oracle:
+					schema = new Schema(new OracleProvider());
+					break;
+				case ProviderType.SqlServer:
+				default:
+					schema = new Schema(new SqlProvider());
+					break;
+			}			
 
 			schema.Provider.Server = server;
 			schema.Provider.Database = database;

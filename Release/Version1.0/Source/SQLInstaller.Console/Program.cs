@@ -49,8 +49,13 @@ namespace SQLInstaller.Console
 					{
 						using (RegistryKey installerKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JHOB Technologies\SQLInstaller"))
 						{
-							if (cl.Parameters.ContainsKey("type") && string.Compare(cl.Parameters["type"], "PostGres", true) == 0)
-								provType = ProviderType.PostGres;
+							if (cl.Parameters.ContainsKey("type") )
+							{
+								if (string.Compare(cl.Parameters["type"], "PostGres", true) == 0)
+									provType = ProviderType.PostGres;
+								else if (string.Compare(cl.Parameters["type"], "Oracle", true) == 0)
+									provType = ProviderType.Oracle;
+							}
 							if (cl.Parameters.ContainsKey("path"))
 								path = cl.Parameters["path"];
 							if ( path.Length == 0 || string.Compare(path, "true", true) == 0 )
