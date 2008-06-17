@@ -22,7 +22,7 @@ namespace SQLInstaller.Core
 		{
 			get
 			{
-				if (connectionString == null)
+				if (connectionString == null || connectionString.Length == 0)
 				{
 					string cred = "Trusted_Connection=yes";
 					if (user != null && user.Length > 0)
@@ -32,6 +32,7 @@ namespace SQLInstaller.Core
 				}
 				return connectionString;
 			}
+			set { connectionString = value; }
 		}
 		public string Server
 		{

@@ -30,8 +30,6 @@ namespace SQLInstaller.Core
 				cmd.Connection = conn;
 				cmd.CommandText = "SELECT COUNT(*) FROM pg_catalog.pg_database WHERE datname = :database_name";
 				cmd.Parameters.Add(new NpgsqlParameter(":database_name", Database.ToLower()));
-				object test = cmd.ExecuteScalar();
-
 				exists = ((long)cmd.ExecuteScalar()) > 0;
 			}
 
