@@ -5,13 +5,13 @@ using System.IO;
 
 namespace SQLInstaller.Core
 {
-	public class DirInfoSorter : System.Collections.IComparer
+	public class FileInfoSorter : System.Collections.IComparer
 	{
 		#region IComparer Members
 
 		public int Compare(object x, object y)
 		{
-			return string.Compare(((DirectoryInfo)x).Name, ((DirectoryInfo)y).Name, true);
+			return string.Compare(((FileInfo)x).FullName, ((FileInfo)y).FullName, true);
 		}
 
 		#endregion
