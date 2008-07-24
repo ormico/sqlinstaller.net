@@ -26,7 +26,7 @@ namespace SQLInstaller.Core
 
 		public Schema Prepare(ProviderType providerType, string server, string database, string user, string password)
 		{
-			if ( server == null || server.Length == 0 | database == null || database.Length == 0)
+			if (server == null || server.Length == 0 | database == null || database.Length == 0)
 				throw new ArgumentException("Missing a required parameter.");
 
 			Schema schema = null;
@@ -43,7 +43,7 @@ namespace SQLInstaller.Core
 				default:
 					schema = new Schema(new SqlProvider());
 					break;
-			}			
+			}
 
 			schema.Provider.Server = server;
 			schema.Provider.Database = database;
@@ -58,19 +58,25 @@ namespace SQLInstaller.Core
 			DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
 			DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(targetDir, "Upgrade"));
 
-			if (!installScripts.Exists || !upgradeScripts.Exists)
-				throw new ArgumentException("Script directory missing required subfolder(s) (Install/Upgrade).");
-
-			DirectoryInfo[] candidates = upgradeScripts.GetDirectories();
-			if (candidates.Length == 0)
-				throw new ArgumentException("Upgrade folder must contain at least one subfolder for versioning.");
-
-			Array.Sort(candidates, new DirInfoSorter());
-			schema.Upgrade = candidates[candidates.Length - 1].Name;
+			DirectoryInfo[] candidates = null;
+			if (upgradeScripts.Exists)
+			{
+				candidates = upgradeScripts.GetDirectories();
+				if (candidates.Length > 0)
+				{
+					Array.Sort(candidates, new DirInfoSorter());
+					schema.Upgrade = candidates[candidates.Length - 1].Name;
+					foreach (DirectoryInfo di in candidates)
+					{
+						if (string.Compare(di.Name, Schema.RTM, true) == 0)
+							throw new ArgumentException("You cannot have an Upgrade directory with the reserved name: " + Schema.RTM);
+					}
+				}
+			}
 
 			if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 			{
-				string[] version = schema.Provider.GetVersion().Split(new char[]{';'}, StringSplitOptions.RemoveEmptyEntries);
+				string[] version = schema.Provider.GetVersion().Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 				if (version.Length == 2)
 				{
 					schema.Version = version[0];
@@ -82,13 +88,13 @@ namespace SQLInstaller.Core
 					{
 						int comp = string.Compare(schema.Version, di.Name, true);
 						bool retry = (flags & RuntimeFlag.Retry) == RuntimeFlag.Retry;
-						if ((!retry && comp < 0) || (retry && comp <= 0))
-							schema.ScriptsTotal += di.GetFiles("*.sql").Length + 1;
+						if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(schema.Version, Schema.RTM, true) == 0))
+							schema.ScriptsTotal += di.GetFiles("*.sql", SearchOption.AllDirectories).Length;
 					}
 				}
 			}
-			else
-				schema.ScriptsTotal = installScripts.GetFiles("*.sql").Length;
+			else if (installScripts.Exists)
+				schema.ScriptsTotal = installScripts.GetFiles("*.sql", SearchOption.AllDirectories).Length;
 
 			return schema;
 		}
@@ -106,7 +112,7 @@ namespace SQLInstaller.Core
 
 				if (schema.Exists && (flags & RuntimeFlag.Drop) == RuntimeFlag.Drop)
 				{
-					SetProgress(StatusMessage.Start, "Dropping Database "+ schema.Provider.Database);
+					SetProgress(StatusMessage.Start, "Dropping Database " + schema.Provider.Database);
 					schema.Provider.DropDatabase();
 					SetProgress(StatusMessage.Complete, "Done.");
 					if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
@@ -131,19 +137,23 @@ namespace SQLInstaller.Core
 
 						if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 							SetProgress(StatusMessage.Detail, string.Empty);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.PreInstallFilter), true);
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.TableFilter));
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.FunctionFilter));
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.ViewFilter));
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.StoredProcedureFilter));
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.TriggerFilter));
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.PostInstallFilter));
-						ExecuteScripts(schema, installScripts.GetFiles(Constants.ForeignKeyFilter));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.PreInstallFilter, SearchOption.AllDirectories), true);
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.TableFilter, SearchOption.AllDirectories));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.FunctionFilter, SearchOption.AllDirectories));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.ViewFilter, SearchOption.AllDirectories));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.StoredProcedureFilter, SearchOption.AllDirectories));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.TriggerFilter, SearchOption.AllDirectories));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.PostInstallFilter, SearchOption.AllDirectories));
+						ExecuteScripts(schema, installScripts.GetFiles(Constants.ForeignKeyFilter, SearchOption.AllDirectories));
 						SetProgress(StatusMessage.Complete, "Done.");
+						if (schema.ScriptsRun == 0)
+							SetProgress(StatusMessage.Complete, "WARNING: no scripts found. An empty database was created.");
 					}
+					else
+						SetProgress(StatusMessage.Complete, "WARNING: missing Install directory. An empty database was created.");
+					schema.Provider.SetVersion(schema.Upgrade, WindowsIdentity.GetCurrent().Name + " on " + DateTime.Now);
 				}
-
-				if (schema.Exists)
+				else
 				{
 					DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(targetDir, "Upgrade"));
 					DirectoryInfo[] candidates = new DirectoryInfo[] { };
@@ -151,35 +161,42 @@ namespace SQLInstaller.Core
 					if (upgradeScripts.Exists)
 					{
 						candidates = upgradeScripts.GetDirectories();
-						Array.Sort(candidates, new DirInfoSorter());
+						if (candidates.Length > 0)
+						{
+							if (schema.ScriptsTotal == 0)
+								SetProgress(StatusMessage.Complete, "WARNING: no new scripts found. Nothing to do.");
+							Array.Sort(candidates, new DirInfoSorter());						
+						}
+						else
+							SetProgress(StatusMessage.Complete, "WARNING: no version directories found. Nothing to do.");
 					}
+					else
+						SetProgress(StatusMessage.Complete, "WARNING: missing Upgrade directory. Nothing to do.");
+
 					foreach (DirectoryInfo upgradeDir in candidates)
 					{
 						int comp = string.Compare(schema.Version, upgradeDir.Name, true);
 						bool retry = (flags & RuntimeFlag.Retry) == RuntimeFlag.Retry;
-						if ((!retry && comp < 0) || (retry && comp <= 0))
+						if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(schema.Version, Schema.RTM, true) == 0))
 						{
 							SetProgress(StatusMessage.Start, "Upgrading Database to version " + upgradeDir.Name);
 							if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
 								SetProgress(StatusMessage.Detail, string.Empty);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PreInstallFilter), true);
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TableFilter));
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.FunctionFilter));
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ViewFilter));
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.StoredProcedureFilter));
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TriggerFilter));
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PostInstallFilter));
-							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ForeignKeyFilter));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PreInstallFilter, SearchOption.AllDirectories), true);
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TableFilter, SearchOption.AllDirectories));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.FunctionFilter, SearchOption.AllDirectories));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ViewFilter, SearchOption.AllDirectories));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.StoredProcedureFilter, SearchOption.AllDirectories));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.TriggerFilter, SearchOption.AllDirectories));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.PostInstallFilter, SearchOption.AllDirectories));
+							ExecuteScripts(schema, upgradeDir.GetFiles(Constants.ForeignKeyFilter, SearchOption.AllDirectories));
 							SetProgress(StatusMessage.Complete, "Done.");
-							schema.ScriptsRun++;
 							if (schema.Errors > 0)
 								break;
 							schema.Provider.SetVersion(upgradeDir.Name, WindowsIdentity.GetCurrent().Name + " on " + DateTime.Now);
 						}
 					}
 				}
-				else
-					schema.Provider.SetVersion(schema.Upgrade, WindowsIdentity.GetCurrent().Name + " on " + DateTime.Now);
 			}
 			catch (Exception ex)
 			{
@@ -201,6 +218,8 @@ namespace SQLInstaller.Core
 
 		private void ExecuteScripts(Schema schema, FileInfo[] files, bool throwOnError)
 		{
+			Array.Sort(files, new FileInfoSorter());
+
 			foreach (FileInfo pre in files)
 			{
 				StreamReader sr = null;
@@ -224,11 +243,9 @@ namespace SQLInstaller.Core
 				}
 				finally
 				{
+					schema.ScriptsRun++;
 					if ((this.flags & RuntimeFlag.Verbose) == RuntimeFlag.Verbose)
-					{
-						schema.ScriptsRun++;
 						SetProgress(StatusMessage.Progress, string.Empty, Convert.ToInt32(decimal.Divide((decimal)schema.ScriptsRun, (decimal)schema.ScriptsTotal) * 100));
-					}
 					if (sr != null)
 						sr.Close();
 				}

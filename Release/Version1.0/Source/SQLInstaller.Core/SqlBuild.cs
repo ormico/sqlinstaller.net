@@ -22,7 +22,6 @@ namespace SQLInstaller.Core
 		private string path;
 		private string user;
 		private string password;
-		private bool create;
 		private bool drop;
 		private bool retry;
 
@@ -63,12 +62,6 @@ namespace SQLInstaller.Core
 			set { password = value; }
 		}
 
-		public bool Create
-		{
-			get { return create; }
-			set { create = value; }
-		}
-
 		public bool Drop
 		{
 			get { return drop; }
@@ -87,14 +80,11 @@ namespace SQLInstaller.Core
 			server = "localhost";
 			user = string.Empty;
 			password = string.Empty;
-			create = true;
 		}
 
 		public override bool Execute()
 		{
-			RuntimeFlag flags = RuntimeFlag.Verbose;
-			if (create)
-				flags |= RuntimeFlag.Create;
+			RuntimeFlag flags = RuntimeFlag.Verbose | RuntimeFlag.Create;
 			if (drop)
 				flags |= RuntimeFlag.Drop;
 			if (retry)

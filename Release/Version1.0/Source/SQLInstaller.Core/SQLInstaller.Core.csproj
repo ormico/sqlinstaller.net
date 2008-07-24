@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="FileInfoSorter.cs" />
     <Compile Include="OracleProvider.cs" />
     <Compile Include="PostGresProvider.cs" />
     <Compile Include="ProviderType.cs" />

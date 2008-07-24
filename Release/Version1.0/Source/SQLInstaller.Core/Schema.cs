@@ -6,6 +6,8 @@ namespace SQLInstaller.Core
 {
 	public sealed class Schema
 	{
+		internal const string RTM = "RTM";
+
 		private Provider provider;
 		private bool exists;
 		private string version;
@@ -63,11 +65,23 @@ namespace SQLInstaller.Core
 			set { scriptsRun = value; }
 		}
 
+		public bool IsCurrent
+		{
+			get
+			{
+				if (string.Compare(this.Version, Schema.RTM, true) == 0)
+					return string.Compare(this.Upgrade, Schema.RTM, true) == 0
+						;
+				else
+					return string.Compare(this.Version, this.Upgrade, true) >= 0;
+			}
+		}
+
 		public Schema(Provider provider)
 		{
 			this.provider = provider;
 			this.version = string.Empty;
-			this.upgrade = string.Empty;
+			this.upgrade = Schema.RTM;
 			this.upgradeBy = string.Empty;
 		}
 

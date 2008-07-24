@@ -174,7 +174,7 @@ namespace SQLInstaller.Windows
 
 						schema = installer.Prepare(ProviderType.SqlServer, this.txtServer.Text, this.txtDatabase.Text, null, null);
 
-						if (schema.Version.ToLower().Equals(schema.Upgrade.ToLower()))
+						if (schema.IsCurrent)
 						{
 							// Set finish text to 'already at version'
 							this.labelFinish.Text = schema.Provider.Database + " is already at version " + schema.Version + ".";

@@ -21,24 +21,23 @@ namespace SQLInstaller.Console
 			Spinner spin = new Spinner();
 			try
 			{
-				cl.Required.Add("database", "SQL Database name (required).");
-				cl.Optional.Add("server", "SQL Server name (defaults to localhost).");
-				cl.Optional.Add("type", "SQL Server type: SqlServer or PostGres (defaults to SqlServer).");
-				cl.Optional.Add("path", "Path to the scripts directory (defaults to current directory).");
-				cl.Optional.Add("user", "SQL Server User (if not using integrated security).");
-				cl.Optional.Add("password", "SQL Server User password.");
-				cl.Optional.Add("create", "Create database if it does not exist (default).");
+				cl.Required.Add("database", "Database name (required).");
+				cl.Optional.Add("server", "Database server name (default last used).");
 				cl.Optional.Add("drop", "Drop database if it exists.");
-				cl.Optional.Add("retry", "Recovers from installation failure.");
 				cl.Optional.Add("verbose", "Show everything.");
-				cl.Optional.Add("noprompt", "Do not prompt.");
+				cl.Optional.Add("path", "Path to the scripts directory (default last used).");
+				cl.Optional.Add("type", "Database type [SqlServer|Oracle|PostGres].");
+				cl.Optional.Add("user", "Database user (if not using integrated security).");
+				cl.Optional.Add("password", "Database user Password.");
+				cl.Optional.Add("noprompt", "Do not prompt for upgrade.");
+				cl.Optional.Add("retry", "Retry last upgrade (for development only).");
 				cl.Optional.Add("?", "Help.");
 				cl.Parse(args);
 
 				if (cl.Parameters.ContainsKey("?"))
 				{
 					System.Console.WriteLine(cl.ShowUsage());
-					System.Console.WriteLine("E.g. SqlInstaller.exe /database=MyDatabase /server=MyServer /path=\"C:\\SQL Scripts\\MyDatabase\" /create /verbose");
+					System.Console.WriteLine("E.g. SqlInstaller.exe /database=MyDatabase /server=MyServer /path=\"C:\\SQL Scripts\\MyDatabase\" /verbose");
 				}
 				else
 				{
@@ -57,9 +56,13 @@ namespace SQLInstaller.Console
 									provType = ProviderType.Oracle;
 							}
 							if (cl.Parameters.ContainsKey("path"))
+							{
 								path = cl.Parameters["path"];
-							if ( path.Length == 0 || string.Compare(path, "true", true) == 0 )
-								path = ".";
+								if (path.Length == 0 || string.Compare(path, "true", true) == 0)
+									path = ".";
+							}
+							else
+								path = installerKey.GetValue("Scripts", ".") as string;
 							if (cl.Parameters.ContainsKey("server"))
 								server = cl.Parameters["server"];
 							if (server.Length == 0 || string.Compare(server, "true", true) == 0)
@@ -74,7 +77,7 @@ namespace SQLInstaller.Console
 					if (database.Length == 0 || string.Compare(database, "true", true) == 0)
 						throw new ArgumentException("Missing required parameter: /database");
 
-					RuntimeFlag flags = RuntimeFlag.None;
+					RuntimeFlag flags = RuntimeFlag.Create;
 
 					string user = string.Empty;
 					string password = string.Empty;
@@ -84,8 +87,6 @@ namespace SQLInstaller.Console
 					if (cl.Parameters.ContainsKey("password"))
 						password = cl.Parameters["password"];
 
-					if (!cl.Parameters.ContainsKey("create") || string.Compare(cl.Parameters["create"], "true", true) == 0)
-						flags |= RuntimeFlag.Create;
 					if (cl.Parameters.ContainsKey("drop") && string.Compare(cl.Parameters["drop"], "true", true) == 0)
 						flags |= RuntimeFlag.Drop;
 					if (cl.Parameters.ContainsKey("retry") && string.Compare(cl.Parameters["retry"], "true", true) == 0)
@@ -106,7 +107,7 @@ namespace SQLInstaller.Console
 						using (RegistryKey installerKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JHOB Technologies\SQLInstaller", true))
 						{
 							DirectoryInfo di = new DirectoryInfo(path);
-							installerKey.SetValue("Scripts", di.FullName, RegistryValueKind.String);
+							installerKey.SetValue("Scripts", path, RegistryValueKind.String);
 							installerKey.SetValue("Server", server, RegistryValueKind.String);
 							installerKey.SetValue("Database", database, RegistryValueKind.String);
 							installerKey.Close();
@@ -116,7 +117,7 @@ namespace SQLInstaller.Console
 
 					if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 					{
-						if (schema.ScriptsTotal == 0)
+						if (schema.IsCurrent)
 						{
 							System.Console.WriteLine(schema.Provider.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
 							return 0;
