@@ -6,9 +6,10 @@ namespace SQLInstaller.Core
 {
 	public sealed class Schema
 	{
+		internal const string RTM = "RTM";
+
+		private Provider provider;
 		private bool exists;
-		private string database;
-		private string server;
 		private string version;
 		private string upgrade;
 		private string upgradeBy;
@@ -16,22 +17,16 @@ namespace SQLInstaller.Core
 		private int scriptsTotal;
 		private int scriptsRun;
 
+		public Provider Provider
+		{
+			get { return provider; }
+			set { provider = value; }
+		}
+
 		public bool Exists
 		{
 			get { return exists; }
 			set { exists = value; }
-		}
-
-		public string Database
-		{
-			get { return database; }
-			set { database = value; }
-		}
-
-		public string Server
-		{
-			get { return server; }
-			set { server = value; }
 		}
 
 		public string Version
@@ -70,18 +65,29 @@ namespace SQLInstaller.Core
 			set { scriptsRun = value; }
 		}
 
-		public Schema(string server, string database)
+		public bool IsCurrent
 		{
-			this.server = server;
-			this.database = database;
+			get
+			{
+				if (string.Compare(this.Version, Schema.RTM, true) == 0)
+					return string.Compare(this.Upgrade, Schema.RTM, true) == 0
+						;
+				else
+					return string.Compare(this.Version, this.Upgrade, true) >= 0;
+			}
+		}
+
+		public Schema(Provider provider)
+		{
+			this.provider = provider;
 			this.version = string.Empty;
-			this.upgrade = string.Empty;
+			this.upgrade = Schema.RTM;
 			this.upgradeBy = string.Empty;
 		}
 
 		public Schema Clone()
 		{
-			Schema schema = new Schema(this.server, this.database);
+			Schema schema = new Schema(this.provider);
 			schema.Exists = this.exists;
 			schema.Version = this.version;
 			schema.Upgrade = this.upgrade;

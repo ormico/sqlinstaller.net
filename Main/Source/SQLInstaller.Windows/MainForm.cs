@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 using SQLInstaller.Core;
 using SQLInstaller.Core.Zip;
@@ -123,6 +124,18 @@ namespace SQLInstaller.Windows
 						this.wizardUpgrade.NextButtonEnabled = true;
 						break;
 					case 1: // Enter SQL details
+						// get values from registry
+						try
+						{
+							using (RegistryKey installerKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JHOB Technologies\SQLInstaller"))
+							{
+								this.textScripts.Text = installerKey.GetValue("Scripts", string.Empty) as string;
+								this.txtServer.Text = installerKey.GetValue("Server", string.Empty) as string;
+								this.txtDatabase.Text = installerKey.GetValue("Database", string.Empty) as string;
+								installerKey.Close();
+							}
+						}
+						catch (Exception) { }
 						this.panelSummary.Visible = false;
 						this.wizardUpgrade.BackButtonEnabled = true;
 						this.wizardUpgrade.NextButtonEnabled = true;
@@ -158,18 +171,19 @@ namespace SQLInstaller.Windows
 						this.labelSummary.Text = "Connecting to " + this.txtServer.Text + "...";
 						this.Refresh();
 						installer = new Runtime(targetDir, RuntimeFlag.Create | RuntimeFlag.Verbose);
-						schema = installer.Prepare(this.txtServer.Text, this.txtDatabase.Text);
 
-						if (schema.Version.ToLower().Equals(schema.Upgrade.ToLower()))
+						schema = installer.Prepare(ProviderType.SqlServer, this.txtServer.Text, this.txtDatabase.Text, null, null);
+
+						if (schema.IsCurrent)
 						{
 							// Set finish text to 'already at version'
-							this.labelFinish.Text = schema.Database + " is already at version " + schema.Version + ".";
+							this.labelFinish.Text = schema.Provider.Database + " is already at version " + schema.Version + ".";
 							this.wizardUpgrade.CurrentStepIndex = 4;
 							return;
 						}
 						this.panelSummary.Visible = true;
-						this.labelConfirmDatabase.Text = schema.Database;
-						this.labelConfirmServer.Text = schema.Server;
+						this.labelConfirmDatabase.Text = schema.Provider.Database;
+						this.labelConfirmServer.Text = schema.Provider.Server;
 						if (schema.Version.Length == 0)
 						{
 							this.labelConfirmVersion.Text = "*NEW INSTALL*";
@@ -188,7 +202,17 @@ namespace SQLInstaller.Windows
 						this.wizardUpgrade.CancelButtonEnabled = true;
 						break;
 					case 3: // Run
-						//this.wizardControl1.CurrentStepIndex = 3;
+						try
+						{
+							using (RegistryKey installerKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\JHOB Technologies\SQLInstaller", true))
+							{
+								installerKey.SetValue("Scripts", this.textScripts.Text, RegistryValueKind.String);
+								installerKey.SetValue("Server", this.txtServer.Text, RegistryValueKind.String);
+								installerKey.SetValue("Database", this.txtDatabase.Text, RegistryValueKind.String);
+								installerKey.Close();
+							}
+						}
+						catch (Exception) { }
 						this.wizardUpgrade.BackButtonVisible = false;
 						this.wizardUpgrade.NextButtonVisible = false;
 						this.wizardUpgrade.CancelButtonVisible = false;
