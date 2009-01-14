@@ -71,7 +71,11 @@ namespace SQLInstaller.Core
 			using (SqlConnection conn = new SqlConnection(ConnectionString))
 			{
 				conn.Open();
-				SqlCommand cmd = new SqlCommand("DROP DATABASE " + Database, conn);
+				SqlCommand cmd = new SqlCommand("ALTER DATABASE " + Database + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE", conn);
+				cmd.ExecuteNonQuery();
+				cmd.CommandText = "ALTER DATABASE " + Database + " SET SINGLE_USER";
+				cmd.ExecuteNonQuery();
+				cmd.CommandText = "DROP DATABASE " + Database;
 				cmd.ExecuteNonQuery();
 			}
 		}
