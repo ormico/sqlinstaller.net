@@ -13,18 +13,22 @@ namespace SQLInstaller.Core
 	{
 		public override bool Exists()
 		{
-			bool exists = false;
-			using (SqlConnection conn = new SqlConnection(ConnectionString))
+			bool exists = true;
+			try
 			{
-				conn.Open();
+				using (SqlConnection conn = new SqlConnection(ConnectionString))
+				{
+					conn.Open();
 
-				SqlCommand cmd = new SqlCommand();
-				cmd.Connection = conn;
-				cmd.CommandText = "SELECT COUNT(*) FROM sysdatabases WHERE name = @database_name";
-				cmd.Parameters.Add(new SqlParameter("@database_name", Database));
+					SqlCommand cmd = new SqlCommand();
+					cmd.Connection = conn;
+					cmd.CommandText = "SELECT COUNT(*) FROM sysdatabases WHERE name = @database_name";
+					cmd.Parameters.Add(new SqlParameter("@database_name", Database));
 
-				exists = ((int)cmd.ExecuteScalar()) > 0;
+					exists = ((int)cmd.ExecuteScalar()) > 0;
+				}
 			}
+			catch (Exception) { }
 
 			return exists;
 		}
