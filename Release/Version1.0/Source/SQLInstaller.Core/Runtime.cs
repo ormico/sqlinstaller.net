@@ -82,16 +82,21 @@ namespace SQLInstaller.Core
 					schema.Version = version[0];
 					schema.UpgradeBy = version[1];
 				}
-				if (candidates != null)
+				if (upgradeScripts.Exists)
 				{
-					foreach (DirectoryInfo di in candidates)
+					if (candidates != null)
 					{
-						int comp = string.Compare(schema.Version, di.Name, true);
-						bool retry = (flags & RuntimeFlag.Retry) == RuntimeFlag.Retry;
-						if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(schema.Version, Schema.RTM, true) == 0))
-							schema.ScriptsTotal += di.GetFiles("*.sql", SearchOption.AllDirectories).Length;
+						foreach (DirectoryInfo di in candidates)
+						{
+							int comp = string.Compare(schema.Version, di.Name, true);
+							bool retry = (flags & RuntimeFlag.Retry) == RuntimeFlag.Retry;
+							if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(schema.Version, Schema.RTM, true) == 0))
+								schema.ScriptsTotal += di.GetFiles("*.sql", SearchOption.AllDirectories).Length;
+						}
 					}
 				}
+				else if (installScripts.Exists)
+					schema.ScriptsTotal = installScripts.GetFiles("*.sql", SearchOption.AllDirectories).Length;
 			}
 			else if (installScripts.Exists)
 				schema.ScriptsTotal = installScripts.GetFiles("*.sql", SearchOption.AllDirectories).Length;
@@ -120,7 +125,10 @@ namespace SQLInstaller.Core
 					schema.Exists = false;
 				}
 
-				if (!schema.Exists)
+				DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
+				DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(targetDir, "Upgrade"));
+
+				if (!schema.Exists || !upgradeScripts.Exists)
 				{
 					if ((flags & RuntimeFlag.Create) == RuntimeFlag.Create)
 					{
@@ -130,7 +138,6 @@ namespace SQLInstaller.Core
 							SetProgress(StatusMessage.Progress, string.Empty, 100);
 						SetProgress(StatusMessage.Complete, "Done.");
 					}
-					DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(targetDir, "Install"));
 					if (installScripts.Exists)
 					{
 						SetProgress(StatusMessage.Start, "Installing Database " + schema.Provider.Database);
@@ -155,7 +162,6 @@ namespace SQLInstaller.Core
 				}
 				else
 				{
-					DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(targetDir, "Upgrade"));
 					DirectoryInfo[] candidates = new DirectoryInfo[] { };
 
 					if (upgradeScripts.Exists)
