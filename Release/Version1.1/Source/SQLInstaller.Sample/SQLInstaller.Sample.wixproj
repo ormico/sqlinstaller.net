@@ -109,8 +109,12 @@
     <None Include="UpgradeVer103.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <WixExtension Include="C:\Program Files\Windows Installer XML v3\bin\WixUIExtension.dll" />
-    <WixExtension Include="C:\Program Files\Windows Installer XML v3\bin\WixUtilExtension.dll" />
+    <WixExtension Include="WixUIExtension">
+      <HintPath>C:\Program Files\Windows Installer XML v3\bin\WixUIExtension.dll</HintPath>
+    </WixExtension>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>C:\Program Files\Windows Installer XML v3\bin\WixUtilExtension.dll</HintPath>
+    </WixExtension>
   </ItemGroup>
   <ItemGroup>
     <None Include="BuildPatch.cmd" />

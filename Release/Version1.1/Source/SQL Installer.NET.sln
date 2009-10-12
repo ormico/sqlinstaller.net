@@ -1,35 +1,15 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Core", "SQLInstaller.Core\SQLInstaller.Core.csproj", "{7D039E41-7A05-4BA1-8D29-64A015270F79}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Console", "SQLInstaller.Console\SQLInstaller.Console.csproj", "{4CF8B29F-A9C0-458C-BA99-4C2334EC6EFA}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SQLInstaller.Setup", "SQLInstaller.Setup\SQLInstaller.Setup.wixproj", "{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SQLInstaller.Sample", "SQLInstaller.Sample\SQLInstaller.Sample.wixproj", "{449F2BA2-ADE4-4389-A519-30AFEBB42B85}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Windows", "SQLInstaller.Windows\SQLInstaller.Windows.csproj", "{CB934CB0-C4BC-41B0-8345-C13AC1A4D92A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
