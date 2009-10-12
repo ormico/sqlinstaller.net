@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder" Name="PFiles">
+				<Directory Id="MYCOMPANY" Name="MyCompany">
+					<Directory Id="ROOTINSTALL" Name="Database">
+						<Directory Id="INSTALL" Name="Install" />
+						<Directory Id="UPGRADE" Name="Upgrade" />
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+</Wix>
