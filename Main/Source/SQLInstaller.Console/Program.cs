@@ -23,6 +23,7 @@ namespace SQLInstaller.Console
 			{
 				cl.Required.Add("database", "Database name (required).");
 				cl.Optional.Add("server", "Database server name (default last used).");
+				cl.Optional.Add("create", "Create database if it does not exist.");
 				cl.Optional.Add("drop", "Drop database if it exists.");
 				cl.Optional.Add("verbose", "Show everything.");
 				cl.Optional.Add("path", "Path to the scripts directory (default last used).");
@@ -77,7 +78,7 @@ namespace SQLInstaller.Console
 					if (database.Length == 0 || string.Compare(database, "true", true) == 0)
 						throw new ArgumentException("Missing required parameter: /database");
 
-					RuntimeFlag flags = RuntimeFlag.Create;
+					RuntimeFlag flags = RuntimeFlag.None;
 
 					string user = string.Empty;
 					string password = string.Empty;
@@ -87,6 +88,8 @@ namespace SQLInstaller.Console
 					if (cl.Parameters.ContainsKey("password"))
 						password = cl.Parameters["password"];
 
+					if (!cl.Parameters.ContainsKey("create") || string.Compare(cl.Parameters["create"], "true", true) == 0)
+						flags |= RuntimeFlag.Create;
 					if (cl.Parameters.ContainsKey("drop") && string.Compare(cl.Parameters["drop"], "true", true) == 0)
 						flags |= RuntimeFlag.Drop;
 					if (cl.Parameters.ContainsKey("retry") && string.Compare(cl.Parameters["retry"], "true", true) == 0)

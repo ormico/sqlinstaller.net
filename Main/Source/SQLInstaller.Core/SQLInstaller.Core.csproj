@@ -39,39 +39,39 @@
     <Reference Include="Microsoft.Build.Utilities" />
     <Reference Include="Microsoft.SqlServer.BatchParser, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.BatchParser.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.BatchParser.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.RegSvrEnum, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.RegSvrEnum.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.RegSvrEnum.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.Rmo, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.Rmo.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.Rmo.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.ServiceBrokerEnum, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.ServiceBrokerEnum.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.ServiceBrokerEnum.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.Smo, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.Smo.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.Smo.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.SmoEnum, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.SmoEnum.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.SmoEnum.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.SqlEnum, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.SqlEnum.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.SqlEnum.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SqlServer.WmiEnum, Version=9.0.242.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Microsoft SQL Server\90\SDK\Assemblies\Microsoft.SqlServer.WmiEnum.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\SQLInstaller\Microsoft.SqlServer.WmiEnum.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL" />
     <Reference Include="System" />
