@@ -41,8 +41,11 @@
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationVersion>1.0.0.1</ApplicationVersion>
     <BootstrapperEnabled>false</BootstrapperEnabled>
-    <FileUpgradeFlags>0</FileUpgradeFlags>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
