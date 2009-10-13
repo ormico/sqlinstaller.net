@@ -86,10 +86,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.OracleClient" />
-    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -114,44 +111,6 @@
     <Compile Include="SqlBuild.cs" />
     <Compile Include="SqlProvider.cs" />
     <Compile Include="StatusMessage.cs" />
-    <Compile Include="Wizard\ColorPair.cs" />
-    <Compile Include="Wizard\CustomFileNameEditor.cs" />
-    <Compile Include="Wizard\FinishStep.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Wizard\GenericCancelEventArgs.cs" />
-    <Compile Include="Wizard\GenericChangeEventArgs.cs" />
-    <Compile Include="Wizard\GenericCollection.cs" />
-    <Compile Include="Wizard\GenericCollectionConverter.cs" />
-    <Compile Include="Wizard\GenericConverter.cs" />
-    <Compile Include="Wizard\GenericEventArgs.cs" />
-    <Compile Include="Wizard\IntermediateStep.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Wizard\LicenceStep.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Wizard\PDesc.cs" />
-    <Compile Include="Wizard\StartStep.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Wizard\TextAppearence.cs" />
-    <Compile Include="Wizard\WizardControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Wizard\WizardDesigner.cs" />
-    <Compile Include="Wizard\WizardDesignerActionList.cs" />
-    <Compile Include="Wizard\WizardStep.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Wizard\WizardStepCollectionEditor.cs" />
-    <Compile Include="Wizard\WizardStepDesigner.cs" />
-    <Compile Include="Zip\Constants.cs" />
-    <Compile Include="Zip\Crc32.cs" />
-    <Compile Include="Zip\Shared.cs" />
-    <Compile Include="Zip\ZipDirEntry.cs" />
-    <Compile Include="Zip\ZipEntry.cs" />
-    <Compile Include="Zip\ZipFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
