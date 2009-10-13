@@ -20,7 +20,7 @@ namespace SQLInstaller.Console
 
 			try
 			{
-				string configPath = Path.Combine(Directory.GetCurrentDirectory(), "SQLInstaller.xml");
+				string configPath = @".\SQLInstaller.xml";
 
 				if (args.Length > 0)
 					configPath = args[0];
@@ -30,7 +30,7 @@ namespace SQLInstaller.Console
 					p = new Parameters();
 					p.ConfigPath = configPath;
 					p.Write();
-					throw new ApplicationException("Missing parameters xml file (SQLInstaller.xml). Creating a new template. Please edit as appropriate. Exiting.");
+					throw new ApplicationException("Missing parameters xml file: " + configPath + ". Creating a new template. Please edit as appropriate. Exiting.");
 				}
 
 				spin.Start(250);
