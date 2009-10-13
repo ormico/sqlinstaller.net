@@ -24,9 +24,9 @@ namespace SQLInstaller.Core
 			this.messages = new Queue<Progress>();
 		}
 
-		public Schema Prepare(ProviderType providerType, string server, string database, string user, string password)
+		public Schema Prepare(ProviderType providerType, string connectionString, string database)
 		{
-			if (server == null || server.Length == 0 | database == null || database.Length == 0)
+			if (connectionString == null || connectionString.Length == 0 || database == null || database.Length == 0)
 				throw new ArgumentException("Missing a required parameter.");
 
 			Schema schema = null;
@@ -45,10 +45,8 @@ namespace SQLInstaller.Core
 					break;
 			}
 
-			schema.Provider.Server = server;
+			schema.Provider.ConnectionString = connectionString;
 			schema.Provider.Database = database;
-			schema.Provider.User = user;
-			schema.Provider.Password = password;
 
 			schema.Exists = schema.Provider.Exists();
 

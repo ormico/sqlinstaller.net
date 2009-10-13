@@ -49,6 +49,7 @@
     <CompilerAdditionalOptions>
     </CompilerAdditionalOptions>
     <LinkerAdditionalOptions>-sval</LinkerAdditionalOptions>
+    <DefineSolutionProperties>false</DefineSolutionProperties>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -85,6 +86,7 @@
     <CompilerAdditionalOptions>
     </CompilerAdditionalOptions>
     <LinkerAdditionalOptions>-sval</LinkerAdditionalOptions>
+    <DefineSolutionProperties>false</DefineSolutionProperties>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Content.wxs" />
@@ -99,11 +101,6 @@
     <ProjectReference Include="..\SQLInstaller.Console\SQLInstaller.Console.csproj">
       <Name>SQLInstaller.Console</Name>
       <Project>{4cf8b29f-a9c0-458c-ba99-4c2334ec6efa}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\SQLInstaller.Windows\SQLInstaller.Windows.csproj">
-      <Name>SQLInstaller.Windows</Name>
-      <Project>{cb934cb0-c4bc-41b0-8345-c13ac1a4d92a}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

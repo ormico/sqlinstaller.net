@@ -8,14 +8,35 @@ namespace SQLInstaller.Core
 {
 	public sealed class OracleProvider : Provider
 	{
-		public string createUser;
-		public string createPassword;
+		private OracleConnectionStringBuilder builder;
+		private OracleConnectionStringBuilder builderNewUser;
+
+		public OracleConnectionStringBuilder Builder
+		{
+			get
+			{
+				if (builder == null)
+					builder = new OracleConnectionStringBuilder(ConnectionString);
+				return builder;
+			}
+		}
+
+		public OracleConnectionStringBuilder BuilderNewUser
+		{
+			get
+			{
+				if (builderNewUser == null)
+				{
+					builderNewUser = new OracleConnectionStringBuilder(ConnectionString);
+					builderNewUser.UserID = Database.ToUpper();
+					builderNewUser.Password = builderNewUser.UserID;
+				}
+				return builder;
+			}
+		}
 
 		public override bool Exists()
 		{
-			createUser = User;
-			createPassword = Password;
-
 			bool exists = false;
 			using (OracleConnection conn = new OracleConnection(ConnectionString))
 			{
@@ -50,9 +71,6 @@ namespace SQLInstaller.Core
 
 		public override void SetVersion(string version, string upgradeBy)
 		{
-			User = createUser;
-			Password = createPassword;
-			ConnectionString = string.Empty;
 			using (OracleConnection conn = new OracleConnection(ConnectionString))
 			{
 				conn.Open();
@@ -88,11 +106,8 @@ namespace SQLInstaller.Core
 			// The .NET provider for Oracle does not support everthing you can do
 			// in SQL*PLUS when executing DDL. We provide for two variants which
 			// should cover all DDL types but there is little tolerance for variation.
-			User = Database.ToUpper();
-			Password = Database.ToUpper();
-			ConnectionString = string.Empty;
 			string sql = script.Replace('\r', ' ').Replace('\n', ' ').Trim();
-			using (OracleConnection conn = new OracleConnection(ConnectionString))
+			using (OracleConnection conn = new OracleConnection(builderNewUser.ConnectionString))
 			{
 				conn.Open();
 				OracleCommand cmd = new OracleCommand();

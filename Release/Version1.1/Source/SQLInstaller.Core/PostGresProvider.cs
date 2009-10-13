@@ -14,11 +14,6 @@ namespace SQLInstaller.Core
 	/// </summary>
 	public sealed class PostGresProvider : Provider
 	{
-		protected override string ConnectionString
-		{
-			get { return base.ConnectionString + "Database=template1;"; }
-		}
-
 		public override bool Exists()
 		{
 			bool exists = false;
