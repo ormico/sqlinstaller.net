@@ -11,17 +11,15 @@ namespace SQLInstaller.Core
 	///   <UsingTask TaskName="SQLInstaller.Core.SqlBuild" AssemblyFile="C:\Program Files\SQLInstaller\SQLInstaller.Core.dll" />
 	///   ...
 	///   <Target Name="AfterBuild">
-	///      <SqlBuild Database="mytestdb" Server="myserver" Path="$(SolutionRoot)\Scripts" Drop="true" />
+	///      <SqlBuild Database="mytestdb" ConnectionString="Data Source=localhost;Integrated Security=SSPI;" Path="$(SolutionRoot)\Scripts" Drop="true" />
 	///   </Target>
 	/// </summary>
 	public class SqlBuild : Task
 	{
 		private ProviderType provType;
+		private string connectionString;
 		private string database;
-		private string server;
 		private string path;
-		private string user;
-		private string password;
 		private bool create;
 		private bool drop;
 		private bool retry;
@@ -39,28 +37,16 @@ namespace SQLInstaller.Core
 			set { provType = value; }
 		}
 
-		public string Server
+		public string ConnectionString
 		{
-			get { return server; }
-			set { server = value; }
+			get { return connectionString; }
+			set { connectionString = value; }
 		}
 
 		public string Path
 		{
 			get { return path; }
 			set { path = value; }
-		}
-
-		public string User
-		{
-			get { return user; }
-			set { user = value; }
-		}
-
-		public string Password
-		{
-			get { return password; }
-			set { password = value; }
 		}
 
 		public bool Create
@@ -84,9 +70,7 @@ namespace SQLInstaller.Core
 		public SqlBuild()
 		{
 			path = string.Empty;
-			server = "localhost";
-			user = string.Empty;
-			password = string.Empty;
+			connectionString = string.Empty;
 			create = true;
 		}
 
@@ -103,10 +87,9 @@ namespace SQLInstaller.Core
 			try
 			{
 				Runtime installer = new Runtime(path, flags);
-				Log.LogMessage("Processing: " + path + ".");
-				Log.LogMessage("Connecting to " + server + ".");
+				Log.LogMessage("Connecting to database.");
 
-				Schema schema = installer.Prepare(provType, server, database, user, password);
+				Schema schema = installer.Prepare(provType, connectionString, database);
 
 				if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
 				{

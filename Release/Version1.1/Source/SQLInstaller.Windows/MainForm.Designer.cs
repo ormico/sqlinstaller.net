@@ -77,7 +77,7 @@ namespace SQLInstaller.Windows
 			// 
 			// wizardUpgrade
 			// 
-			this.wizardUpgrade.BackButtonEnabled = false;
+			this.wizardUpgrade.BackButtonEnabled = true;
 			this.wizardUpgrade.BackButtonVisible = true;
 			this.wizardUpgrade.CancelButtonEnabled = true;
 			this.wizardUpgrade.CancelButtonVisible = true;
@@ -107,7 +107,6 @@ namespace SQLInstaller.Windows
 			this.startStep.BindingImage = null;
 			this.startStep.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.startStep.Icon = ((System.Drawing.Image)(resources.GetObject("startStep.Icon")));
-			this.startStep.LeftPair = ((SQLInstaller.Core.Wizard.ColorPair)(resources.GetObject("startStep.LeftPair")));
 			this.startStep.Name = "startStep";
 			this.startStep.Subtitle = "Click next to begin the installation.";
 			this.startStep.Title = "Database Upgrade Wizard";
@@ -149,7 +148,7 @@ namespace SQLInstaller.Windows
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(83, 141);
+			this.label1.Location = new System.Drawing.Point(80, 141);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(81, 13);
 			this.label1.TabIndex = 4;
@@ -167,27 +166,26 @@ namespace SQLInstaller.Windows
 			// 
 			this.txtServer.Location = new System.Drawing.Point(167, 166);
 			this.txtServer.Name = "txtServer";
-			this.txtServer.Size = new System.Drawing.Size(100, 20);
+			this.txtServer.Size = new System.Drawing.Size(297, 20);
 			this.txtServer.TabIndex = 1;
-			this.txtServer.Text = "localhost";
 			// 
 			// lblDatabase
 			// 
 			this.lblDatabase.AutoSize = true;
-			this.lblDatabase.Location = new System.Drawing.Point(112, 196);
+			this.lblDatabase.Location = new System.Drawing.Point(105, 196);
 			this.lblDatabase.Name = "lblDatabase";
-			this.lblDatabase.Size = new System.Drawing.Size(53, 13);
+			this.lblDatabase.Size = new System.Drawing.Size(56, 13);
 			this.lblDatabase.TabIndex = 1;
-			this.lblDatabase.Text = "Database";
+			this.lblDatabase.Text = "Database:";
 			// 
 			// lblServer
 			// 
 			this.lblServer.AutoSize = true;
-			this.lblServer.Location = new System.Drawing.Point(126, 169);
+			this.lblServer.Location = new System.Drawing.Point(67, 169);
 			this.lblServer.Name = "lblServer";
-			this.lblServer.Size = new System.Drawing.Size(38, 13);
+			this.lblServer.Size = new System.Drawing.Size(94, 13);
 			this.lblServer.TabIndex = 0;
-			this.lblServer.Text = "Server";
+			this.lblServer.Text = "Connection String:";
 			// 
 			// stepConfirm
 			// 
@@ -372,7 +370,6 @@ namespace SQLInstaller.Windows
 			this.stepFinish.Controls.Add(this.linkLog);
 			this.stepFinish.Controls.Add(this.labelFinish);
 			this.stepFinish.Name = "stepFinish";
-			this.stepFinish.Pair = ((SQLInstaller.Core.Wizard.ColorPair)(resources.GetObject("stepFinish.Pair")));
 			// 
 			// linkLog
 			// 
