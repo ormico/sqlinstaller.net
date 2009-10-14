@@ -34,14 +34,17 @@ namespace SQLInstaller.Core
 		public override string GetVersion()
 		{			
 			string version = string.Empty;
-			using (NpgsqlConnection conn = new NpgsqlConnection(ConnectionString))
+			try
 			{
-				conn.Open();
-				conn.ChangeDatabase(Database.ToLower());
-				NpgsqlCommand cmd = new NpgsqlCommand("SELECT d.description FROM pg_shdescription d JOIN pg_database b ON b.oid = d.objoid WHERE datname = :database_name", conn);
-				cmd.Parameters.Add(new NpgsqlParameter(":database_name", Database.ToLower()));
-				version = cmd.ExecuteScalar() as string;
+				using (NpgsqlConnection conn = new NpgsqlConnection(ConnectionString))
+				{
+					conn.Open();
+					conn.ChangeDatabase(Database.ToLower());
+					NpgsqlCommand cmd = new NpgsqlCommand("SELECT version_info FROM db_version", conn);
+					version = cmd.ExecuteScalar() as string;
+				}
 			}
+			catch (Exception){}
 			return version;
 		}
 
@@ -51,8 +54,7 @@ namespace SQLInstaller.Core
 			{
 				conn.Open();
 				conn.ChangeDatabase(Database.ToLower());
-				NpgsqlCommand cmd = new NpgsqlCommand("COMMENT ON DATABASE " + Database.ToLower() + " IS :version", conn);
-				cmd.Parameters.Add(new NpgsqlParameter(":version", version + ";" + upgradeBy));
+				NpgsqlCommand cmd = new NpgsqlCommand("CREATE OR REPLACE VIEW db_version AS SELECT CAST('" + version + ";" + upgradeBy.Replace('\\','/') + "' AS VARCHAR(250)) AS version_info", conn);
 				cmd.ExecuteNonQuery();
 			}
 		}
