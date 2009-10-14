@@ -60,10 +60,46 @@ namespace SQLInstaller.Console {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to  to Version .
+        /// </summary>
+        internal static string AskToVersion {
+            get {
+                return ResourceManager.GetString("AskToVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upgrade .
+        /// </summary>
+        internal static string AskUpgrade {
+            get {
+                return ResourceManager.GetString("AskUpgrade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  (Y/N)? .
+        /// </summary>
+        internal static string AskYesNo {
+            get {
+                return ResourceManager.GetString("AskYesNo", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Icon data_replace {
             get {
                 object obj = ResourceManager.GetObject("data_replace", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to . Creating a new template. Please edit as appropriate. Exiting..
+        /// </summary>
+        internal static string ExitingWithNewTemplate {
+            get {
+                return ResourceManager.GetString("ExitingWithNewTemplate", resourceCulture);
             }
         }
         
@@ -74,6 +110,69 @@ namespace SQLInstaller.Console {
         internal static string License {
             get {
                 return ResourceManager.GetString("License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing parameters xml file: .
+        /// </summary>
+        internal static string MissingParmFile {
+            get {
+                return ResourceManager.GetString("MissingParmFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  has already been upgraded to .
+        /// </summary>
+        internal static string StatusAlreadyUpgraded {
+            get {
+                return ResourceManager.GetString("StatusAlreadyUpgraded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  by .
+        /// </summary>
+        internal static string StatusBy {
+            get {
+                return ResourceManager.GetString("StatusBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Completed with .
+        /// </summary>
+        internal static string StatusCompletedWith {
+            get {
+                return ResourceManager.GetString("StatusCompletedWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting to database....
+        /// </summary>
+        internal static string StatusConnecting {
+            get {
+                return ResourceManager.GetString("StatusConnecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Done..
+        /// </summary>
+        internal static string StatusDone {
+            get {
+                return ResourceManager.GetString("StatusDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  errors..
+        /// </summary>
+        internal static string StatusErrorCount {
+            get {
+                return ResourceManager.GetString("StatusErrorCount", resourceCulture);
             }
         }
     }

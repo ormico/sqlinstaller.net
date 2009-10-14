@@ -23,8 +23,8 @@ namespace SQLInstaller.Core
 
 				NpgsqlCommand cmd = new NpgsqlCommand();
 				cmd.Connection = conn;
-				cmd.CommandText = "SELECT COUNT(*) FROM pg_catalog.pg_database WHERE datname = :database_name";
-				cmd.Parameters.Add(new NpgsqlParameter(":database_name", Database.ToLower()));
+				cmd.CommandText = Constants.PostGresSelectExists;
+				cmd.Parameters.Add(new NpgsqlParameter(Constants.PostGresParmDatabaseName, Database.ToLower()));
 				exists = ((long)cmd.ExecuteScalar()) > 0;
 			}
 
@@ -40,7 +40,7 @@ namespace SQLInstaller.Core
 				{
 					conn.Open();
 					conn.ChangeDatabase(Database.ToLower());
-					NpgsqlCommand cmd = new NpgsqlCommand("SELECT version_info FROM db_version", conn);
+					NpgsqlCommand cmd = new NpgsqlCommand(Constants.PostGresSelectVersion, conn);
 					version = cmd.ExecuteScalar() as string;
 				}
 			}
@@ -54,7 +54,7 @@ namespace SQLInstaller.Core
 			{
 				conn.Open();
 				conn.ChangeDatabase(Database.ToLower());
-				NpgsqlCommand cmd = new NpgsqlCommand("CREATE OR REPLACE VIEW db_version AS SELECT CAST('" + version + ";" + upgradeBy.Replace('\\','/') + "' AS VARCHAR(250)) AS version_info", conn);
+				NpgsqlCommand cmd = new NpgsqlCommand(string.Format(Constants.PostGresCreateVersionView, version, upgradeBy.Replace(Constants.BackSlash, Constants.ForwardSlash)), conn);
 				cmd.ExecuteNonQuery();
 			}
 		}
@@ -64,7 +64,7 @@ namespace SQLInstaller.Core
 			using (NpgsqlConnection conn = new NpgsqlConnection(ConnectionString))
 			{
 				conn.Open();
-				NpgsqlCommand cmd = new NpgsqlCommand("DROP DATABASE " + Database.ToLower(), conn);
+				NpgsqlCommand cmd = new NpgsqlCommand(Constants.PostGresDropDatabase + Database.ToLower(), conn);
 				cmd.ExecuteNonQuery();
 			}
 		}
@@ -74,7 +74,7 @@ namespace SQLInstaller.Core
 			using (NpgsqlConnection conn = new NpgsqlConnection(ConnectionString))
 			{
 				conn.Open();
-				NpgsqlCommand cmd = new NpgsqlCommand("CREATE DATABASE " + Database.ToLower(), conn);
+				NpgsqlCommand cmd = new NpgsqlCommand(Constants.PostGresCreateDatabase + Database.ToLower(), conn);
 				cmd.ExecuteNonQuery();
 			}
 		}

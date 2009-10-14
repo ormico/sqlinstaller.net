@@ -10,18 +10,20 @@ using SQLInstaller.Core;
 namespace SQLInstaller.Console
 {
 	[Serializable]
-	public sealed class Parameters
+	public sealed class Parameters : IDisposable
 	{
+		private bool isDisposed;
 		private string configPath;
 		private string scriptPath;
 		private string connectionString;
 		private string database;
 		private ProviderType providerType;
-		private RuntimeFlag flags;
+		private Options options;
 		private bool isProtected;
 		private bool noPrompt;
 		private bool noPromptSpecified;
 
+		[NonSerializedAttribute]
 		private RSACryptoServiceProvider rsa;
 
 		[XmlIgnore]
@@ -62,14 +64,14 @@ namespace SQLInstaller.Console
 		[XmlIgnore]
 		public bool ScriptPathSpecified
 		{
-			get { return scriptPath != null && scriptPath != "."; }
+			get { return scriptPath != null && scriptPath != Constants.CurrentDir; }
 		}
 
 		[XmlAttribute]
-		public RuntimeFlag Flags
+		public Options Options
 		{
-			get { return flags; }
-			set { flags = value; }
+			get { return options; }
+			set { options = value; }
 		}
 
 		[XmlAttribute]
@@ -94,12 +96,12 @@ namespace SQLInstaller.Console
 
 		public Parameters()
 		{
-			configPath = @".\SQLInstaller.xml";
-			scriptPath = ".";
-			database = "DatabaseName";
-			connectionString = "Data Source=localhost;Integrated Security=SSPI;";
+			configPath = Constants.DefaultConfigFile;
+			scriptPath = Constants.CurrentDir;
+			database = Constants.DefaultDbName;
+			connectionString = Constants.DefaultConnString;
 			providerType = ProviderType.SqlServer;
-			flags = flags.Add(RuntimeFlag.Create | RuntimeFlag.Drop | RuntimeFlag.Verbose);
+			options = options.Add(Options.Create | Options.Drop | Options.Verbose);
 
 			CspParameters csp = new CspParameters();
 			csp.Flags = CspProviderFlags.UseMachineKeyStore;
@@ -131,7 +133,7 @@ namespace SQLInstaller.Console
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.OmitXmlDeclaration = true;
 			settings.Encoding = Encoding.UTF8;
-			settings.IndentChars = "\t";
+			settings.IndentChars = Constants.Tab;
 			settings.Indent = true;
 			XmlWriter w = XmlWriter.Create(stream, settings);
 			s.Serialize(w, this, ns);
@@ -176,5 +178,19 @@ namespace SQLInstaller.Console
 
 			return p;
 		}
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			if (!isDisposed)
+			{
+				rsa.Clear();
+				GC.SuppressFinalize(this);
+				isDisposed = true;
+			}
+		}
+
+		#endregion
 	}
 }

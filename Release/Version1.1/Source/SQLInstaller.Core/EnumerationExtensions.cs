@@ -37,11 +37,7 @@ namespace SQLInstaller.Core
 			}
 			catch (Exception ex)
 			{
-				throw new ArgumentException(
-					string.Format(
-						"Could not append value from enumerated type '{0}'.",
-						typeof(T).Name
-						), ex);
+				throw new ArgumentException(string.Format(Resources.ErrorEnumAppend,typeof(T).Name), ex);
 			}
 		}
 
@@ -54,11 +50,7 @@ namespace SQLInstaller.Core
 			}
 			catch (Exception ex)
 			{
-				throw new ArgumentException(
-					string.Format(
-						"Could not remove value from enumerated type '{0}'.",
-						typeof(T).Name
-						), ex);
+				throw new ArgumentException(string.Format(Resources.ErrorEnumRemove, typeof(T).Name), ex);
 			}
 		}
 
