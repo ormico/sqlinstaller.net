@@ -9,18 +9,18 @@ namespace SQLInstaller.Console
 {
 	class Program
 	{
-		public delegate void InstallMethod(Schema schema);
+		public delegate void InstallMethod(SchemaInfo schema);
 
 		static int Main(string[] args)
 		{
 			int returnCode = 0;
 
-			Runtime installer;
+			Installer installer;
 			Spinner spin = new Spinner();
 
 			try
 			{
-				string configPath = @".\SQLInstaller.xml";
+				string configPath = Constants.DefaultConfigFile;
 
 				if (args.Length > 0)
 					configPath = args[0];
@@ -30,22 +30,22 @@ namespace SQLInstaller.Console
 					p = new Parameters();
 					p.ConfigPath = configPath;
 					p.Write();
-					throw new ApplicationException("Missing parameters xml file: " + configPath + ". Creating a new template. Please edit as appropriate. Exiting.");
+					throw new ArgumentException(Resources.MissingParmFile + configPath + Resources.ExitingWithNewTemplate);
 				}
 
 				spin.Start(250);
-				System.Console.Write("Connecting to database...");
+				System.Console.Write(Resources.StatusConnecting);
 
-				installer = new Runtime(p.ScriptPath, p.Flags);
-				Schema schema = installer.Prepare(p.ProviderType, p.ConnectionString, p.Database);
+				installer = new Installer(p.ScriptPath, p.Options);
+				SchemaInfo schema = installer.Prepare(p.ProviderType, p.ConnectionString, p.Database);
 				spin.Stop();
-				System.Console.WriteLine("Done.");
+				System.Console.WriteLine(Resources.StatusDone);
 
-				if (schema.Exists && !p.Flags.Has(RuntimeFlag.Drop))
+				if (schema.Exists && !p.Options.Has(Options.Drop))
 				{
-					if (schema.IsCurrent && !p.Flags.Has(RuntimeFlag.Retry))
+					if (schema.IsCurrent && !p.Options.Has(Options.Retry))
 					{
-						System.Console.WriteLine(schema.Provider.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
+						System.Console.WriteLine(schema.Provider.Database + Resources.StatusAlreadyUpgraded + schema.Version + Resources.StatusBy + schema.UpgradeBy);
 						return 0;
 					}
 					else
@@ -55,7 +55,8 @@ namespace SQLInstaller.Console
 							ConsoleKey key = ConsoleKey.NoName;
 							while (key != ConsoleKey.N && key != ConsoleKey.Y)
 							{
-								System.Console.Write("\rUpgrade " + schema.Provider.Database + " to Version " + schema.Upgrade + " (Y/N)? ");
+								System.Console.WriteLine();
+								System.Console.Write(Resources.AskUpgrade + schema.Provider.Database + Resources.AskToVersion + schema.Upgrade + Resources.AskYesNo);
 								key = System.Console.ReadKey(true).Key;
 							}
 							System.Console.WriteLine(key);
@@ -79,14 +80,14 @@ namespace SQLInstaller.Console
 					switch (prog.Status)
 					{
 						case StatusMessage.Start:
-							System.Console.Write("\r" + prog.Message + "...");
+							System.Console.Write(Constants.CarriageReturn + prog.Message + Constants.Wait);
 							break;
 						case StatusMessage.Complete:
 						case StatusMessage.Detail:
 							System.Console.WriteLine(prog.Message);
 							break;
 						case StatusMessage.Exit:
-							System.Console.WriteLine("Completed with " + prog.Percent + " errors.");
+							System.Console.WriteLine(Resources.StatusCompletedWith + prog.Percent + Resources.StatusErrorCount);
 							returnCode = prog.Percent;
 							break;
 						case StatusMessage.Running:

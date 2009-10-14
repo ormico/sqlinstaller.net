@@ -22,8 +22,8 @@ namespace SQLInstaller.Core
 
 					SqlCommand cmd = new SqlCommand();
 					cmd.Connection = conn;
-					cmd.CommandText = "SELECT COUNT(*) FROM sysdatabases WHERE name = @database_name";
-					cmd.Parameters.Add(new SqlParameter("@database_name", Database));
+					cmd.CommandText = Constants.SqlSelectExists;
+					cmd.Parameters.Add(new SqlParameter(Constants.SqlParmDatabaseName, Database));
 
 					exists = ((int)cmd.ExecuteScalar()) > 0;
 				}
@@ -40,12 +40,12 @@ namespace SQLInstaller.Core
 			{
 				conn.Open();
 				conn.ChangeDatabase(Database);
-				SqlCommand cmd = new SqlCommand("SELECT ISNULL(value,'') FROM fn_listextendedproperty(@name, default, default, default, default, default, default)", conn);
-				SqlParameter name = new SqlParameter("@name", "Version");
+				SqlCommand cmd = new SqlCommand(Constants.SqlSelectVersion, conn);
+				SqlParameter name = new SqlParameter(Constants.SqlParmName, Constants.SqlValueVersion);
 				cmd.Parameters.Add(name);
 				version = cmd.ExecuteScalar() as string;
-				name.Value = "UpdatedBy";
-				version += ";" + cmd.ExecuteScalar() as string;
+				name.Value = Constants.SqlValueUpdatedBy;
+				version += Constants.SplitChar.ToString() + cmd.ExecuteScalar() as string;
 			}
 			return version;
 		}
@@ -56,15 +56,15 @@ namespace SQLInstaller.Core
 			{
 				conn.Open();
 				conn.ChangeDatabase(Database);
-				SqlCommand cmd = new SqlCommand("IF NOT EXISTS (SELECT value FROM fn_listextendedproperty(@propname, default, default, default, default, default, default)) EXEC sp_addextendedproperty @propname, @propvalue ELSE EXEC sp_updateextendedproperty @propname, @propvalue ", conn);
-				SqlParameter propName = new SqlParameter("@propname", SqlDbType.VarChar);
-				SqlParameter propValue = new SqlParameter("@propvalue", SqlDbType.VarChar);
+				SqlCommand cmd = new SqlCommand(Constants.SqlSetVersion, conn);
+				SqlParameter propName = new SqlParameter(Constants.SqlParmPropName, SqlDbType.VarChar);
+				SqlParameter propValue = new SqlParameter(Constants.SqlParmPropValue, SqlDbType.VarChar);
 				cmd.Parameters.Add(propName);
 				cmd.Parameters.Add(propValue);
-				propName.Value = "Version";
+				propName.Value = Constants.SqlValueVersion;
 				propValue.Value = version;
 				cmd.ExecuteNonQuery();
-				propName.Value = "UpdatedBy";
+				propName.Value = Constants.SqlValueUpdatedBy;
 				propValue.Value = upgradeBy;
 				cmd.ExecuteNonQuery();
 			}
@@ -75,11 +75,11 @@ namespace SQLInstaller.Core
 			using (SqlConnection conn = new SqlConnection(ConnectionString))
 			{
 				conn.Open();
-				SqlCommand cmd = new SqlCommand("ALTER DATABASE " + Database + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE", conn);
+				SqlCommand cmd = new SqlCommand(string.Format(Constants.SqlSetSingleUser+Constants.SqlWithRollback, Database), conn);
 				cmd.ExecuteNonQuery();
-				cmd.CommandText = "ALTER DATABASE " + Database + " SET SINGLE_USER";
+				cmd.CommandText = string.Format(Constants.SqlSetSingleUser, Database);
 				cmd.ExecuteNonQuery();
-				cmd.CommandText = "DROP DATABASE " + Database;
+				cmd.CommandText = Constants.SqlDropDatabase + Database;
 				cmd.ExecuteNonQuery();
 			}
 		}

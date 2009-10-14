@@ -76,26 +76,26 @@ namespace SQLInstaller.Core
 
 		public override bool Execute()
 		{
-			RuntimeFlag flags = RuntimeFlag.Verbose;
+			Options options = Options.Verbose;
 			if (create)
-				flags |= RuntimeFlag.Create;
+				options |= Options.Create;
 			if (drop)
-				flags |= RuntimeFlag.Drop;
+				options |= Options.Drop;
 			if (retry)
-				flags |= RuntimeFlag.Retry;
+				options |= Options.Retry;
 
 			try
 			{
-				Runtime installer = new Runtime(path, flags);
-				Log.LogMessage("Connecting to database.");
+				Installer installer = new Installer(path, options);
+				Log.LogMessage(Resources.StatusConnecting);
 
-				Schema schema = installer.Prepare(provType, connectionString, database);
+				SchemaInfo schema = installer.Prepare(provType, connectionString, database);
 
-				if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
+				if (schema.Exists && (options & Options.Drop) != Options.Drop)
 				{
 					if (schema.ScriptsTotal == 0)
 					{
-						Log.LogWarning(schema.Provider.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
+						Log.LogWarning(schema.Provider.Database + Resources.StatusAlreadyUpgraded + schema.Version + Resources.StatusBy + schema.UpgradeBy);
 						return true;
 					}
 				}
@@ -114,9 +114,9 @@ namespace SQLInstaller.Core
 							break;
 						case StatusMessage.Exit:
 							if (prog.Percent == 0)
-								Log.LogMessage("Completed successfully.");
+								Log.LogMessage(Resources.StatusSuccess);
 							else
-								Log.LogError("Completed with " + prog.Percent + " errors.");
+								Log.LogError(Resources.StatusErrorComp + prog.Percent + Resources.StatusErrorWith);
 							break;
 						case StatusMessage.Complete:
 						case StatusMessage.Running:

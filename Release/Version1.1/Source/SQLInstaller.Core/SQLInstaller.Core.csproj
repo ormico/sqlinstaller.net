@@ -105,9 +105,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Runtime.cs" />
-    <Compile Include="RuntimeFlag.cs" />
-    <Compile Include="Schema.cs" />
+    <Compile Include="Installer.cs" />
+    <Compile Include="Options.cs" />
+    <Compile Include="SchemaInfo.cs" />
     <Compile Include="SqlBuild.cs" />
     <Compile Include="SqlProvider.cs" />
     <Compile Include="StatusMessage.cs" />
