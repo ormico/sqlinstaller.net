@@ -11,6 +11,7 @@ namespace SQLInstaller.Console
 	using System;
 	using System.IO;
 	using System.Security.Cryptography;
+	using System.Security.Principal;
 	using System.Text;
 	using System.Xml;
 	using System.Xml.Serialization;
@@ -56,7 +57,7 @@ namespace SQLInstaller.Console
 
 			CspParameters csp = new CspParameters();
 			csp.Flags = CspProviderFlags.UseMachineKeyStore;
-			csp.KeyContainerName = AppDomain.CurrentDomain.FriendlyName;
+			csp.KeyContainerName = Path.GetFileNameWithoutExtension(configPath) + WindowsIdentity.GetCurrent().Name;
 			rsa = new RSACryptoServiceProvider(csp);
 			aes = new RijndaelManaged();
 		}
@@ -219,16 +220,11 @@ namespace SQLInstaller.Console
 			string saveString = connectionString;
 			cipherInit = System.Convert.ToBase64String(rsa.Encrypt(aes.IV, false));
 			cipherKey = System.Convert.ToBase64String(rsa.Encrypt(aes.Key, false));
-			using (MemoryStream memoryStream = new MemoryStream())
-			{
-				using (CryptoStream cryptoStream = new CryptoStream(memoryStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
-				{
-					byte[] connectionStringBytes = Encoding.UTF8.GetBytes(connectionString);
-					cryptoStream.Write(connectionStringBytes, 0, connectionStringBytes.Length);
-					cryptoStream.FlushFinalBlock();
-					connectionString = System.Convert.ToBase64String(memoryStream.ToArray());
-				}
-			}
+
+			ICryptoTransform transform = aes.CreateEncryptor();
+			byte[] connectionStringBytes = Encoding.UTF8.GetBytes(connectionString);
+			byte[] cipherText = transform.TransformFinalBlock(connectionStringBytes, 0, connectionStringBytes.Length);
+			connectionString = System.Convert.ToBase64String(cipherText);
 
 			isProtected = true;
 			Write();
@@ -240,16 +236,10 @@ namespace SQLInstaller.Console
 			aes.IV = rsa.Decrypt(System.Convert.FromBase64String(cipherInit), false);
 			aes.Key = rsa.Decrypt(System.Convert.FromBase64String(cipherKey), false);
 
-			using (MemoryStream memoryStream = new MemoryStream())
-			{
-				using (CryptoStream cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(), CryptoStreamMode.Write))
-				{
-					byte[] connectionStringBytes = System.Convert.FromBase64String(connectionString);
-					cryptoStream.Write(connectionStringBytes, 0, connectionStringBytes.Length);
-					cryptoStream.FlushFinalBlock();
-					connectionString = Encoding.UTF8.GetString(memoryStream.ToArray());
-				}
-			}
+			ICryptoTransform transform = aes.CreateDecryptor();
+			byte[] connectionStringBytes = System.Convert.FromBase64String(connectionString);
+			byte[] plainText = transform.TransformFinalBlock(connectionStringBytes, 0, connectionStringBytes.Length);
+			connectionString = Encoding.UTF8.GetString(plainText);
 
 			isProtected = false;
 			cipherInit = null;
