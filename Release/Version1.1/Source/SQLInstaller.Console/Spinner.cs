@@ -1,19 +1,30 @@
-using System;
-using System.Timers;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       Spinner.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Console
 {
+	using System;
+	using System.Timers;
+
+	/// <summary>
+	/// Spinning/flaming logo.
+	/// </summary>
 	internal sealed class Spinner : IDisposable
 	{
 		private bool isDisposed;
-		int counter;
-		Timer timer;
+		private int counter;
+		private Timer timer;
 		private string[] frame = { "|", "/", "-", "\\" };
 
 		public Spinner()
 		{
 			timer = new Timer(250);
-			timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+			timer.Elapsed += new ElapsedEventHandler(Timer_Elapsed);
 			timer.Enabled = false;
 			timer.AutoReset = true;
 		}
@@ -29,13 +40,6 @@ namespace SQLInstaller.Console
 			timer.Enabled = false;
 		}
 
-		private void timer_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			counter++;
-			System.Console.Write(frame[counter % frame.Length]);
-			System.Console.SetCursorPosition(System.Console.CursorLeft - frame[counter % frame.Length].Length, System.Console.CursorTop);
-		}
-
 		#region IDisposable Members
 
 		public void Dispose()
@@ -49,5 +53,12 @@ namespace SQLInstaller.Console
 		}
 
 		#endregion
+
+		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			counter++;
+			System.Console.Write(frame[counter % frame.Length]);
+			System.Console.SetCursorPosition(System.Console.CursorLeft - frame[counter % frame.Length].Length, System.Console.CursorTop);
+		}
 	}
 }

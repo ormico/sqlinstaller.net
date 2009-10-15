@@ -1,9 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       SchemaInfo.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	/// <summary>
+	/// Schema information.
+	/// </summary>
 	public sealed class SchemaInfo
 	{
 		internal const string RTM = "RTM";
@@ -16,6 +23,14 @@ namespace SQLInstaller.Core
 		private int errors;
 		private int scriptsTotal;
 		private int scriptsRun;
+
+		public SchemaInfo(Provider provider)
+		{
+			this.provider = provider;
+			this.version = string.Empty;
+			this.upgrade = SchemaInfo.RTM;
+			this.upgradeBy = string.Empty;
+		}
 
 		public Provider Provider
 		{
@@ -70,19 +85,10 @@ namespace SQLInstaller.Core
 			get
 			{
 				if (string.Compare(this.Version, SchemaInfo.RTM, true) == 0)
-					return string.Compare(this.Upgrade, SchemaInfo.RTM, true) == 0
-						;
+					return string.Compare(this.Upgrade, SchemaInfo.RTM, true) == 0;
 				else
 					return string.Compare(this.Version, this.Upgrade, true) >= 0;
 			}
-		}
-
-		public SchemaInfo(Provider provider)
-		{
-			this.provider = provider;
-			this.version = string.Empty;
-			this.upgrade = SchemaInfo.RTM;
-			this.upgradeBy = string.Empty;
 		}
 
 		public SchemaInfo Clone()

@@ -1,14 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Text;
-
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Common;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       SqlProvider.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	using System;
+	using System.Data;
+	using System.Data.SqlClient;
+
+	using Microsoft.SqlServer.Management.Common;
+	using Microsoft.SqlServer.Management.Smo;
+
+	/// <summary>
+	/// Microsoft SQL Server provider.
+	/// </summary>
 	public sealed class SqlProvider : Provider
 	{
 		public override bool Exists()
@@ -47,6 +56,7 @@ namespace SQLInstaller.Core
 				name.Value = Constants.SqlValueUpdatedBy;
 				version += Constants.SplitChar.ToString() + cmd.ExecuteScalar() as string;
 			}
+
 			return version;
 		}
 
@@ -75,7 +85,7 @@ namespace SQLInstaller.Core
 			using (SqlConnection conn = new SqlConnection(ConnectionString))
 			{
 				conn.Open();
-				SqlCommand cmd = new SqlCommand(string.Format(Constants.SqlSetSingleUser+Constants.SqlWithRollback, Database), conn);
+				SqlCommand cmd = new SqlCommand(string.Format(Constants.SqlSetSingleUser + Constants.SqlWithRollback, Database), conn);
 				cmd.ExecuteNonQuery();
 				cmd.CommandText = string.Format(Constants.SqlSetSingleUser, Database);
 				cmd.ExecuteNonQuery();

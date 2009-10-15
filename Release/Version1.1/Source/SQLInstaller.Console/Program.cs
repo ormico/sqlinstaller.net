@@ -1,17 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.IO;
-
-using SQLInstaller.Core;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       Program.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Console
 {
-	class Program
+	using System;
+	using System.Collections.Generic;
+	using System.IO;
+	using System.Threading;
+
+	using SQLInstaller.Core;
+
+	/// <summary>
+	/// Program entry point.
+	/// </summary>
+	public class Program
 	{
 		public delegate void InstallMethod(SchemaInfo schema);
 
-		static int Main(string[] args)
+		public static int Main(string[] args)
 		{
 			int returnCode = 0;
 
@@ -59,6 +70,7 @@ namespace SQLInstaller.Console
 								System.Console.Write(Resources.AskUpgrade + schema.Provider.Database + Resources.AskToVersion + schema.Upgrade + Resources.AskYesNo);
 								key = System.Console.ReadKey(true).Key;
 							}
+
 							System.Console.WriteLine(key);
 							if (key == ConsoleKey.N)
 								return 0;
@@ -112,12 +124,10 @@ namespace SQLInstaller.Console
 			return returnCode;
 		}
 
-		static void InstallCallback(IAsyncResult iar)
+		public static void InstallCallback(IAsyncResult iar)
 		{
 			InstallMethod im = (InstallMethod)iar.AsyncState;
 			im.EndInvoke(iar);
 		}
-
 	}
-
 }

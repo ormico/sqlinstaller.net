@@ -1,11 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       SqlBuild.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	using System;
+
+	using Microsoft.Build.Framework;
+	using Microsoft.Build.Utilities;
+
 	/// <summary>
 	/// <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	///   <UsingTask TaskName="SQLInstaller.Core.SqlBuild" AssemblyFile="C:\Program Files\SQLInstaller\SQLInstaller.Core.dll" />
@@ -13,6 +20,7 @@ namespace SQLInstaller.Core
 	///   <Target Name="AfterBuild">
 	///      <SqlBuild Database="mytestdb" ConnectionString="Data Source=localhost;Integrated Security=SSPI;" Path="$(SolutionRoot)\Scripts" Drop="true" />
 	///   </Target>
+	/// </Project>
 	/// </summary>
 	public class SqlBuild : Task
 	{
@@ -23,6 +31,13 @@ namespace SQLInstaller.Core
 		private bool create;
 		private bool drop;
 		private bool retry;
+
+		public SqlBuild()
+		{
+			path = string.Empty;
+			connectionString = string.Empty;
+			create = true;
+		}
 
 		[Required]
 		public string Database
@@ -37,6 +52,7 @@ namespace SQLInstaller.Core
 			set { provType = value; }
 		}
 
+		[Required]
 		public string ConnectionString
 		{
 			get { return connectionString; }
@@ -65,13 +81,6 @@ namespace SQLInstaller.Core
 		{
 			get { return retry; }
 			set { retry = value; }
-		}
-
-		public SqlBuild()
-		{
-			path = string.Empty;
-			connectionString = string.Empty;
-			create = true;
 		}
 
 		public override bool Execute()
@@ -109,7 +118,7 @@ namespace SQLInstaller.Core
 					{
 						case StatusMessage.Start:
 						case StatusMessage.Detail:
-							if ( prog.Message.Length > 0 )
+							if (prog.Message.Length > 0)
 								Log.LogMessage(prog.Message + ".");
 							break;
 						case StatusMessage.Exit:
@@ -134,5 +143,4 @@ namespace SQLInstaller.Core
 			return !Log.HasLoggedErrors;
 		}
 	}
-
 }

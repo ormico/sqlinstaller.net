@@ -1,25 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.OracleClient;
-using System.Text;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       OracleProvider.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	using System;
+	using System.Data.OracleClient;
+
+	/// <summary>
+	/// Oracle provider.
+	/// </summary>
 	public sealed class OracleProvider : Provider
 	{
-		private OracleConnectionStringBuilder builder;
 		private OracleConnectionStringBuilder builderNewUser;
-
-		public OracleConnectionStringBuilder Builder
-		{
-			get
-			{
-				if (builder == null)
-					builder = new OracleConnectionStringBuilder(ConnectionString);
-				return builder;
-			}
-		}
 
 		public OracleConnectionStringBuilder BuilderNewUser
 		{
@@ -31,7 +28,8 @@ namespace SQLInstaller.Core
 					builderNewUser.UserID = Database.ToUpper();
 					builderNewUser.Password = builderNewUser.UserID;
 				}
-				return builder;
+
+				return builderNewUser;
 			}
 		}
 
@@ -107,7 +105,7 @@ namespace SQLInstaller.Core
 			// in SQL*PLUS when executing DDL. We provide for two variants which
 			// should cover all DDL types but there is little tolerance for variation.
 			string sql = script.Replace(Constants.CarriageReturn, Constants.Space).Replace(Constants.NewLine, Constants.Space).Trim();
-			using (OracleConnection conn = new OracleConnection(builderNewUser.ConnectionString))
+			using (OracleConnection conn = new OracleConnection(BuilderNewUser.ConnectionString))
 			{
 				conn.Open();
 				OracleCommand cmd = new OracleCommand();
@@ -130,7 +128,7 @@ namespace SQLInstaller.Core
 						scripts = sql.Split(new char[] { Constants.ForwardSlash }, StringSplitOptions.RemoveEmptyEntries);
 				}
 				else // Should handle all other types of create/alter DDL
-					scripts = sql.Split(new char[] { Constants.SplitChar}, StringSplitOptions.RemoveEmptyEntries);
+					scripts = sql.Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
 				foreach (string sqlLine in scripts)
 				{

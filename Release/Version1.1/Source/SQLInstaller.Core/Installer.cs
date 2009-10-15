@@ -1,14 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Globalization;
-using System.Reflection;
-using System.Threading;
-using System.Security.Principal;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       Installer.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	using System;
+	using System.Collections.Generic;
+	using System.IO;
+	using System.Security.Principal;
+	using System.Threading;
+
+	/// <summary>
+	/// Install class.
+	/// </summary>
 	public sealed class Installer : IDisposable
 	{
 		private bool isDisposed;
@@ -74,12 +82,13 @@ namespace SQLInstaller.Core
 
 			if (schema.Exists && (options & Options.Drop) != Options.Drop)
 			{
-				string[] version = schema.Provider.GetVersion().Split(new char[] {Constants.SplitChar}, StringSplitOptions.RemoveEmptyEntries);
+				string[] version = schema.Provider.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 				if (version.Length == 2)
 				{
 					schema.Version = version[0];
 					schema.UpgradeBy = version[1];
 				}
+
 				if (upgradeScripts.Exists)
 				{
 					if (candidates != null)
@@ -136,6 +145,7 @@ namespace SQLInstaller.Core
 							SetProgress(StatusMessage.Progress, string.Empty, 100);
 						SetProgress(StatusMessage.Complete, Resources.StatusDone);
 					}
+
 					if (installScripts.Exists)
 					{
 						SetProgress(StatusMessage.Start, Resources.StatusInstallingDatabase + schema.Provider.Database);
@@ -215,6 +225,36 @@ namespace SQLInstaller.Core
 			}
 		}
 
+		public Progress GetProgress(bool isRunning)
+		{
+			Progress prog = null;
+			lock (messages)
+			{
+				if (messages.Count == 0)
+					Monitor.Wait(messages, 30000);
+
+				if (messages.Count > 0)
+					prog = messages.Dequeue();
+			}
+
+			if (prog == null)
+				prog = new Progress(isRunning ? StatusMessage.Running : StatusMessage.Exit, 0);
+			return prog;
+		}
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			if (!isDisposed)
+			{
+				GC.SuppressFinalize(this);
+				isDisposed = true;
+			}
+		}
+
+		#endregion
+
 		private void ExecuteScripts(SchemaInfo schema, FileInfo[] files)
 		{
 			ExecuteScripts(schema, files, false);
@@ -269,34 +309,5 @@ namespace SQLInstaller.Core
 				Monitor.Pulse(messages);
 			}
 		}
-
-		public Progress GetProgress(bool isRunning)
-		{
-			Progress prog = null;
-			lock (messages)
-			{
-				if (messages.Count == 0)
-					Monitor.Wait(messages, 30000);
-
-				if (messages.Count > 0)
-					prog = messages.Dequeue();
-			}
-			if (prog == null)
-				prog = new Progress(isRunning ? StatusMessage.Running : StatusMessage.Exit, 0);
-			return prog;
-		}
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			if (!isDisposed)
-			{
-				GC.SuppressFinalize(this);
-				isDisposed = true;
-			}
-		}
-
-		#endregion
 	}
 }
