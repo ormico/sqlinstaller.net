@@ -27,7 +27,6 @@ namespace SQLInstaller.Console
 
 		private bool isDisposed;
 		private string configPath;
-		private string scriptPath;
 		private string connectionString;
 		private string database;
 		private ProviderType providerType;
@@ -50,7 +49,6 @@ namespace SQLInstaller.Console
 		public Parameters()
 		{
 			configPath = Constants.DefaultConfigFile;
-			scriptPath = Constants.CurrentDir;
 			database = Constants.DefaultDbName;
 			connectionString = Constants.DefaultConnString;
 			providerType = ProviderType.SqlServer;
@@ -109,17 +107,10 @@ namespace SQLInstaller.Console
 			set { connectionString = value; }
 		}
 
-		[XmlAttribute]
+		[XmlIgnore]
 		public string ScriptPath
 		{
-			get { return scriptPath; }
-			set { scriptPath = value; }
-		}
-
-		[XmlIgnore]
-		public bool ScriptPathSpecified
-		{
-			get { return scriptPath != null && scriptPath != Constants.CurrentDir; }
+			get { return Path.GetDirectoryName(this.configPath); }
 		}
 
 		[XmlAttribute]
