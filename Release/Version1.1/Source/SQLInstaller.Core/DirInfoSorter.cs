@@ -1,11 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       DirInfoSorter.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
-	public class DirInfoSorter : System.Collections.IComparer
+	using System.Collections;
+	using System.IO;
+
+	/// <summary>
+	/// Basic comparer for sorting directories.
+	/// </summary>
+	public class DirInfoSorter : IComparer
 	{
 		#region IComparer Members
 

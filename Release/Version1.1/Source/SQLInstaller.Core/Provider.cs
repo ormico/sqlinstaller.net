@@ -1,15 +1,16 @@
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Data.OleDb;
-using System.Configuration;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.IO;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       Provider.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	/// <summary>
+	/// Provider base class.
+	/// </summary>
 	public abstract class Provider
 	{
 		private string connectionString;
@@ -28,11 +29,15 @@ namespace SQLInstaller.Core
 		}
 
 		public abstract bool Exists();
+
 		public abstract string GetVersion();
+
 		public abstract void SetVersion(string version, string upgradeBy);
+
 		public abstract void DropDatabase();
+
 		public abstract void CreateDatabase();
+
 		public abstract void ExecuteScript(string script);
-		
 	}
 }

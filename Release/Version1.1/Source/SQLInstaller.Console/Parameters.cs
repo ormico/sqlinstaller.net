@@ -1,17 +1,30 @@
-﻿using System;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Text;
-using System.Security.Cryptography;
-
-using SQLInstaller.Core;
-
+﻿/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       Parameters.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Console
 {
+	using System;
+	using System.IO;
+	using System.Security.Cryptography;
+	using System.Text;
+	using System.Xml;
+	using System.Xml.Serialization;
+
+	using SQLInstaller.Core;
+
+	/// <summary>
+	/// Parameters class.
+	/// </summary>
 	[Serializable]
 	public sealed class Parameters : IDisposable
 	{
+		#region Fields
+
 		private bool isDisposed;
 		private string configPath;
 		private string scriptPath;
@@ -19,12 +32,40 @@ namespace SQLInstaller.Console
 		private string database;
 		private ProviderType providerType;
 		private Options options;
+		private string cipherInit;
+		private string cipherKey;
 		private bool isProtected;
 		private bool noPrompt;
 		private bool noPromptSpecified;
 
 		[NonSerializedAttribute]
 		private RSACryptoServiceProvider rsa;
+		[NonSerializedAttribute]
+		private RijndaelManaged aes;
+
+		#endregion
+
+		#region Constructors
+
+		public Parameters()
+		{
+			configPath = Constants.DefaultConfigFile;
+			scriptPath = Constants.CurrentDir;
+			database = Constants.DefaultDbName;
+			connectionString = Constants.DefaultConnString;
+			providerType = ProviderType.SqlServer;
+			options = options.Add(Options.Create | Options.Drop | Options.Verbose);
+
+			CspParameters csp = new CspParameters();
+			csp.Flags = CspProviderFlags.UseMachineKeyStore;
+			csp.KeyContainerName = AppDomain.CurrentDomain.FriendlyName;
+			rsa = new RSACryptoServiceProvider(csp);
+			aes = new RijndaelManaged();
+		}
+
+		#endregion
+
+		#region Properties
 
 		[XmlIgnore]
 		public string ConfigPath
@@ -45,6 +86,20 @@ namespace SQLInstaller.Console
 		{
 			get { return providerType; }
 			set { providerType = value; }
+		}
+
+		[XmlElement]
+		public string CipherInit
+		{
+			get { return cipherInit; }
+			set { cipherInit = value; }
+		}
+
+		[XmlElement]
+		public string CipherKey
+		{
+			get { return cipherKey; }
+			set { cipherKey = value; }
 		}
 
 		[XmlElement]
@@ -94,69 +149,9 @@ namespace SQLInstaller.Console
 			get { return noPromptSpecified; }
 		}
 
-		public Parameters()
-		{
-			configPath = Constants.DefaultConfigFile;
-			scriptPath = Constants.CurrentDir;
-			database = Constants.DefaultDbName;
-			connectionString = Constants.DefaultConnString;
-			providerType = ProviderType.SqlServer;
-			options = options.Add(Options.Create | Options.Drop | Options.Verbose);
+		#endregion
 
-			CspParameters csp = new CspParameters();
-			csp.Flags = CspProviderFlags.UseMachineKeyStore;
-			csp.KeyContainerName = AppDomain.CurrentDomain.FriendlyName;
-			rsa = new RSACryptoServiceProvider(csp);
-		}
-
-		public void Write()
-		{
-			StreamWriter sw = null;
-
-			try
-			{
-				sw = new StreamWriter(configPath);
-				WriteXml(sw.BaseStream);
-			}
-			finally
-			{
-				if (sw != null)
-					sw.Close();
-			}
-		}
-
-		private void WriteXml(Stream stream)
-		{
-			XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-			ns.Add(string.Empty, string.Empty);
-			XmlSerializer s = new XmlSerializer(this.GetType());
-			XmlWriterSettings settings = new XmlWriterSettings();
-			settings.OmitXmlDeclaration = true;
-			settings.Encoding = Encoding.UTF8;
-			settings.IndentChars = Constants.Tab;
-			settings.Indent = true;
-			XmlWriter w = XmlWriter.Create(stream, settings);
-			s.Serialize(w, this, ns);
-		}
-
-		private void ProtectConnectionString()
-		{
-			string saveString = connectionString;
-			UTF8Encoding utf8 = new UTF8Encoding();
-			byte[] encrypted = rsa.Encrypt(utf8.GetBytes(connectionString), false);
-			connectionString = System.Convert.ToBase64String(encrypted);
-			isProtected = true;
-			Write();
-			connectionString = saveString;
-		}
-
-		private void RevealConnectionString()
-		{
-			UTF8Encoding utf8 = new UTF8Encoding();
-			byte[] decrypted = rsa.Decrypt(System.Convert.FromBase64String(connectionString), false);
-			connectionString = utf8.GetString(decrypted);
-			isProtected = false;
-		}
+		#region Public Methods
 
 		public static Parameters Load(string configPath)
 		{
@@ -179,6 +174,24 @@ namespace SQLInstaller.Console
 			return p;
 		}
 
+		public void Write()
+		{
+			StreamWriter sw = null;
+
+			try
+			{
+				sw = new StreamWriter(configPath);
+				WriteXml(sw.BaseStream);
+			}
+			finally
+			{
+				if (sw != null)
+					sw.Close();
+			}
+		}
+
+		#endregion
+
 		#region IDisposable Members
 
 		public void Dispose()
@@ -186,9 +199,70 @@ namespace SQLInstaller.Console
 			if (!isDisposed)
 			{
 				rsa.Clear();
+				aes.Clear();
 				GC.SuppressFinalize(this);
 				isDisposed = true;
 			}
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private void WriteXml(Stream stream)
+		{
+			XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+			ns.Add(string.Empty, string.Empty);
+			XmlSerializer s = new XmlSerializer(this.GetType());
+			XmlWriterSettings settings = new XmlWriterSettings();
+			settings.OmitXmlDeclaration = true;
+			settings.Encoding = Encoding.UTF8;
+			settings.IndentChars = Constants.Tab;
+			settings.Indent = true;
+			XmlWriter w = XmlWriter.Create(stream, settings);
+			s.Serialize(w, this, ns);
+		}
+
+		private void ProtectConnectionString()
+		{
+			string saveString = connectionString;
+			cipherInit = System.Convert.ToBase64String(rsa.Encrypt(aes.IV, false));
+			cipherKey = System.Convert.ToBase64String(rsa.Encrypt(aes.Key, false));
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				using (CryptoStream cryptoStream = new CryptoStream(memoryStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
+				{
+					byte[] connectionStringBytes = Encoding.UTF8.GetBytes(connectionString);
+					cryptoStream.Write(connectionStringBytes, 0, connectionStringBytes.Length);
+					cryptoStream.FlushFinalBlock();
+					connectionString = System.Convert.ToBase64String(memoryStream.ToArray());
+				}
+			}
+
+			isProtected = true;
+			Write();
+			connectionString = saveString;
+		}
+
+		private void RevealConnectionString()
+		{
+			aes.IV = rsa.Decrypt(System.Convert.FromBase64String(cipherInit), false);
+			aes.Key = rsa.Decrypt(System.Convert.FromBase64String(cipherKey), false);
+
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				using (CryptoStream cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(), CryptoStreamMode.Write))
+				{
+					byte[] connectionStringBytes = System.Convert.FromBase64String(connectionString);
+					cryptoStream.Write(connectionStringBytes, 0, connectionStringBytes.Length);
+					cryptoStream.FlushFinalBlock();
+					connectionString = Encoding.UTF8.GetString(memoryStream.ToArray());
+				}
+			}
+
+			isProtected = false;
+			cipherInit = null;
+			cipherKey = null;
 		}
 
 		#endregion

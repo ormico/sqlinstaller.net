@@ -1,12 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-
-using Npgsql;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       PostGresProvider.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	using System;
+
+	using Npgsql;
+
 	/// <summary>
 	/// The PostGres data provider is using Npgsql binaries (see http://pgfoundry.org/projects/npgsql/) 
 	/// licensed under GNU LGPL (aka. Lesser GPL).
@@ -44,7 +49,8 @@ namespace SQLInstaller.Core
 					version = cmd.ExecuteScalar() as string;
 				}
 			}
-			catch (Exception){}
+			catch (Exception) { }
+
 			return version;
 		}
 
