@@ -233,17 +233,20 @@ namespace SQLInstaller.Console
 
 		private void RevealConnectionString()
 		{
-			aes.IV = rsa.Decrypt(System.Convert.FromBase64String(cipherInit), false);
-			aes.Key = rsa.Decrypt(System.Convert.FromBase64String(cipherKey), false);
+			if (cipherInit != null && cipherInit.Length > 0 && cipherKey != null && cipherKey.Length > 0)
+			{
+				aes.IV = rsa.Decrypt(System.Convert.FromBase64String(cipherInit), false);
+				aes.Key = rsa.Decrypt(System.Convert.FromBase64String(cipherKey), false);
 
-			ICryptoTransform transform = aes.CreateDecryptor();
-			byte[] connectionStringBytes = System.Convert.FromBase64String(connectionString);
-			byte[] plainText = transform.TransformFinalBlock(connectionStringBytes, 0, connectionStringBytes.Length);
-			connectionString = Encoding.UTF8.GetString(plainText);
+				ICryptoTransform transform = aes.CreateDecryptor();
+				byte[] connectionStringBytes = System.Convert.FromBase64String(connectionString);
+				byte[] plainText = transform.TransformFinalBlock(connectionStringBytes, 0, connectionStringBytes.Length);
+				connectionString = Encoding.UTF8.GetString(plainText);
 
-			isProtected = false;
-			cipherInit = null;
-			cipherKey = null;
+				isProtected = false;
+				cipherInit = null;
+				cipherKey = null;
+			}
 		}
 
 		#endregion
