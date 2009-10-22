@@ -133,4 +133,79 @@
   <data name="Top" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Top.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ErrorSchemaPrep" xml:space="preserve">
+    <value>You must prepare the schema first.</value>
+  </data>
+  <data name="InvalidReserved" xml:space="preserve">
+    <value>You cannot have an Upgrade directory with the reserved name:</value>
+  </data>
+  <data name="MissingReq" xml:space="preserve">
+    <value>Missing required parameter.</value>
+  </data>
+  <data name="MissingScriptDir" xml:space="preserve">
+    <value>Script directory is missing:</value>
+  </data>
+  <data name="StatusCreatingDatabase" xml:space="preserve">
+    <value>Creating database </value>
+  </data>
+  <data name="StatusDone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="StatusDroppingDatabase" xml:space="preserve">
+    <value>Dropping database </value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Error.</value>
+  </data>
+  <data name="StatusExecutingScript" xml:space="preserve">
+    <value>Executing script: </value>
+  </data>
+  <data name="StatusInstallingDatabase" xml:space="preserve">
+    <value>Installing database </value>
+  </data>
+  <data name="StatusOnSeparator" xml:space="preserve">
+    <value> on </value>
+  </data>
+  <data name="StatusUpgradingDatabase" xml:space="preserve">
+    <value>Upgrading Database to version </value>
+  </data>
+  <data name="WarnMissingInstall" xml:space="preserve">
+    <value>WARNING: missing Install directory. An empty database was created.</value>
+  </data>
+  <data name="WarnMissingUpgrade" xml:space="preserve">
+    <value>WARNING: missing Upgrade directory. Nothing to do.</value>
+  </data>
+  <data name="WarnMissingVersions" xml:space="preserve">
+    <value>WARNING: no version directories found. Nothing to do.</value>
+  </data>
+  <data name="WarnNoNewScripts" xml:space="preserve">
+    <value>WARNING: no new scripts found. Nothing to do.</value>
+  </data>
+  <data name="WarnNoScripts" xml:space="preserve">
+    <value>WARNING: no scripts found. An empty database was created.</value>
+  </data>
+  <data name="ErrorEnumAppend" xml:space="preserve">
+    <value>Could not append value from enumerated type '{0}'.</value>
+  </data>
+  <data name="ErrorEnumRemove" xml:space="preserve">
+    <value>Could not remove value from enumerated type '{0}'.</value>
+  </data>
+  <data name="StatusAlreadyUpgraded" xml:space="preserve">
+    <value> has already been upgraded to </value>
+  </data>
+  <data name="StatusBy" xml:space="preserve">
+    <value> by </value>
+  </data>
+  <data name="StatusConnecting" xml:space="preserve">
+    <value>Connecting to database.</value>
+  </data>
+  <data name="StatusErrorComp" xml:space="preserve">
+    <value>Completed with </value>
+  </data>
+  <data name="StatusErrorWith" xml:space="preserve">
+    <value> errors.</value>
+  </data>
+  <data name="StatusSuccess" xml:space="preserve">
+    <value>Completed successfully.</value>
+  </data>
 </root>

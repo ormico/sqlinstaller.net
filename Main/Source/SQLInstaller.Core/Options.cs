@@ -2,45 +2,43 @@
  *  SQL Installer.NET
  *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
  *  ----------------------------------------------------------------------------
- *  File:       StatusMessage.cs
+ *  File:       Options.cs
  *  Author:     Brian Schloz
  *  ----------------------------------------------------------------------------
  */
 namespace SQLInstaller.Core
 {
+	using System;
+
 	/// <summary>
-	/// Status message enumeration.
+	/// Options enumeration.
 	/// </summary>
-	public enum StatusMessage
+	[Flags]
+	public enum Options
 	{
 		/// <summary>
-		/// Start of installation.
+		/// No options.
 		/// </summary>
-		Start,
+		None = 0x00,
 
 		/// <summary>
-		/// Output detailed status message.
+		/// Create database (if it does not exist)
 		/// </summary>
-		Detail,
+		Create = 0x01,
 
 		/// <summary>
-		/// Provide progress indicator (e.g. percentage complete)
+		/// Drop database (if it exists)
 		/// </summary>
-		Progress,
+		Drop = 0x02,
 
 		/// <summary>
-		/// Installation is running.
+		/// Retry the last upgrade/install operation.
 		/// </summary>
-		Running,
+		Retry = 0x04,
 
 		/// <summary>
-		/// Installation has completed.
+		/// Output all status messages.
 		/// </summary>
-		Complete,
-
-		/// <summary>
-		/// Installation is exiting.
-		/// </summary>
-		Exit,
+		Verbose = 0x08,
 	}
 }
