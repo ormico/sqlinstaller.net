@@ -104,6 +104,15 @@ namespace SQLInstaller.Console {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The cipher data is invalid. Cannot decrypt connection string..
+        /// </summary>
+        internal static string InvalidCipherData {
+            get {
+                return ResourceManager.GetString("InvalidCipherData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\froman\fcharset0 Times New Roman;}{\f1\fswiss\fcharset0 Arial;}}
         ///{\*\generator Msftedit 5.41.21.2500;}\viewkind4\uc1\pard\sb100\sa100\f0\fs24 Microsoft Public License (Ms-PL)\line\line This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.\line\line 1. Definitions\line\line The terms &quot;reproduce,&quot; &quot;reproduction,&quot; &quot;derivative works,&quot; and &quot;distribu [rest of string was truncated]&quot;;.
         /// </summary>

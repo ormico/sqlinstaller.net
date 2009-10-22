@@ -32,8 +32,7 @@ namespace SQLInstaller.Console
 		private string database;
 		private ProviderType providerType;
 		private Options options;
-		private string cipherInit;
-		private string cipherKey;
+		private string cipherData;
 		private bool isProtected;
 		private bool noPrompt;
 		private bool noPromptSpecified;
@@ -88,17 +87,10 @@ namespace SQLInstaller.Console
 		}
 
 		[XmlElement]
-		public string CipherInit
+		public string CipherData
 		{
-			get { return cipherInit; }
-			set { cipherInit = value; }
-		}
-
-		[XmlElement]
-		public string CipherKey
-		{
-			get { return cipherKey; }
-			set { cipherKey = value; }
+			get { return cipherData; }
+			set { cipherData = value; }
 		}
 
 		[XmlElement]
@@ -218,8 +210,8 @@ namespace SQLInstaller.Console
 		private void ProtectConnectionString()
 		{
 			string saveString = connectionString;
-			cipherInit = System.Convert.ToBase64String(rsa.Encrypt(aes.IV, false));
-			cipherKey = System.Convert.ToBase64String(rsa.Encrypt(aes.Key, false));
+			cipherData = System.Convert.ToBase64String(rsa.Encrypt(aes.IV, true)) 
+				+ Constants.Pipe + System.Convert.ToBase64String(rsa.Encrypt(aes.Key, true));
 
 			ICryptoTransform transform = aes.CreateEncryptor();
 			byte[] connectionStringBytes = Encoding.UTF8.GetBytes(connectionString);
@@ -233,10 +225,16 @@ namespace SQLInstaller.Console
 
 		private void RevealConnectionString()
 		{
-			if (cipherInit != null && cipherInit.Length > 0 && cipherKey != null && cipherKey.Length > 0)
+			if (cipherData != null && cipherData.Length > 0)
 			{
-				aes.IV = rsa.Decrypt(System.Convert.FromBase64String(cipherInit), false);
-				aes.Key = rsa.Decrypt(System.Convert.FromBase64String(cipherKey), false);
+				string[] cipherInit = cipherData.Split(new char[] { Constants.Pipe });
+				if (cipherInit.Length == 2)
+				{
+					aes.IV = rsa.Decrypt(System.Convert.FromBase64String(cipherInit[0]), true);
+					aes.Key = rsa.Decrypt(System.Convert.FromBase64String(cipherInit[1]), true);
+				}
+				else
+					throw new ArgumentException(Resources.InvalidCipherData);
 
 				ICryptoTransform transform = aes.CreateDecryptor();
 				byte[] connectionStringBytes = System.Convert.FromBase64String(connectionString);
@@ -244,8 +242,7 @@ namespace SQLInstaller.Console
 				connectionString = Encoding.UTF8.GetString(plainText);
 
 				isProtected = false;
-				cipherInit = null;
-				cipherKey = null;
+				cipherData = null;
 			}
 		}
 

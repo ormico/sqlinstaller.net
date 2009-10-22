@@ -13,6 +13,7 @@ namespace SQLInstaller.Console
 	/// </summary>
 	internal sealed class Constants
 	{
+		public const char Pipe = '|';
 		public const string DefaultConfigFile = @".\SQLInstaller.xml";
 		public const string CarriageReturn = "\r";
 		public const string Tab = "\t";
