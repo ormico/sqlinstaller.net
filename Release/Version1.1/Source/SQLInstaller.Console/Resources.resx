@@ -157,4 +157,7 @@
   <data name="StatusErrorCount" xml:space="preserve">
     <value> errors.</value>
   </data>
+  <data name="InvalidCipherData" xml:space="preserve">
+    <value>The cipher data is invalid. Cannot decrypt connection string.</value>
+  </data>
 </root>
