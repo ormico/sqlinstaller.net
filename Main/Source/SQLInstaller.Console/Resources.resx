@@ -124,4 +124,40 @@
   <data name="License" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\License.rtf;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="AskToVersion" xml:space="preserve">
+    <value> to Version </value>
+  </data>
+  <data name="AskUpgrade" xml:space="preserve">
+    <value>Upgrade </value>
+  </data>
+  <data name="AskYesNo" xml:space="preserve">
+    <value> (Y/N)? </value>
+  </data>
+  <data name="ExitingWithNewTemplate" xml:space="preserve">
+    <value>. Creating a new template. Please edit as appropriate. Exiting.</value>
+  </data>
+  <data name="MissingParmFile" xml:space="preserve">
+    <value>Missing parameters xml file: </value>
+  </data>
+  <data name="StatusAlreadyUpgraded" xml:space="preserve">
+    <value> has already been upgraded to </value>
+  </data>
+  <data name="StatusBy" xml:space="preserve">
+    <value> by </value>
+  </data>
+  <data name="StatusCompletedWith" xml:space="preserve">
+    <value>Completed with </value>
+  </data>
+  <data name="StatusConnecting" xml:space="preserve">
+    <value>Connecting to database...</value>
+  </data>
+  <data name="StatusDone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="StatusErrorCount" xml:space="preserve">
+    <value> errors.</value>
+  </data>
+  <data name="InvalidCipherData" xml:space="preserve">
+    <value>The cipher data is invalid. Cannot decrypt connection string.</value>
+  </data>
 </root>

@@ -1,21 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.OracleClient;
-using System.Text;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       OracleProvider.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	using System;
+	using System.Data.OracleClient;
+
+	/// <summary>
+	/// Oracle provider.
+	/// </summary>
 	public sealed class OracleProvider : Provider
 	{
-		public string createUser;
-		public string createPassword;
+		private OracleConnectionStringBuilder builderNewUser;
+
+		public OracleConnectionStringBuilder BuilderNewUser
+		{
+			get
+			{
+				if (builderNewUser == null)
+				{
+					builderNewUser = new OracleConnectionStringBuilder(ConnectionString);
+					builderNewUser.UserID = Database.ToUpper();
+					builderNewUser.Password = builderNewUser.UserID;
+				}
+
+				return builderNewUser;
+			}
+		}
 
 		public override bool Exists()
 		{
-			createUser = User;
-			createPassword = Password;
-
 			bool exists = false;
 			using (OracleConnection conn = new OracleConnection(ConnectionString))
 			{
@@ -23,8 +42,8 @@ namespace SQLInstaller.Core
 
 				OracleCommand cmd = new OracleCommand();
 				cmd.Connection = conn;
-				cmd.CommandText = "SELECT COUNT(*) FROM all_users WHERE username = UPPER(:database_name)";
-				cmd.Parameters.Add(new OracleParameter(":database_name", Database.ToUpper()));
+				cmd.CommandText = Constants.OracleSelectExists;
+				cmd.Parameters.Add(new OracleParameter(Constants.OracleParmDatabaseName, Database.ToUpper()));
 
 				exists = ((decimal)cmd.ExecuteScalar()) > 0;
 			}
@@ -40,7 +59,7 @@ namespace SQLInstaller.Core
 				using (OracleConnection conn = new OracleConnection(ConnectionString))
 				{
 					conn.Open();
-					OracleCommand cmd = new OracleCommand("SELECT version || ';' || upgradeby FROM " + Database.ToUpper() + ".VERSION", conn);
+					OracleCommand cmd = new OracleCommand(string.Format(Constants.OracleSelectVersion, Database.ToUpper()), conn);
 					version = cmd.ExecuteScalar() as string;
 				}
 			}
@@ -50,13 +69,10 @@ namespace SQLInstaller.Core
 
 		public override void SetVersion(string version, string upgradeBy)
 		{
-			User = createUser;
-			Password = createPassword;
-			ConnectionString = string.Empty;
 			using (OracleConnection conn = new OracleConnection(ConnectionString))
 			{
 				conn.Open();
-				OracleCommand cmd = new OracleCommand("CREATE OR REPLACE VIEW " + Database.ToUpper() + ".VERSION AS SELECT '" + version + "' AS VERSION, '" + upgradeBy + "' AS UPGRADEBY FROM DUAL", conn);
+				OracleCommand cmd = new OracleCommand(string.Format(Constants.OracleCreateVersionView, Database.ToUpper(), version, upgradeBy), conn);
 				cmd.ExecuteNonQuery();
 			}
 		}
@@ -66,7 +82,7 @@ namespace SQLInstaller.Core
 			using (OracleConnection conn = new OracleConnection(ConnectionString))
 			{
 				conn.Open();
-				OracleCommand cmd = new OracleCommand("DROP USER " + Database.ToUpper() + " CASCADE", conn);
+				OracleCommand cmd = new OracleCommand(string.Format(Constants.OracleDropUser, Database.ToUpper()), conn);
 				cmd.ExecuteNonQuery();
 			}
 		}
@@ -76,9 +92,9 @@ namespace SQLInstaller.Core
 			using (OracleConnection conn = new OracleConnection(ConnectionString))
 			{
 				conn.Open();
-				OracleCommand cmd = new OracleCommand("CREATE USER " + Database.ToUpper() + " IDENTIFIED BY " + Database.ToUpper(), conn);
+				OracleCommand cmd = new OracleCommand(string.Format(Constants.OracleCreateUser, Database.ToUpper()), conn);
 				cmd.ExecuteNonQuery();
-				cmd.CommandText = "GRANT UNLIMITED TABLESPACE, CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE PROCEDURE, CREATE SEQUENCE, CREATE ROLE, CREATE SYNONYM, CREATE TRIGGER, CREATE TYPE, CREATE MATERIALIZED VIEW, CREATE OPERATOR, CREATE CLUSTER, CREATE INDEXTYPE TO " + Database.ToUpper();
+				cmd.CommandText = string.Format(Constants.OracleGrantUser, Database.ToUpper());
 				cmd.ExecuteNonQuery();
 			}
 		}
@@ -88,11 +104,8 @@ namespace SQLInstaller.Core
 			// The .NET provider for Oracle does not support everthing you can do
 			// in SQL*PLUS when executing DDL. We provide for two variants which
 			// should cover all DDL types but there is little tolerance for variation.
-			User = Database.ToUpper();
-			Password = Database.ToUpper();
-			ConnectionString = string.Empty;
-			string sql = script.Replace('\r', ' ').Replace('\n', ' ').Trim();
-			using (OracleConnection conn = new OracleConnection(ConnectionString))
+			string sql = script.Replace(Constants.CarriageReturn, Constants.Space).Replace(Constants.NewLine, Constants.Space).Trim();
+			using (OracleConnection conn = new OracleConnection(BuilderNewUser.ConnectionString))
 			{
 				conn.Open();
 				OracleCommand cmd = new OracleCommand();
@@ -101,7 +114,7 @@ namespace SQLInstaller.Core
 				// If the script has a begin/end block, then assume it is a sproc, trigger or
 				// anonymous/adhoc. These can have multiple statements terminated by semi-colons.
 				string[] scripts = null;
-				int begin = sql.IndexOf("BEGIN", StringComparison.InvariantCultureIgnoreCase);
+				int begin = sql.IndexOf(Constants.OracleBegin, StringComparison.OrdinalIgnoreCase);
 				if (begin >= 0)
 				{
 					// Treat script starting with BEGIN special case for data loading/inserts.
@@ -112,10 +125,10 @@ namespace SQLInstaller.Core
 						scripts[0] = sql;
 					}
 					else
-						scripts = sql.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+						scripts = sql.Split(new char[] { Constants.ForwardSlash }, StringSplitOptions.RemoveEmptyEntries);
 				}
 				else // Should handle all other types of create/alter DDL
-					scripts = sql.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+					scripts = sql.Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
 				foreach (string sqlLine in scripts)
 				{

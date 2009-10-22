@@ -1,11 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       FileInfoSorter.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
-	public class FileInfoSorter : System.Collections.IComparer
+	using System;
+	using System.Collections;
+	using System.IO;
+
+	/// <summary>
+	/// Basic comparison for FileInfo
+	/// </summary>
+	public class FileInfoSorter : IComparer
 	{
 		#region IComparer Members
 

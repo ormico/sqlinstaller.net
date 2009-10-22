@@ -1,30 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-
+/*  ----------------------------------------------------------------------------
+ *  SQL Installer.NET
+ *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
+ *  ----------------------------------------------------------------------------
+ *  File:       SqlBuild.cs
+ *  Author:     Brian Schloz
+ *  ----------------------------------------------------------------------------
+ */
 namespace SQLInstaller.Core
 {
+	using System;
+
+	using Microsoft.Build.Framework;
+	using Microsoft.Build.Utilities;
+
 	/// <summary>
 	/// <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	///   <UsingTask TaskName="SQLInstaller.Core.SqlBuild" AssemblyFile="C:\Program Files\SQLInstaller\SQLInstaller.Core.dll" />
 	///   ...
 	///   <Target Name="AfterBuild">
-	///      <SqlBuild Database="mytestdb" Server="myserver" Path="$(SolutionRoot)\Scripts" Drop="true" />
+	///      <SqlBuild Database="mytestdb" ConnectionString="Data Source=localhost;Integrated Security=SSPI;" Path="$(SolutionRoot)\Scripts" Drop="true" />
 	///   </Target>
+	/// </Project>
 	/// </summary>
 	public class SqlBuild : Task
 	{
 		private ProviderType provType;
+		private string connectionString;
 		private string database;
-		private string server;
 		private string path;
-		private string user;
-		private string password;
 		private bool create;
 		private bool drop;
 		private bool retry;
+
+		public SqlBuild()
+		{
+			path = string.Empty;
+			connectionString = string.Empty;
+			create = true;
+		}
 
 		[Required]
 		public string Database
@@ -39,28 +52,17 @@ namespace SQLInstaller.Core
 			set { provType = value; }
 		}
 
-		public string Server
+		[Required]
+		public string ConnectionString
 		{
-			get { return server; }
-			set { server = value; }
+			get { return connectionString; }
+			set { connectionString = value; }
 		}
 
 		public string Path
 		{
 			get { return path; }
 			set { path = value; }
-		}
-
-		public string User
-		{
-			get { return user; }
-			set { user = value; }
-		}
-
-		public string Password
-		{
-			get { return password; }
-			set { password = value; }
 		}
 
 		public bool Create
@@ -81,38 +83,28 @@ namespace SQLInstaller.Core
 			set { retry = value; }
 		}
 
-		public SqlBuild()
-		{
-			path = string.Empty;
-			server = "localhost";
-			user = string.Empty;
-			password = string.Empty;
-			create = true;
-		}
-
 		public override bool Execute()
 		{
-			RuntimeFlag flags = RuntimeFlag.Verbose;
+			Options options = Options.Verbose;
 			if (create)
-				flags |= RuntimeFlag.Create;
+				options |= Options.Create;
 			if (drop)
-				flags |= RuntimeFlag.Drop;
+				options |= Options.Drop;
 			if (retry)
-				flags |= RuntimeFlag.Retry;
+				options |= Options.Retry;
 
 			try
 			{
-				Runtime installer = new Runtime(path, flags);
-				Log.LogMessage("Processing: " + path + ".");
-				Log.LogMessage("Connecting to " + server + ".");
+				Installer installer = new Installer(path, options);
+				Log.LogMessage(Resources.StatusConnecting);
 
-				Schema schema = installer.Prepare(provType, server, database, user, password);
+				SchemaInfo schema = installer.Prepare(provType, connectionString, database);
 
-				if (schema.Exists && (flags & RuntimeFlag.Drop) != RuntimeFlag.Drop)
+				if (schema.Exists && (options & Options.Drop) != Options.Drop)
 				{
 					if (schema.ScriptsTotal == 0)
 					{
-						Log.LogWarning(schema.Provider.Database + " has already been upgraded to " + schema.Version + " by " + schema.UpgradeBy);
+						Log.LogWarning(schema.Provider.Database + Resources.StatusAlreadyUpgraded + schema.Version + Resources.StatusBy + schema.UpgradeBy);
 						return true;
 					}
 				}
@@ -126,14 +118,14 @@ namespace SQLInstaller.Core
 					{
 						case StatusMessage.Start:
 						case StatusMessage.Detail:
-							if ( prog.Message.Length > 0 )
+							if (prog.Message.Length > 0)
 								Log.LogMessage(prog.Message + ".");
 							break;
 						case StatusMessage.Exit:
 							if (prog.Percent == 0)
-								Log.LogMessage("Completed successfully.");
+								Log.LogMessage(Resources.StatusSuccess);
 							else
-								Log.LogError("Completed with " + prog.Percent + " errors.");
+								Log.LogError(Resources.StatusErrorComp + prog.Percent + Resources.StatusErrorWith);
 							break;
 						case StatusMessage.Complete:
 						case StatusMessage.Running:
@@ -151,5 +143,4 @@ namespace SQLInstaller.Core
 			return !Log.HasLoggedErrors;
 		}
 	}
-
 }
