@@ -15,6 +15,7 @@ namespace SQLInstaller.Console
 	{
 		public const char Pipe = '|';
 		public const string DefaultConfigFile = @".\SQLInstaller.xml";
+		public const string CipherFile = "SQLInstaller.aes";
 		public const string CarriageReturn = "\r";
 		public const string Tab = "\t";
 		public const string Wait = "...";
