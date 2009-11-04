@@ -11,6 +11,7 @@ namespace SQLInstaller.Console
 	using System;
 	using System.IO;
 	using System.IO.IsolatedStorage;
+	using System.Security;
 	using System.Security.Cryptography;
 	using System.Security.Principal;
 	using System.Text;
@@ -230,7 +231,16 @@ namespace SQLInstaller.Console
 		private RijndaelManaged CreateCipher()
 		{
 			RijndaelManaged aes = new RijndaelManaged();
-			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly();
+			IsolatedStorageFile isf = null;
+			try
+			{
+				isf = IsolatedStorageFile.GetUserStoreForAssembly();
+			}
+			catch (SecurityException)
+			{
+				isf = IsolatedStorageFile.GetMachineStoreForAssembly();
+			}
+
 			using (IsolatedStorageFileStream ifs = new IsolatedStorageFileStream(Constants.CipherFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, isf))
 			{
 				string cipherData = string.Empty;
