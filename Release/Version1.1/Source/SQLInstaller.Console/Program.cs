@@ -45,7 +45,7 @@ namespace SQLInstaller.Console
 					throw new ArgumentException(Resources.MissingParmFile + configPath + Resources.ExitingWithNewTemplate);
 				}
 
-				if (p.Options.Has(Options.Verbose))
+				if (p.NoPrompt)
 					spinCycle = double.MinValue;
 
 				spin.Start(spinCycle);
