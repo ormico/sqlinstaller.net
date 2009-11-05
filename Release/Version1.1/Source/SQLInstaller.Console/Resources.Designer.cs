@@ -159,7 +159,7 @@ namespace SQLInstaller.Console {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connecting to database....
+        ///   Looks up a localized string similar to Connecting to data source....
         /// </summary>
         internal static string StatusConnecting {
             get {

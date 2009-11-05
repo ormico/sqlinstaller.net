@@ -149,7 +149,7 @@
     <value>Completed with </value>
   </data>
   <data name="StatusConnecting" xml:space="preserve">
-    <value>Connecting to database...</value>
+    <value>Connecting to data source...</value>
   </data>
   <data name="StatusDone" xml:space="preserve">
     <value>Done.</value>

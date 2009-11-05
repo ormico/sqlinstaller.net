@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{c252feb5-a946-4202-b1d4-9916a0590387};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{02E2C154-5D5F-43F0-9827-C82D274AA475}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>SQLInstaller.Sample</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>SQLInstaller.Sample</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\SqlServer.targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>sqlinstaller ..\..\SQLInstaller.xml</PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Install\ForeignKeys\CustomerCustomerDemo.ForeignKey.sql" />
+    <None Include="Install\ForeignKeys\Employees.ForeignKey.sql" />
+    <None Include="Install\ForeignKeys\EmployeeTerritories.ForeignKey.sql" />
+    <None Include="Install\ForeignKeys\Orders.ForeignKey.sql" />
+    <None Include="Install\ForeignKeys\Products.ForeignKey.sql" />
+    <None Include="Install\ForeignKeys\Territories.ForeignKey.sql" />
+    <None Include="Install\PostInstall\Categories.PostInstall.sql" />
+    <None Include="Install\PostInstall\Customers.PostInstall.sql" />
+    <None Include="Install\PostInstall\Employees.PostInstall.sql" />
+    <None Include="Install\PostInstall\OrderDetails.PostInstall.sql" />
+    <None Include="Install\PostInstall\Orders.PostInstall.sql" />
+    <None Include="Install\PostInstall\Products.PostInstall.sql" />
+    <None Include="Install\PostInstall\Shippers.PostInstall.sql" />
+    <None Include="Install\PostInstall\Suppliers.PostInstall.sql" />
+    <None Include="Install\StoredProcedures\CustOrderHist.StoredProcedure.sql" />
+    <None Include="Install\StoredProcedures\CustOrdersDetail.StoredProcedure.sql" />
+    <None Include="Install\StoredProcedures\CustOrdersOrders.StoredProcedure.sql" />
+    <None Include="Install\StoredProcedures\EmployeeSalesByCountry.StoredProcedure.sql" />
+    <None Include="Install\StoredProcedures\SalesByYear.StoredProcedure.sql" />
+    <None Include="Install\StoredProcedures\SalesByCategory.StoredProcedure.sql" />
+    <None Include="Install\StoredProcedures\TenMostExpensiveProducts.StoredProcedure.sql" />
+    <None Include="Install\Tables\Categories.Table.sql" />
+    <None Include="Install\Tables\CustomerCustomerDemo.Table.sql" />
+    <None Include="Install\Tables\CustomerDemographics.Table.sql" />
+    <None Include="Install\Tables\Customers.Table.sql" />
+    <None Include="Install\Tables\Employees.Table.sql" />
+    <None Include="Install\Tables\EmployeeTerritories.Table.sql" />
+    <None Include="Install\Tables\OrderDetails.Table.sql" />
+    <None Include="Install\Tables\Orders.Table.sql" />
+    <None Include="Install\Tables\Products.Table.sql" />
+    <None Include="Install\Tables\Region.Table.sql" />
+    <None Include="Install\Tables\Shippers.Table.sql" />
+    <None Include="Install\Tables\Suppliers.Table.sql" />
+    <None Include="Install\Tables\Territories.Table.sql" />
+    <None Include="Install\Views\OrderSubtotals.View.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SQLInstaller.xml" />
+  </ItemGroup>
+</Project>
