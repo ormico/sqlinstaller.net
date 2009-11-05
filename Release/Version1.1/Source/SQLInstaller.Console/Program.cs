@@ -25,6 +25,7 @@ namespace SQLInstaller.Console
 		public static int Main(string[] args)
 		{
 			int returnCode = 0;
+			double spinCycle = Constants.MinSpinTimeout;
 
 			Installer installer;
 			Spinner spin = new Spinner();
@@ -44,7 +45,10 @@ namespace SQLInstaller.Console
 					throw new ArgumentException(Resources.MissingParmFile + configPath + Resources.ExitingWithNewTemplate);
 				}
 
-				spin.Start(250);
+				if (p.Options.Has(Options.Verbose))
+					spinCycle = double.MinValue;
+
+				spin.Start(spinCycle);
 				System.Console.Write(Resources.StatusConnecting);
 
 				installer = new Installer(p.ScriptPath, p.Options);
@@ -78,7 +82,7 @@ namespace SQLInstaller.Console
 					}
 				}
 
-				spin.Start(250);
+				spin.Start(spinCycle);
 				InstallMethod im = new InstallMethod(installer.Create);
 				AsyncCallback cb = new AsyncCallback(InstallCallback);
 

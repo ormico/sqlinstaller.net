@@ -13,6 +13,7 @@ namespace SQLInstaller.Console
 	/// </summary>
 	internal sealed class Constants
 	{
+		public const double MinSpinTimeout = 250;
 		public const char Pipe = '|';
 		public const string DefaultConfigFile = @".\SQLInstaller.xml";
 		public const string CipherFile = "SQLInstaller.aes";
