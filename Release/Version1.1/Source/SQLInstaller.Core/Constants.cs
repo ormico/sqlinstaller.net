@@ -49,9 +49,10 @@ namespace SQLInstaller.Core
 		public const string OracleSelectVersion = "SELECT VERSION_INFO || ';' || UPGRADEBY FROM {0}.DB_VERSION";
 		public const string OracleCreateVersionView = "CREATE OR REPLACE VIEW {0}.DB_VERSION AS SELECT '{1}' AS VERSION_INFO, '{2}' AS UPGRADEBY FROM DUAL";
 		public const string OracleDropUser = "DROP USER {0} CASCADE";
-		public const string OracleCreateUser = "CREATE USER {0} IDENTIFIED BY {0}";
-		public const string OracleGrantUser = "GRANT UNLIMITED TABLESPACE, CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE PROCEDURE, CREATE SEQUENCE, CREATE ROLE, CREATE SYNONYM, CREATE TRIGGER, CREATE TYPE, CREATE MATERIALIZED VIEW, CREATE OPERATOR, CREATE CLUSTER, CREATE INDEXTYPE TO {0}";
+		public const string OracleCreateUser = "CREATE USER {0} IDENTIFIED EXTERNALLY";
+		public const string OracleGrantUser = "GRANT UNLIMITED TABLESPACE TO {0}";
 		public const string OracleBegin = "BEGIN";
+		public const string OracleAlterSession = "ALTER SESSION SET CURRENT_SCHEMA=";
 
 		public const string PostGresSelectExists = "SELECT COUNT(*) FROM pg_catalog.pg_database WHERE datname = :database_name";
 		public const string PostGresParmDatabaseName = ":database_name";

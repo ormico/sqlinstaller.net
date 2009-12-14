@@ -1,0 +1,5 @@
+﻿<Parameters Options="Create Drop Verbose" IsProtected="true" NoPrompt="true">
+	<Database>Northwind</Database>
+	<ProviderType>SqlServer</ProviderType>
+	<ConnectionString>Data Source=qa-data1;Integrated Security=SSPI</ConnectionString>
+</Parameters>
