@@ -93,7 +93,14 @@ namespace SQLInstaller.Console
 		[XmlIgnore]
 		public string ScriptPath
 		{
-			get { return Path.GetDirectoryName(this.configPath); }
+			get 
+			{ 
+				string scriptPath = Path.GetDirectoryName(this.configPath);
+				if (string.IsNullOrEmpty(scriptPath))
+					scriptPath = Constants.CurrentDir;
+
+				return scriptPath;
+			}
 		}
 
 		[XmlAttribute]
