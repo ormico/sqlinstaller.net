@@ -20,7 +20,7 @@ namespace SQLInstaller.Console
 		public const string CarriageReturn = "\r";
 		public const string Tab = "\t";
 		public const string Wait = "...";
-		public const string CurrentDir = ".";
+		public const string CurrentDir = @".\";
 		public const string DefaultDbName = "DbName";
 		public const string DefaultConnString = "Data Source=localhost;Integrated Security=SSPI;";
 
