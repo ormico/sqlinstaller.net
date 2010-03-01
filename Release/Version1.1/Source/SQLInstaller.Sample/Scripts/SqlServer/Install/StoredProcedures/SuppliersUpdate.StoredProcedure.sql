@@ -13,7 +13,7 @@ CREATE PROCEDURE SuppliersUpdate
 	@Phone nvarchar(24) = NULL,
 	@Fax nvarchar(24) = NULL,
 	@HomePage ntext = NULL,
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

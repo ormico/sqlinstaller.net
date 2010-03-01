@@ -58,7 +58,7 @@ BEGIN
 	ALTER TABLE dbo.' + @table_name + 'Audit ALTER COLUMN 
 		AuditOn datetime NOT NULL
 	ALTER TABLE dbo.' + @table_name + 'Audit ALTER COLUMN 
-		AuditUserName nvarchar(64) NOT NULL
+		AuditUserName nvarchar(255) NOT NULL
 
 	ALTER TABLE dbo.' + @table_name + 'Audit ADD 
 		CONSTRAINT Pk_' + @table_name + 'Audit PRIMARY KEY CLUSTERED 

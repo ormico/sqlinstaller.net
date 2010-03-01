@@ -6,7 +6,7 @@ CREATE PROCEDURE OrderDetailsInsert
 	@UnitPrice money,
 	@Quantity decimal(5,0),
 	@Discount real,
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

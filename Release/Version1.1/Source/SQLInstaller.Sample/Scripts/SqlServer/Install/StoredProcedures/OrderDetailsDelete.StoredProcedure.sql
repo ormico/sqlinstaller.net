@@ -3,7 +3,7 @@ CREATE PROCEDURE OrderDetailsDelete
 (
 	@OrderID decimal(10,0),
 	@ProductID decimal(10,0),
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

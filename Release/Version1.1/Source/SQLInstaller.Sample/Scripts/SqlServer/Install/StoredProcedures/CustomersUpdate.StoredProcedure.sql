@@ -12,7 +12,7 @@ CREATE PROCEDURE CustomersUpdate
 	@Country nvarchar(15) = NULL,
 	@Phone nvarchar(24) = NULL,
 	@Fax nvarchar(24) = NULL,
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

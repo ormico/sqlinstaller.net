@@ -2,7 +2,7 @@
 CREATE PROCEDURE CustomerDemographicsDelete
 (
 	@CustomerTypeID nchar(10),
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

@@ -3,7 +3,7 @@ CREATE PROCEDURE RegionUpdate
 (
 	@RegionID decimal(10,0),
 	@RegionDescription nchar(50),
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

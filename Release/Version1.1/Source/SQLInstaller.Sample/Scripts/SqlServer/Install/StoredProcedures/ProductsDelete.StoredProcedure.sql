@@ -2,7 +2,7 @@
 CREATE PROCEDURE ProductsDelete
 (
 	@ProductID decimal(10,0),
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

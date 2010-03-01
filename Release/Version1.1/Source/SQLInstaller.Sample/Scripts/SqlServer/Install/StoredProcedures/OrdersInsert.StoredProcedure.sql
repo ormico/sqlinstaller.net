@@ -15,7 +15,7 @@ CREATE PROCEDURE OrdersInsert
 	@ShipRegion nvarchar(15) = NULL,
 	@ShipPostalCode nvarchar(10) = NULL,
 	@ShipCountry nvarchar(15) = NULL,
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN
