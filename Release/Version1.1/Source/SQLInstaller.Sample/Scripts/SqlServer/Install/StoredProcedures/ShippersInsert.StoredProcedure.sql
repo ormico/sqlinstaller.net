@@ -4,7 +4,7 @@ CREATE PROCEDURE ShippersInsert
 	@ShipperID decimal(10,0) = NULL output,
 	@CompanyName nvarchar(40),
 	@Phone nvarchar(24) = NULL,
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

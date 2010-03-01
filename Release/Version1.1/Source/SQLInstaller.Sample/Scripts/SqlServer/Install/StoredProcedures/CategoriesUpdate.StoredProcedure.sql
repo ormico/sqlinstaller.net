@@ -5,7 +5,7 @@ CREATE PROCEDURE CategoriesUpdate
 	@CategoryName nvarchar(15),
 	@Description ntext = NULL,
 	@Picture image = NULL,
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

@@ -19,8 +19,8 @@ CREATE PROCEDURE EmployeesInsert
 	@Notes ntext = NULL,
 	@ReportsTo decimal(10,0) = NULL,
 	@PhotoPath nvarchar(255) = NULL,
-	@UserID nvarchar(64),
-	@AuthUserID nvarchar(64)
+	@UserID nvarchar(255),
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

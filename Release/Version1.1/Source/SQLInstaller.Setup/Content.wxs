@@ -26,21 +26,7 @@
 				<Environment Id="SQLInstaller.setpath" Action="set" Name="PATH" Part="last" System="yes" Value="[ROOTINSTALL]" />
 			</Component>
 		</DirectoryRef>
-		<DirectoryRef Id="ROOTINSTALL" FileSource="$(env.ProgramFiles)\Microsoft SQL Server\90\SDK\Assemblies">
-			<Component Id="Microsoft.SqlServer.SMO" Guid="{CB5E92F6-2EB2-4684-ABA7-34642EC5CF13}">
-				<File Id="Microsoft.SqlServer.RegSvrEnum.dll"/>
-				<File Id="Microsoft.SqlServer.SmoEnum.dll"/>
-				<File Id="Microsoft.SqlServer.SqlEnum.dll"/>
-				<File Id="Microsoft.SqlServer.Smo.dll"/>
-				<File Id="Microsoft.SqlServer.ServiceBrokerEnum.dll"/>
-				<File Id="Microsoft.SqlServer.ConnectionInfo.dll"/>
-				<File Id="Microsoft.SqlServer.WmiEnum.dll"/>
-				<File Id="Microsoft.SqlServer.Rmo.dll"/>
-				<File Id="Microsoft.SqlServer.BatchParser.dll"/>
-			</Component>
-		</DirectoryRef>
 		<ComponentGroup Id="Binaries">
-			<ComponentRef Id="Microsoft.SqlServer.SMO"/>
 			<ComponentRef Id="SqlInstaller.exe"/>
 			<ComponentRef Id="SQLInstaller.Core.dll"/>
 			<ComponentRef Id="SQLInstaller.reg"/>

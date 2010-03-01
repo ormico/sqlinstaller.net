@@ -3,7 +3,7 @@ CREATE PROCEDURE EmployeeTerritoriesDelete
 (
 	@EmployeeID decimal(10,0),
 	@TerritoryID nvarchar(20),
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

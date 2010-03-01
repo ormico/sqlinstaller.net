@@ -11,7 +11,7 @@ CREATE PROCEDURE ProductsUpdate
 	@UnitsOnOrder decimal(5,0) = NULL,
 	@ReorderLevel decimal(5,0) = NULL,
 	@Discontinued bit,
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN

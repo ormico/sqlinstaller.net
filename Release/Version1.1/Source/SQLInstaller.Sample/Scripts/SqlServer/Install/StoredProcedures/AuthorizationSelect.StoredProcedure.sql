@@ -1,6 +1,6 @@
 CREATE PROCEDURE AuthorizationSelect
 (
-	@UserName nvarchar(64)
+	@UserName nvarchar(255)
 )
 AS
 	SET NOCOUNT ON

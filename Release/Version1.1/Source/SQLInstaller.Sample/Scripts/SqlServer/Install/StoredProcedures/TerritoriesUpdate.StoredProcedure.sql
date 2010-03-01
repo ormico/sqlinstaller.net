@@ -4,7 +4,7 @@ CREATE PROCEDURE TerritoriesUpdate
 	@TerritoryID nvarchar(20),
 	@TerritoryDescription nchar(50),
 	@RegionID decimal(10,0),
-	@AuthUserID nvarchar(64)
+	@AuthUserID nvarchar(255)
 )
 AS
 BEGIN
