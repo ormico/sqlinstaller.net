@@ -20,7 +20,7 @@ namespace SQLInstaller.Console
 	/// </summary>
 	public class Program
 	{
-		public delegate void InstallMethod(SchemaInfo schema);
+		public delegate void InstallMethod();
 
 		public static int Main(string[] args)
 		{
@@ -32,7 +32,7 @@ namespace SQLInstaller.Console
 
 			try
 			{
-				string configPath = Constants.DefaultConfigFile;
+				string configPath = string.Empty;
 
 				if (args.Length > 0)
 					configPath = args[0];
@@ -51,16 +51,16 @@ namespace SQLInstaller.Console
 				spin.Start(spinCycle);
 				System.Console.Write(Resources.StatusConnecting);
 
-				installer = new Installer(p.ScriptPath, p.Options);
-				SchemaInfo schema = installer.Prepare(p.ProviderType, p.ConnectionString, p.Database);
+				installer = new Installer(p);
+				installer.Prepare();
 				spin.Stop();
 				System.Console.WriteLine(Resources.StatusDone);
 
-				if (schema.Exists && !p.Options.Has(Options.Drop))
+				if (installer.Exists && !p.Options.Has(Options.Drop))
 				{
-					if (schema.IsCurrent && !p.Options.Has(Options.Retry))
+                    if (installer.IsCurrent && !p.Options.Has(Options.Retry))
 					{
-						System.Console.WriteLine(schema.Provider.Database + Resources.StatusAlreadyUpgraded + schema.Version + Resources.StatusBy + schema.UpgradeBy);
+                        System.Console.WriteLine(p.Database + Resources.StatusAlreadyUpgraded + installer.Version + Resources.StatusBy + installer.UpgradeBy);
 						return 0;
 					}
 					else
@@ -71,7 +71,7 @@ namespace SQLInstaller.Console
 							while (key != ConsoleKey.N && key != ConsoleKey.Y)
 							{
 								System.Console.WriteLine();
-								System.Console.Write(Resources.AskUpgrade + schema.Provider.Database + Resources.AskToVersion + schema.Upgrade + Resources.AskYesNo);
+                                System.Console.Write(Resources.AskUpgrade + p.Database + Resources.AskToVersion + installer.Upgrade + Resources.AskYesNo);
 								key = System.Console.ReadKey(true).Key;
 							}
 
@@ -86,7 +86,7 @@ namespace SQLInstaller.Console
 				InstallMethod im = new InstallMethod(installer.Create);
 				AsyncCallback cb = new AsyncCallback(InstallCallback);
 
-				IAsyncResult asyncResult = im.BeginInvoke(schema, cb, im);
+				IAsyncResult asyncResult = im.BeginInvoke(cb, im);
 
 				WaitHandle[] bg = new WaitHandle[] { asyncResult.AsyncWaitHandle };
 				Progress prog = new Progress(StatusMessage.Running);

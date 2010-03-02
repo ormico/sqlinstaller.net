@@ -1,4 +1,4 @@
-create type orderhistory as (productname varchar(40), totalquantity int8);
+create type orderhistory as (productname varchar(40), totalquantity decimal);
 
 CREATE FUNCTION custorderhist(IN customerid character varying) RETURNS setof orderhistory AS
 $BODY$SELECT ProductName, SUM(Quantity) AS totalquantity

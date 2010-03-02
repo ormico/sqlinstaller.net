@@ -2,23 +2,25 @@
  *  SQL Installer.NET
  *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
  *  ----------------------------------------------------------------------------
- *  File:       Constants.cs
+ *  File:       Script.cs
  *  Author:     Brian Schloz
  *  ----------------------------------------------------------------------------
  */
-namespace SQLInstaller.Console
+namespace SQLInstaller.Core
 {
-	/// <summary>
-	/// Constants class.
-	/// </summary>
-	internal sealed class Constants
-	{
-		public const double MinSpinTimeout = 250;
-		public const string CarriageReturn = "\r";
-		public const string Wait = "...";
+	using System;
+	using System.Xml.Serialization;
 
-		private Constants()
-		{
-		}
+	/// <summary>
+	/// SQL Script.
+	/// </summary>
+	[Serializable]
+	public sealed class Script
+	{
+		[XmlAttribute]
+		public ScriptType Type { get; set; }
+
+		[XmlText]
+		public string CommandText { get; set; }
 	}
 }
