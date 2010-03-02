@@ -24,92 +24,61 @@ namespace SQLInstaller.Core
 	/// </summary>
 	public class SqlBuild : Task
 	{
-		private ProviderType provType;
-		private string connectionString;
-		private string database;
-		private string path;
-		private bool create;
-		private bool drop;
-		private bool retry;
-
 		public SqlBuild()
 		{
-			path = string.Empty;
-			connectionString = string.Empty;
-			create = true;
+			this.Create = true;
 		}
 
 		[Required]
-		public string Database
-		{
-			get { return database; }
-			set { database = value; }
-		}
+		public string Database { get; set; }
 
-		public ProviderType Provider
-		{
-			get { return provType; }
-			set { provType = value; }
-		}
+		public string Provider { get; set; }
 
 		[Required]
-		public string ConnectionString
-		{
-			get { return connectionString; }
-			set { connectionString = value; }
-		}
+		public string ConnectionString { get; set; }
 
-		public string Path
-		{
-			get { return path; }
-			set { path = value; }
-		}
+		public string Path { get; set; }
 
-		public bool Create
-		{
-			get { return create; }
-			set { create = value; }
-		}
+		public bool Create { get; set; }
 
-		public bool Drop
-		{
-			get { return drop; }
-			set { drop = value; }
-		}
+		public bool Drop { get; set; }
 
-		public bool Retry
-		{
-			get { return retry; }
-			set { retry = value; }
-		}
+		public bool Retry { get; set; }
 
 		public override bool Execute()
 		{
 			Options options = Options.Verbose;
-			if (create)
+			if (this.Create)
 				options |= Options.Create;
-			if (drop)
+			if (this.Drop)
 				options |= Options.Drop;
-			if (retry)
+			if (this.Retry)
 				options |= Options.Retry;
 
 			try
 			{
-				Installer installer = new Installer(path, options);
+				Parameters p = new Parameters();
+				p.ConfigPath = this.Path;
+				p.Options = options;
+				p.Database = this.Database;
+				p.ConnectionString = this.ConnectionString;
+				p.Provider.Name = this.Provider;
+
+				Installer installer = new Installer(p);
 				Log.LogMessage(Resources.StatusConnecting);
 
-				SchemaInfo schema = installer.Prepare(provType, connectionString, database);
+				installer.Prepare();
 
-				if (schema.Exists && (options & Options.Drop) != Options.Drop)
+				if (installer.Exists && (options & Options.Drop) != Options.Drop)
 				{
-					if (schema.ScriptsTotal == 0)
+					if (installer.ScriptsTotal == 0)
 					{
-						Log.LogWarning(schema.Provider.Database + Resources.StatusAlreadyUpgraded + schema.Version + Resources.StatusBy + schema.UpgradeBy);
+                        Log.LogWarning(this.Database + Resources.StatusAlreadyUpgraded + installer.Version + Resources.StatusBy + installer.UpgradeBy);
 						return true;
 					}
 				}
 
-				installer.Create(schema);
+				installer.Create();
 				Progress prog = new Progress(StatusMessage.Running);
 				while (prog.Status != StatusMessage.Exit)
 				{

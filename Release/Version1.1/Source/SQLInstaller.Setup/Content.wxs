@@ -12,12 +12,12 @@
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Core.TargetDir)">
 			<Component Id="SQLInstaller.Core.dll" Guid="{807BEB2A-AC36-4f90-9126-074B5C10C2A1}">
 				<File Id="SQLInstaller.Core.dll" KeyPath="yes"/>
-				<File Id="Npgsql.dll"/>
 			</Component>
 		</DirectoryRef>
 		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Console.TargetDir)">
 			<Component Id="SqlInstaller.exe" Guid="{E4A5EE25-AFC4-4409-945A-04262EF63492}">
-				<File Id="SqlInstaller.exe"/>
+				<File Id="SqlInstaller.exe" KeyPath="yes"/>
+				<File Id="ProviderFactory.xml.orig" Name="ProviderFactory.xml.orig" Source="$(var.SQLInstaller.Core.ProjectDir)Resources\ProviderFactory.xml"/>
 			</Component>
 			<Component Id="SQLInstaller.reg" Guid="{A082D4E0-E238-43bd-915A-54734039DFCE}">
 				<RegistryKey Id="SQLInstaller.regkey" Root="HKLM" Key="SOFTWARE\JHOB Technologies\SQLInstaller" Action="createAndRemoveOnUninstall">

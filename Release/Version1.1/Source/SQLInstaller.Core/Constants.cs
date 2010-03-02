@@ -10,13 +10,28 @@ namespace SQLInstaller.Core
 {
 	internal sealed class Constants
 	{
+        public const string RTM = "RTM";
+        public const string SqlServer = "SqlServer";
+        public const string Oracle = "Oracle";
+        public const string PostGres = "PostGres";
+
+		public const string DefaultConfigFile = @".\SQLInstaller.xml";
+		public const string DefaultDbName = "DbName";
+		public const string DefaultConnString = "Data Source=localhost;Integrated Security=SSPI;";
+		public const string CipherFile = "SQLInstaller.aes";
+		public const string ProviderFactory = "ProviderFactory";
+
+		public const char Pipe = '|';
 		public const char SplitChar = ';';
 		public const char CarriageReturn = '\r';
 		public const char NewLine = '\n';
 		public const char Space = ' ';
 		public const char BackSlash = '\\';
 		public const char ForwardSlash = '/';
+		public const string Tab = "\t";
+		public const string CurrentDir = @".\";
 		public const string SqlPattern = "*.sql";
+		public const string XmlExt = ".xml";
 		public const string OpenBracket = "[";
 		public const string CloseBracketHyphen = "] - ";
 
@@ -31,35 +46,8 @@ namespace SQLInstaller.Core
 		public const string PostInstallFilter = "*.PostInstall.sql";
 		public const string ForeignKeyFilter = "*.ForeignKey.sql";
 
-		public const string SqlSelectExists = "SELECT COUNT(*) FROM sysdatabases WHERE name = @database_name";
-		public const string SqlParmDatabaseName = "@database_name";
-		public const string SqlSelectVersion = "SELECT ISNULL(value,'') FROM fn_listextendedproperty(@name, default, default, default, default, default, default)";
-		public const string SqlParmName = "@name";
-		public const string SqlValueVersion = "Version";
-		public const string SqlValueUpdatedBy = "UpdatedBy";
-		public const string SqlSetVersion = "IF NOT EXISTS (SELECT value FROM fn_listextendedproperty(@propname, default, default, default, default, default, default)) EXEC sp_addextendedproperty @propname, @propvalue ELSE EXEC sp_updateextendedproperty @propname, @propvalue";
-		public const string SqlParmPropName = "@propname";
-		public const string SqlParmPropValue = "@propvalue";
-		public const string SqlSetSingleUser = "ALTER DATABASE {0} SET SINGLE_USER";
-		public const string SqlWithRollback = " WITH ROLLBACK IMMEDIATE";
-		public const string SqlDropDatabase = "DROP DATABASE ";
-
-		public const string OracleSelectExists = "SELECT COUNT(*) FROM all_users WHERE username = UPPER(:database_name)";
-		public const string OracleParmDatabaseName = ":database_name";
-		public const string OracleSelectVersion = "SELECT VERSION_INFO || ';' || UPGRADEBY FROM {0}.DB_VERSION";
-		public const string OracleCreateVersionView = "CREATE OR REPLACE VIEW {0}.DB_VERSION AS SELECT '{1}' AS VERSION_INFO, '{2}' AS UPGRADEBY FROM DUAL";
-		public const string OracleDropUser = "DROP USER {0} CASCADE";
-		public const string OracleCreateUser = "CREATE USER {0} IDENTIFIED EXTERNALLY";
-		public const string OracleGrantUser = "GRANT UNLIMITED TABLESPACE TO {0}";
 		public const string OracleBegin = "BEGIN";
 		public const string OracleAlterSession = "ALTER SESSION SET CURRENT_SCHEMA=";
-
-		public const string PostGresSelectExists = "SELECT COUNT(*) FROM pg_catalog.pg_database WHERE datname = :database_name";
-		public const string PostGresParmDatabaseName = ":database_name";
-		public const string PostGresSelectVersion = "SELECT version_info FROM db_version";
-		public const string PostGresCreateVersionView = "CREATE OR REPLACE VIEW db_version AS SELECT CAST('{0};{1}' AS VARCHAR(250)) AS version_info";
-		public const string PostGresDropDatabase = "DROP DATABASE ";
-		public const string PostGresCreateDatabase = "CREATE DATABASE ";
 	
 		private Constants()
 		{
