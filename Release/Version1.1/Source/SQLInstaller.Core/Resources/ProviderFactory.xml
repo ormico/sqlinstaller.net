@@ -5,7 +5,7 @@
 	with the underlying ADO.NET data provider. This file is an embedded resource within the
 	binary. However, if you rename the ProviderFactory.xml.orig (remove orig) found within
 	the SQL Installer.NET installation folder, you can customize these per installation. 
-	There are four scripts that you can customize:
+	There are five scripts that you can customize:
 	
 	1.	Exists: checks to see if the target database already exists. Will replace {0} 
 		with the database name passed in from the configuration (SQLInstaller.xml). 
@@ -15,7 +15,9 @@
 		database name.
 	3.	Create: creates the target database (or USER if Oracle). Will replace {0} with
 		the database name.
-	4.	GetVersion: retrieves the version information. Will replace {0} with the 
+	4.	GetVersion: gets the version information. Will replace {0} with the
+		database name.
+	5.	SetVersion: sets the version information. Will replace {0} with the 
 		database name, {1} with the version, and {2} with the user running the install.
 		
 	The Provider element is the same Provider used within the SQLInstaller.xml config file.
