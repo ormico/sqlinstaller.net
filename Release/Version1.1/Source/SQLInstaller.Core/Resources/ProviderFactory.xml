@@ -1,11 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ProviderFactory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="ProviderFactory">
+	<!--
+	The ProviderFactory configuration XML is used by SQL Installer.NET to control interaction
+	with the underlying ADO.NET data provider. This file is an embedded resource within the
+	binary. However, if you rename the ProviderFactory.xml.orig (remove orig) found within
+	the SQL Installer.NET installation folder, you can customize these per installation. 
+	There are four scripts that you can customize:
+	
+	1.	Exists: checks to see if the target database already exists. Will replace {0} 
+		with the database name passed in from the configuration (SQLInstaller.xml). 
+		Simply return a numeric value greater than zero if the database exists. 
+		Note: for Oracle you will check for a USER account.
+	2.	Drop: drops the target database (or USER if Oracle). Will replace {0} with the
+		database name.
+	3.	Create: creates the target database (or USER if Oracle). Will replace {0} with
+		the database name.
+	4.	GetVersion: retrieves the version information. Will replace {0} with the 
+		database name, {1} with the version, and {2} with the user running the install.
+		
+	The Provider element is the same Provider used within the SQLInstaller.xml config file.
+	You can override any or all of the Provider elements/attributes within SQLInstaller.xml. These
+	will be merged back with the global ProviderFactory xml at runtime.
+	
+	You may also define your own provider within either the ProviderFactory.xml file or within
+	each of your SQLInstaller.xml configuration files respectively. This allows you to add
+	support for other ADO.NET data providers as necessary.
+	-->
 	<Providers>
 		<Provider Name="Oracle" InvariantName="System.Data.OracleClient">
 			<Scripts>
 				<Script Type="Exists">SELECT COUNT(*) FROM all_users WHERE username = UPPER('{0}')</Script>
 				<Script Type="Drop">DROP USER {0} CASCADE</Script>
-				<Script Type="Create">BEGIN CREATE USER {0} IDENTIFIED EXTERNALLY; GRANT UNLIMITED TABLESPACE TO {0}; END;</Script>
+				<Script Type="Create">
+					BEGIN
+					EXECUTE IMMEDIATE 'CREATE USER {0} IDENTIFIED EXTERNALLY';
+					EXECUTE IMMEDIATE 'GRANT UNLIMITED TABLESPACE TO {0}';
+					END;
+				</Script>
 				<Script Type="GetVersion">SELECT VERSION_INFO || ';' || UPGRADEBY FROM {0}.DB_VERSION</Script>
 				<Script Type="SetVersion">CREATE OR REPLACE VIEW {0}.DB_VERSION AS SELECT '{1}' AS VERSION_INFO, '{2}' AS UPGRADEBY FROM DUAL</Script>
 			</Scripts>
