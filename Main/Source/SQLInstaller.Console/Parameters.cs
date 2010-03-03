@@ -10,6 +10,8 @@ namespace SQLInstaller.Console
 {
 	using System;
 	using System.IO;
+	using System.IO.IsolatedStorage;
+	using System.Security;
 	using System.Security.Cryptography;
 	using System.Security.Principal;
 	using System.Text;
@@ -32,15 +34,11 @@ namespace SQLInstaller.Console
 		private string database;
 		private ProviderType providerType;
 		private Options options;
-		private string cipherData;
 		private bool isProtected;
 		private bool noPrompt;
-		private bool noPromptSpecified;
 
 		[NonSerializedAttribute]
 		private RSACryptoServiceProvider rsa;
-		[NonSerializedAttribute]
-		private RijndaelManaged aes;
 
 		#endregion
 
@@ -58,7 +56,6 @@ namespace SQLInstaller.Console
 			csp.Flags = CspProviderFlags.UseMachineKeyStore;
 			csp.KeyContainerName = Path.GetFileNameWithoutExtension(configPath) + WindowsIdentity.GetCurrent().Name;
 			rsa = new RSACryptoServiceProvider(csp);
-			aes = new RijndaelManaged();
 		}
 
 		#endregion
@@ -87,13 +84,6 @@ namespace SQLInstaller.Console
 		}
 
 		[XmlElement]
-		public string CipherData
-		{
-			get { return cipherData; }
-			set { cipherData = value; }
-		}
-
-		[XmlElement]
 		public string ConnectionString
 		{
 			get { return connectionString; }
@@ -103,7 +93,14 @@ namespace SQLInstaller.Console
 		[XmlIgnore]
 		public string ScriptPath
 		{
-			get { return Path.GetDirectoryName(this.configPath); }
+			get 
+			{ 
+				string scriptPath = Path.GetDirectoryName(this.configPath);
+				if (string.IsNullOrEmpty(scriptPath))
+					scriptPath = Constants.CurrentDir;
+
+				return scriptPath;
+			}
 		}
 
 		[XmlAttribute]
@@ -124,13 +121,13 @@ namespace SQLInstaller.Console
 		public bool NoPrompt
 		{
 			get { return noPrompt; }
-			set { noPrompt = value; noPromptSpecified = true; }
+			set { noPrompt = value; }
 		}
 
 		[XmlIgnore]
 		public bool NoPromptSpecified
 		{
-			get { return noPromptSpecified; }
+			get { return noPrompt; }
 		}
 
 		#endregion
@@ -183,7 +180,6 @@ namespace SQLInstaller.Console
 			if (!isDisposed)
 			{
 				rsa.Clear();
-				aes.Clear();
 				GC.SuppressFinalize(this);
 				isDisposed = true;
 			}
@@ -210,13 +206,12 @@ namespace SQLInstaller.Console
 		private void ProtectConnectionString()
 		{
 			string saveString = connectionString;
-			cipherData = System.Convert.ToBase64String(rsa.Encrypt(aes.IV, true)) 
-				+ Constants.Pipe + System.Convert.ToBase64String(rsa.Encrypt(aes.Key, true));
 
+			RijndaelManaged aes = this.CreateCipher();
 			ICryptoTransform transform = aes.CreateEncryptor();
 			byte[] connectionStringBytes = Encoding.UTF8.GetBytes(connectionString);
 			byte[] cipherText = transform.TransformFinalBlock(connectionStringBytes, 0, connectionStringBytes.Length);
-			connectionString = System.Convert.ToBase64String(cipherText);
+			connectionString = Convert.ToBase64String(cipherText);
 
 			isProtected = true;
 			Write();
@@ -225,25 +220,69 @@ namespace SQLInstaller.Console
 
 		private void RevealConnectionString()
 		{
-			if (cipherData != null && cipherData.Length > 0)
-			{
-				string[] cipherInit = cipherData.Split(new char[] { Constants.Pipe });
-				if (cipherInit.Length == 2)
-				{
-					aes.IV = rsa.Decrypt(System.Convert.FromBase64String(cipherInit[0]), true);
-					aes.Key = rsa.Decrypt(System.Convert.FromBase64String(cipherInit[1]), true);
-				}
-				else
-					throw new ArgumentException(Resources.InvalidCipherData);
+			RijndaelManaged aes = this.CreateCipher();
 
+			try
+			{
 				ICryptoTransform transform = aes.CreateDecryptor();
-				byte[] connectionStringBytes = System.Convert.FromBase64String(connectionString);
+				byte[] connectionStringBytes = Convert.FromBase64String(connectionString);
 				byte[] plainText = transform.TransformFinalBlock(connectionStringBytes, 0, connectionStringBytes.Length);
 				connectionString = Encoding.UTF8.GetString(plainText);
-
-				isProtected = false;
-				cipherData = null;
 			}
+			catch (FormatException) { }
+			catch (CryptographicException) { }
+
+			isProtected = false;
+		}
+
+		private RijndaelManaged CreateCipher()
+		{
+			RijndaelManaged aes = new RijndaelManaged();
+			IsolatedStorageFile isf = null;
+			try
+			{
+				isf = IsolatedStorageFile.GetUserStoreForAssembly();
+			}
+			catch (SecurityException)
+			{
+				isf = IsolatedStorageFile.GetMachineStoreForAssembly();
+			}
+
+			using (IsolatedStorageFileStream ifs = new IsolatedStorageFileStream(Constants.CipherFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, isf))
+			{
+				string cipherData = string.Empty;
+				if (ifs.Length > 0)
+				{
+					using (StreamReader sr = new StreamReader(ifs))
+					{
+						cipherData = sr.ReadLine();
+						string[] cipherInit = cipherData.Split(new char[] { Constants.Pipe });
+						if (cipherInit.Length == 2)
+						{
+							aes.IV = rsa.Decrypt(Convert.FromBase64String(cipherInit[0]), true);
+							aes.Key = rsa.Decrypt(Convert.FromBase64String(cipherInit[1]), true);
+						}
+						else
+							throw new ArgumentException(Resources.InvalidCipherData);
+
+						sr.Close();
+					}
+				}
+				else
+				{
+					cipherData = Convert.ToBase64String(rsa.Encrypt(aes.IV, true))
+						+ Constants.Pipe + Convert.ToBase64String(rsa.Encrypt(aes.Key, true));
+
+					using (StreamWriter sw = new StreamWriter(ifs))
+					{
+						sw.WriteLine(cipherData);
+						sw.Flush();
+						sw.Close();
+					}
+				}
+			}
+
+			return aes;
 		}
 
 		#endregion

@@ -13,14 +13,9 @@ namespace SQLInstaller.Console
 	/// </summary>
 	internal sealed class Constants
 	{
-		public const char Pipe = '|';
-		public const string DefaultConfigFile = @".\SQLInstaller.xml";
+		public const double MinSpinTimeout = 250;
 		public const string CarriageReturn = "\r";
-		public const string Tab = "\t";
 		public const string Wait = "...";
-		public const string CurrentDir = ".";
-		public const string DefaultDbName = "DbName";
-		public const string DefaultConnString = "Data Source=localhost;Integrated Security=SSPI;";
 
 		private Constants()
 		{
