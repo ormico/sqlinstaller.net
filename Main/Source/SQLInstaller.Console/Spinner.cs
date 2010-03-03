@@ -23,7 +23,7 @@ namespace SQLInstaller.Console
 
 		public Spinner()
 		{
-			timer = new Timer(250);
+			timer = new Timer(Constants.MinSpinTimeout);
 			timer.Elapsed += new ElapsedEventHandler(Timer_Elapsed);
 			timer.Enabled = false;
 			timer.AutoReset = true;
@@ -31,8 +31,11 @@ namespace SQLInstaller.Console
 
 		public void Start(double timeout)
 		{
-			timer.Interval = timeout;
-			timer.Enabled = true;
+			if (timeout >= Constants.MinSpinTimeout)
+			{
+				timer.Interval = timeout;
+				timer.Enabled = true;
+			}
 		}
 
 		public void Stop()

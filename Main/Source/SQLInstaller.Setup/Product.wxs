@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="{BAB1F4A8-9049-4609-993A-3EA8C8ACADEF}" Codepage="1252" Language="1033" Manufacturer="JHOB Technologies, LLC" Name="SQL Installer.NET" UpgradeCode="{7F6E19C9-161F-47e6-804F-E1A0C30E8A31}" Version="1.1.0">
-		<Package Comments="SQL Installer.NET" Compressed="yes" InstallerVersion="200" Languages="1033" Manufacturer="JHOB Technologies, LLC" Platform="x86" />
-		<Feature Id="Default" ConfigurableDirectory="ROOTINSTALL" Level="1" Title="Binaries" Description="Binaries, Documentation, and Samples">
-			<ComponentGroupRef Id="Binaries" />
-		</Feature>
+  <Product Id="{BAB1F4A8-9049-4609-993A-3EA8C8ACADEF}" Codepage="1252" Language="1033" Manufacturer="JHOB Technologies, LLC" Name="SQL Installer.NET" UpgradeCode="{7F6E19C9-161F-47e6-804F-E1A0C30E8A31}" Version="1.1.4">
+    <Package Comments="SQL Installer.NET" Compressed="yes" InstallerVersion="200" Languages="1033" Manufacturer="JHOB Technologies, LLC" Platform="x86" />
+    <Condition Message="[SQLSMOMSG]">INSTALLED OR SQLSMO</Condition>
+    <Feature Id="Default" ConfigurableDirectory="ROOTINSTALL" Level="1" Title="Binaries" Description="Binaries, Documentation, and Samples">
+      <ComponentGroupRef Id="Binaries" />
+    </Feature>
 
-		<Media Id="1" Cabinet="SQLInstaller.cab" EmbedCab="yes" />
+    <Media Id="1" Cabinet="SQLInstaller.cab" EmbedCab="yes" />
 
-		<Property Id="WIXUI_INSTALLDIR" Value="ROOTINSTALL" />
-		<Property Id="ARPHELPLINK" Value="http://www.codeplex.com/sqlinstaller" />
-		<Property Id="ARPURLINFOABOUT" Value="http://www.codeplex.com/sqlinstaller" />
-		<Property Id="ALLUSERS" Value="2" />
-		<Property Id="ARPPRODUCTICON" Value="Install.Icon.exe" />
-		<Icon Id="Install.Icon.exe" SourceFile="$(var.SQLInstaller.Console.ProjectDir)Resources\data_replace.ico"/>
+    <Property Id="SQLSMO" >
+      <DirectorySearch Id="FindSmoDir" Path="[ProgramFilesFolder]\Microsoft SQL Server\100\SDK\Assemblies" Depth="0">
+        <FileSearch Id="FindSmoFile" Name="Microsoft.SqlServer.Management.Sdk.Sfc.dll" />
+      </DirectorySearch>
+    </Property>
+    <Property Id="SQLSMOMSG" Value="This program requires Microsoft SQL Server 2008 Management Objects.  You can find them at http://www.microsoft.com/downloads/details.aspx?familyid=228DE03F-3B5A-428A-923F-58A033D316E1." />
+    <Property Id="WIXUI_INSTALLDIR" Value="ROOTINSTALL" />
+    <Property Id="ARPHELPLINK" Value="http://www.codeplex.com/sqlinstaller" />
+    <Property Id="ARPURLINFOABOUT" Value="http://www.codeplex.com/sqlinstaller" />
+    <Property Id="ALLUSERS" Value="2" />
+    <Property Id="ARPPRODUCTICON" Value="Install.Icon.exe" />
+    <Icon Id="Install.Icon.exe" SourceFile="$(var.SQLInstaller.Console.ProjectDir)Resources\data_replace.ico"/>
 
-		<UIRef Id="WixUI_InstallDir" />
-		<WixVariable Id="WixUILicenseRtf" Value="$(var.SQLInstaller.Console.ProjectDir)Resources\License.rtf" />
-	</Product>
+    <UIRef Id="WixUI_InstallDir" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SQLInstaller.Console.ProjectDir)Resources\License.rtf" />
+  </Product>
 </Wix>

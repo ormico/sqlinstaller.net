@@ -8,36 +8,40 @@
  */
 namespace SQLInstaller.Core
 {
+	using System;
+	using System.ComponentModel;
+	using System.Xml.Serialization;
+
 	/// <summary>
-	/// Provider base class.
+	/// Provider factory.
 	/// </summary>
-	public abstract class Provider
+	[Serializable]
+	public sealed class Provider
 	{
-		private string connectionString;
-		private string database;
+		private ScriptCollection scripts;
 
-		public string ConnectionString
+		public Provider()
 		{
-			get { return connectionString; }
-			set { connectionString = value; }
+			this.scripts = new ScriptCollection();
 		}
 
-		public string Database
+		[XmlAttribute]
+		public string Name { get; set; }
+
+		[XmlAttribute]
+		public string InvariantName { get; set; }
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[XmlIgnore]
+		public bool ScriptsSpecified
 		{
-			get { return database; }
-			set { database = value; }
+			get { return this.Scripts.Count > 0; }
 		}
 
-		public abstract bool Exists();
-
-		public abstract string GetVersion();
-
-		public abstract void SetVersion(string version, string upgradeBy);
-
-		public abstract void DropDatabase();
-
-		public abstract void CreateDatabase();
-
-		public abstract void ExecuteScript(string script);
+		public ScriptCollection Scripts
+		{
+			get { return this.scripts; }
+		}
 	}
 }

@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Console", "SQL
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SQLInstaller.Setup", "SQLInstaller.Setup\SQLInstaller.Setup.wixproj", "{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Sample", "SQLInstaller.Sample\SQLInstaller.Sample.csproj", "{02E2C154-5D5F-43F0-9827-C82D274AA475}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs05.codeplex.com/
 		SccLocalPath0 = .
@@ -22,6 +24,9 @@ Global
 		SccProjectUniqueName3 = SQLInstaller.Setup\\SQLInstaller.Setup.wixproj
 		SccProjectName3 = SQLInstaller.Setup
 		SccLocalPath3 = SQLInstaller.Setup
+		SccProjectUniqueName4 = SQLInstaller.Sample\\SQLInstaller.Sample.csproj
+		SccProjectName4 = SQLInstaller.Sample
+		SccLocalPath4 = SQLInstaller.Sample
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +65,12 @@ Global
 		{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}.Release|x86.ActiveCfg = Release|x86
 		{AE047B4B-C06F-4972-8A66-DC7F0DF8F38D}.Release|x86.Build.0 = Release|x86
+		{02E2C154-5D5F-43F0-9827-C82D274AA475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02E2C154-5D5F-43F0-9827-C82D274AA475}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{02E2C154-5D5F-43F0-9827-C82D274AA475}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{02E2C154-5D5F-43F0-9827-C82D274AA475}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02E2C154-5D5F-43F0-9827-C82D274AA475}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{02E2C154-5D5F-43F0-9827-C82D274AA475}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

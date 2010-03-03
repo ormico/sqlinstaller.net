@@ -16,23 +16,6 @@ namespace SQLInstaller.Core
 	/// </summary>
 	public sealed class OracleProvider : Provider
 	{
-		private OracleConnectionStringBuilder builderNewUser;
-
-		public OracleConnectionStringBuilder BuilderNewUser
-		{
-			get
-			{
-				if (builderNewUser == null)
-				{
-					builderNewUser = new OracleConnectionStringBuilder(ConnectionString);
-					builderNewUser.UserID = Database.ToUpper();
-					builderNewUser.Password = builderNewUser.UserID;
-				}
-
-				return builderNewUser;
-			}
-		}
-
 		public override bool Exists()
 		{
 			bool exists = false;
@@ -104,17 +87,20 @@ namespace SQLInstaller.Core
 			// The .NET provider for Oracle does not support everthing you can do
 			// in SQL*PLUS when executing DDL. We provide for two variants which
 			// should cover all DDL types but there is little tolerance for variation.
-			string sql = script.Replace(Constants.CarriageReturn, Constants.Space).Replace(Constants.NewLine, Constants.Space).Trim();
-			using (OracleConnection conn = new OracleConnection(BuilderNewUser.ConnectionString))
+			using (OracleConnection conn = new OracleConnection(ConnectionString))
 			{
 				conn.Open();
 				OracleCommand cmd = new OracleCommand();
 				cmd.Connection = conn;
 
+				cmd.CommandText = Constants.OracleAlterSession + Database.ToUpper();
+				cmd.ExecuteNonQuery();
+				cmd.Parameters.Clear();
+
 				// If the script has a begin/end block, then assume it is a sproc, trigger or
 				// anonymous/adhoc. These can have multiple statements terminated by semi-colons.
 				string[] scripts = null;
-				int begin = sql.IndexOf(Constants.OracleBegin, StringComparison.OrdinalIgnoreCase);
+				int begin = script.IndexOf(Constants.OracleBegin, StringComparison.OrdinalIgnoreCase);
 				if (begin >= 0)
 				{
 					// Treat script starting with BEGIN special case for data loading/inserts.
@@ -122,13 +108,13 @@ namespace SQLInstaller.Core
 					if (begin == 0)
 					{
 						scripts = new string[1];
-						scripts[0] = sql;
+						scripts[0] = script;
 					}
 					else
-						scripts = sql.Split(new char[] { Constants.ForwardSlash }, StringSplitOptions.RemoveEmptyEntries);
+						scripts = script.Split(new char[] { Constants.ForwardSlash }, StringSplitOptions.RemoveEmptyEntries);
 				}
 				else // Should handle all other types of create/alter DDL
-					scripts = sql.Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
+					scripts = script.Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
 				foreach (string sqlLine in scripts)
 				{

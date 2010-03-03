@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{c252feb5-a946-4202-b1d4-9916a0590387};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{02E2C154-5D5F-43F0-9827-C82D274AA475}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>SQLInstaller.Sample</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>SQLInstaller.Sample</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\SqlServer.targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>sqlinstaller ..\..\SQLInstaller.xml</PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Scripts\Oracle\SQLInstaller.xml" />
+    <Content Include="Scripts\PostGres\SQLInstaller.xml" />
+    <Content Include="Scripts\SqlServer\SQLInstaller.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\Oracle\Install\ForeignKeys\CATEGORIESPRODUCTS.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\CUSTOMERCUSTOMERDEMO.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\CUSTOMERORDERS.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\EMPLOYEESORDERS.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\EMPLOYEETERRITORIES.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\ORDERDETAILS.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\PRODUCTSORDERDETAILS.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\SHIPPERSORDERS.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\SUPPLIERSPRODUCTS.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\ForeignKeys\TERRITORIES.ForeignKey.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\CATEGORIES.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\CUSTOMERS.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\EMPLOYEES.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\EMPLOYEES_SETUSER.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\ORDERDETAILS.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\ORDERS.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\PRODUCTS.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\SHIPPERS.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\SUPPLIERS.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\PostInstall\UserGrants.PostInstall.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\AUTHORIZATIONSELECT.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\CATEGORIES.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\CUSTOMERCUSTOMERDEMO.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\CUSTOMERDEMOGRAPHICS.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\CUSTOMERS.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\EMPLOYEES.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\EMPLOYEETERRITORIES.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\ORDERDETAILS.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\ORDERS.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\PRODUCTS.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\REGION.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\SHIPPERS.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\SUPPLIERS.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\StoredProcedures\TERRITORIES.StoredProcedure.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\CATEGORIES.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\CUSTOMERCUSTOMERDEMO.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\CUSTOMERDEMOGRAPHICS.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\CUSTOMERS.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\EMPLOYEES.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\EMPLOYEETERRITORIES.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\ORDERDETAILS.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\ORDERS.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\PRODUCTS.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\REGION.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\SHIPPERS.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\SUPPLIERS.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Tables\TERRITORIES.Table.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\CATEGORIES.Trigger.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\CUSTOMERS.Trigger.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\EMPLOYEES.Trigger.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\ORDERDETAILS.Trigger.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\ORDERS.Trigger.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\PRODUCTS.Trigger.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\SHIPPERS.Trigger.sql" />
+    <None Include="Scripts\Oracle\Install\Triggers\SUPPLIERS.Trigger.sql" />
+    <None Include="Scripts\PostGres\Install\Functions\customers.UserDefinedFunction.sql" />
+    <None Include="Scripts\PostGres\Install\Functions\custorderhist.UserDefinedFunction.sql" />
+    <None Include="Scripts\PostGres\Install\Functions\orderdetails.UserDefinedFunction.sql" />
+    <None Include="Scripts\PostGres\Install\Functions\orders.UserDefinedFunction.sql" />
+    <None Include="Scripts\PostGres\Install\Functions\products.UserDefinedFunction.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\categories.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\customers.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\employees.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\orderdetails.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\orders.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\products.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\shippers.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\PostInstall\suppliers.PostInstall.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\categories.Table.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\customers.Table.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\employees.Table.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\orderdetails.Table.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\orders.Table.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\products.Table.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\shippers.Table.sql" />
+    <None Include="Scripts\PostGres\Install\Tables\suppliers.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\AuditCreate.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\ForeignKeys\CustomerCustomerDemo.ForeignKey.sql" />
+    <None Include="Scripts\SqlServer\Install\ForeignKeys\Employees.ForeignKey.sql" />
+    <None Include="Scripts\SqlServer\Install\ForeignKeys\EmployeeTerritories.ForeignKey.sql" />
+    <None Include="Scripts\SqlServer\Install\ForeignKeys\OrderDetails.ForeignKey.sql" />
+    <None Include="Scripts\SqlServer\Install\ForeignKeys\Orders.ForeignKey.sql" />
+    <None Include="Scripts\SqlServer\Install\ForeignKeys\Products.ForeignKey.sql" />
+    <None Include="Scripts\SqlServer\Install\ForeignKeys\Territories.ForeignKey.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\Categories.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\Customers.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\Employees.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\OrderDetails.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\Orders.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\Products.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\Shippers.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\PostInstall\Suppliers.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\AuthorizationSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CategoriesDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CategoriesInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CategoriesSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CategoriesUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomerCustomerDemoDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomerCustomerDemoInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomerCustomerDemoSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomerDemographicsDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomerDemographicsInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomerDemographicsSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomerDemographicsUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomersDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomersInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomersSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\CustomersUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeeListSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeesDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeesInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeesSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeesUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeeTerritoriesDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeeTerritoriesInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\EmployeeTerritoriesSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrderDetailsDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrderDetailsInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrderDetailsSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrderDetailsUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrdersDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrdersInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrdersSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\OrdersUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ProductsDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ProductsInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ProductsSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ProductsUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\RegionDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\RegionInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\RegionSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\RegionUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\SetUserContext.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ShippersDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ShippersInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ShippersSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\ShippersUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\SuppliersDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\SuppliersInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\SuppliersSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\SuppliersUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\TerritoriesDelete.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\TerritoriesInsert.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\TerritoriesSelect.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\TerritoriesUpdate.StoredProcedure.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Categories.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\CustomerCustomerDemo.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\CustomerDemographics.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Customers.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Employees.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\EmployeeTerritories.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\OrderDetails.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Orders.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Products.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Region.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Shippers.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Suppliers.Table.sql" />
+    <None Include="Scripts\SqlServer\Install\Tables\Territories.Table.sql" />
+  </ItemGroup>
+</Project>
