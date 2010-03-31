@@ -214,4 +214,10 @@
   <data name="ProviderFactory" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\providerfactory.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="ExitingWithNewTemplate" xml:space="preserve">
+    <value>. Creating a new template. Please edit as appropriate. Exiting.</value>
+  </data>
+  <data name="MissingParmFile" xml:space="preserve">
+    <value>Missing parameters xml file: </value>
+  </data>
 </root>

@@ -17,6 +17,7 @@ namespace SQLInstaller.Core
 
 		public const string DefaultConfigFile = @".\SQLInstaller.xml";
 		public const string DefaultDbName = "DbName";
+		public const string DefaultProvider = "SqlServer";
 		public const string DefaultConnString = "Data Source=localhost;Integrated Security=SSPI;";
 		public const string CipherFile = "SQLInstaller.aes";
 		public const string ProviderFactory = "ProviderFactory";

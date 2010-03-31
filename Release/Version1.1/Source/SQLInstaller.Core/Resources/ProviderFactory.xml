@@ -29,6 +29,15 @@
 	support for other ADO.NET data providers as necessary.
 	-->
 	<Providers>
+		<Provider Name="MySql" InvariantName="MySql.Data.MySqlClient">
+			<Scripts>
+				<Script Type="Exists">SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{0}'</Script>
+				<Script Type="Drop">SET FOREIGN_KEY_CHECKS=0;DROP DATABASE {0};SET FOREIGN_KEY_CHECKS=1;</Script>
+				<Script Type="Create">CREATE DATABASE {0}</Script>
+				<Script Type="GetVersion">SELECT version_info FROM db_version</Script>
+				<Script Type="SetVersion">CREATE OR REPLACE VIEW db_version AS SELECT '{1};{2}' AS version_info</Script>
+			</Scripts>
+		</Provider>
 		<Provider Name="Oracle" InvariantName="System.Data.OracleClient">
 			<Scripts>
 				<Script Type="Exists">SELECT COUNT(*) FROM all_users WHERE username = UPPER('{0}')</Script>
