@@ -38,7 +38,6 @@ namespace SQLInstaller.Core
 
 		public Parameters()
 		{
-			this.ConfigPath = Constants.DefaultConfigFile;
 			this.Database = Constants.DefaultDbName;
 			this.ConnectionString = Constants.DefaultConnString;
 			this.Options = this.Options.Add(Options.Create | Options.Drop | Options.Verbose);
@@ -46,7 +45,7 @@ namespace SQLInstaller.Core
 
 			CspParameters csp = new CspParameters();
 			csp.Flags = CspProviderFlags.UseMachineKeyStore;
-			csp.KeyContainerName = Path.GetFileNameWithoutExtension(this.ConfigPath) + WindowsIdentity.GetCurrent().Name;
+			csp.KeyContainerName = Path.GetFileNameWithoutExtension(Constants.DefaultConfigFile) + WindowsIdentity.GetCurrent().Name;
 			rsa = new RSACryptoServiceProvider(csp);			
 		}
 
@@ -110,8 +109,6 @@ namespace SQLInstaller.Core
 		public static Parameters Load(string configPath)
 		{
 			Parameters p = null;
-			if (string.IsNullOrEmpty(configPath))
-				configPath = Constants.DefaultConfigFile;
 
 			if (File.Exists(configPath))
 			{
@@ -122,10 +119,18 @@ namespace SQLInstaller.Core
 				}
 
 				p.ConfigPath = configPath;
+
 				if (!p.IsProtected)
 					p.ProtectConnectionString();
 				else
 					p.RevealConnectionString();
+			}
+			else
+			{
+				p = new Parameters();
+				p.ConfigPath = configPath;
+				p.Write();
+				throw new ArgumentException(Resources.MissingParmFile + configPath + Resources.ExitingWithNewTemplate);
 			}
 
 			return p;

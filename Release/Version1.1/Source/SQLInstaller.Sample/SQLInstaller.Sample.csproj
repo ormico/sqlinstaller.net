@@ -55,11 +55,28 @@
     <PostBuildEvent>sqlinstaller ..\..\SQLInstaller.xml</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Scripts\MySql\SQLInstaller.xml" />
     <Content Include="Scripts\Oracle\SQLInstaller.xml" />
     <Content Include="Scripts\PostGres\SQLInstaller.xml" />
     <Content Include="Scripts\SqlServer\SQLInstaller.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\MySql\Install\PostInstall\categories.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\PostInstall\customers.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\PostInstall\employees.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\PostInstall\orderdetails.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\PostInstall\orders.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\PostInstall\products.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\PostInstall\shippers.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\PostInstall\suppliers.PostInstall.sql" />
+    <None Include="Scripts\MySql\Install\Tables\categories.Table.sql" />
+    <None Include="Scripts\MySql\Install\Tables\customers.Table.sql" />
+    <None Include="Scripts\MySql\Install\Tables\employees.Table.sql" />
+    <None Include="Scripts\MySql\Install\Tables\orderdetails.Table.sql" />
+    <None Include="Scripts\MySql\Install\Tables\orders.Table.sql" />
+    <None Include="Scripts\MySql\Install\Tables\products.Table.sql" />
+    <None Include="Scripts\MySql\Install\Tables\shippers.Table.sql" />
+    <None Include="Scripts\MySql\Install\Tables\suppliers.Table.sql" />
     <None Include="Scripts\Oracle\Install\ForeignKeys\CATEGORIESPRODUCTS.ForeignKey.sql" />
     <None Include="Scripts\Oracle\Install\ForeignKeys\CUSTOMERCUSTOMERDEMO.ForeignKey.sql" />
     <None Include="Scripts\Oracle\Install\ForeignKeys\CUSTOMERORDERS.ForeignKey.sql" />
@@ -152,6 +169,8 @@
     <None Include="Scripts\SqlServer\Install\PostInstall\Products.PostInstall.sql" />
     <None Include="Scripts\SqlServer\Install\PostInstall\Shippers.PostInstall.sql" />
     <None Include="Scripts\SqlServer\Install\PostInstall\Suppliers.PostInstall.sql" />
+    <None Include="Scripts\SqlServer\Install\SaltedHash.UserDefinedFunction.sql" />
+    <None Include="Scripts\SqlServer\Install\StoredProcedures\AuthenticationSelect.StoredProcedure.sql" />
     <None Include="Scripts\SqlServer\Install\StoredProcedures\AuthorizationSelect.StoredProcedure.sql" />
     <None Include="Scripts\SqlServer\Install\StoredProcedures\CategoriesDelete.StoredProcedure.sql" />
     <None Include="Scripts\SqlServer\Install\StoredProcedures\CategoriesInsert.StoredProcedure.sql" />

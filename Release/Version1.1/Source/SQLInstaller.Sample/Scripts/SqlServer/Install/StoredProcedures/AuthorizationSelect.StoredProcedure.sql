@@ -1,6 +1,6 @@
 CREATE PROCEDURE AuthorizationSelect
 (
-	@UserName nvarchar(255)
+	@UserID nvarchar(255)
 )
 AS
 	SET NOCOUNT ON
@@ -17,5 +17,8 @@ AS
 			HomePhone AS AuthHomePhone,
 			ReportsTo AS AuthReportsTo
 	FROM	Employees
-	WHERE	UserID = @UserName
+	WHERE	UserID = @UserID
+
+	SELECT	'Administrators'
+
 GO
