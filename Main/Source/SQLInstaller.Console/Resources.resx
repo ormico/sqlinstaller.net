@@ -133,12 +133,6 @@
   <data name="AskYesNo" xml:space="preserve">
     <value> (Y/N)? </value>
   </data>
-  <data name="ExitingWithNewTemplate" xml:space="preserve">
-    <value>. Creating a new template. Please edit as appropriate. Exiting.</value>
-  </data>
-  <data name="MissingParmFile" xml:space="preserve">
-    <value>Missing parameters xml file: </value>
-  </data>
   <data name="StatusAlreadyUpgraded" xml:space="preserve">
     <value> has already been upgraded to </value>
   </data>

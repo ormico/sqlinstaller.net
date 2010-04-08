@@ -36,14 +36,11 @@ namespace SQLInstaller.Console
 
 				if (args.Length > 0)
 					configPath = args[0];
+
+				if (string.IsNullOrEmpty(configPath))
+					configPath = Path.Combine(Directory.GetCurrentDirectory(), Constants.SQLInstallerXml);
+
 				Parameters p = Parameters.Load(configPath);
-				if (p == null)
-				{
-					p = new Parameters();
-					p.ConfigPath = configPath;
-					p.Write();
-					throw new ArgumentException(Resources.MissingParmFile + configPath + Resources.ExitingWithNewTemplate);
-				}
 
 				if (p.NoPrompt)
 					spinCycle = double.MinValue;
