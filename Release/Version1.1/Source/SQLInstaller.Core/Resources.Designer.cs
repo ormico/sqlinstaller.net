@@ -68,6 +68,15 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find connection method: .
+        /// </summary>
+        internal static string ErrorConnectionMethod {
+            get {
+                return ResourceManager.GetString("ErrorConnectionMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not append value from enumerated type &apos;{0}&apos;..
         /// </summary>
         internal static string ErrorEnumAppend {
@@ -91,6 +100,15 @@ namespace SQLInstaller.Core {
         internal static string ErrorInvalidCipherData {
             get {
                 return ResourceManager.GetString("ErrorInvalidCipherData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: this provider requires an Exists SQL statement. None were provided. Check your config file: .
+        /// </summary>
+        internal static string ErrorMissingStatement {
+            get {
+                return ResourceManager.GetString("ErrorMissingStatement", resourceCulture);
             }
         }
         

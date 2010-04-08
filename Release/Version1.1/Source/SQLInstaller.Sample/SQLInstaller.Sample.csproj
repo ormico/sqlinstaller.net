@@ -55,12 +55,16 @@
     <PostBuildEvent>sqlinstaller ..\..\SQLInstaller.xml</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Scripts\Firebird\SQLInstaller.xml" />
     <Content Include="Scripts\MySql\SQLInstaller.xml" />
     <Content Include="Scripts\Oracle\SQLInstaller.xml" />
     <Content Include="Scripts\PostGres\SQLInstaller.xml" />
     <Content Include="Scripts\SqlServer\SQLInstaller.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\Firebird\Install\PostInstall\EMPLOYEES.PostInstall.sql" />
+    <None Include="Scripts\Firebird\Install\Tables\CUSTOMERS.Table.sql" />
+    <None Include="Scripts\Firebird\Install\Tables\EMPLOYEES.Table.sql" />
     <None Include="Scripts\MySql\Install\PostInstall\categories.PostInstall.sql" />
     <None Include="Scripts\MySql\Install\PostInstall\customers.PostInstall.sql" />
     <None Include="Scripts\MySql\Install\PostInstall\employees.PostInstall.sql" />

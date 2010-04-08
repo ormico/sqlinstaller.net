@@ -29,6 +29,12 @@
 	support for other ADO.NET data providers as necessary.
 	-->
 	<Providers>
+		<Provider Name="Firebird" InvariantName="FirebirdSql.Data.FirebirdClient">
+			<Scripts>
+				<Script Type="GetVersion">SELECT version_info FROM db_version</Script>
+				<Script Type="SetVersion">RECREATE VIEW db_version (version_info) AS SELECT '{1};{2}' FROM rdb$database</Script>
+			</Scripts>
+		</Provider>
 		<Provider Name="MySql" InvariantName="MySql.Data.MySqlClient">
 			<Scripts>
 				<Script Type="Exists">SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{0}'</Script>
