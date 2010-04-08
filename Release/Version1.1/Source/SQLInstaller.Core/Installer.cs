@@ -10,15 +10,9 @@ namespace SQLInstaller.Core
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Data.Common;
-	using System.Data.SqlClient;
 	using System.IO;
-	using System.Reflection;
 	using System.Security.Principal;
 	using System.Threading;
-
-	using Microsoft.SqlServer.Management.Common;
-	using Microsoft.SqlServer.Management.Smo;
 
 	/// <summary>
 	/// Install class.
@@ -28,7 +22,7 @@ namespace SQLInstaller.Core
 		private bool isDisposed;
 		private Queue<Progress> messages;
 		private Parameters parameters;
-		private DbProviderFactory providerFactory;
+		private BaseClient client;
 
 		public Installer(Parameters parameters)
 		{
@@ -36,8 +30,6 @@ namespace SQLInstaller.Core
 			this.messages = new Queue<Progress>();
 			this.parameters = parameters;
 		}
-
-		public Provider Provider { get; private set; }
 
 		public bool Exists { get; private set; }
 
@@ -64,11 +56,6 @@ namespace SQLInstaller.Core
 			}
 		}
 
-		public bool IsNotOracle
-		{
-			get { return string.CompareOrdinal(this.Provider.Name, Constants.Oracle) != 0; }
-		}
-
 		public void Prepare()
         {
 			if (this.parameters.Provider == null 
@@ -77,36 +64,8 @@ namespace SQLInstaller.Core
 				|| string.IsNullOrEmpty(this.parameters.Database))
                 throw new ArgumentException(Resources.MissingReq);
 
-			string provConfig = Resources.ProviderFactory;
-			string provConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Constants.ProviderFactory + Constants.XmlExt);
-
-			if (File.Exists(provConfigPath))
-			{
-				using (StreamReader r = new StreamReader(provConfigPath))
-				{
-					provConfig = r.ReadToEnd();
-				}
-			}
-
-			ProviderFactory factory = ProviderFactory.Load(provConfig);
-			if (!factory.Providers.Contains(this.parameters.Provider.Name))
-				throw new ArgumentException(Resources.ErrorUnknownProvider + this.parameters.Provider.Name);
-
-			this.Provider = factory.Providers[this.parameters.Provider.Name];
-			this.providerFactory = DbProviderFactories.GetFactory(this.Provider.InvariantName);
-
-			if (this.parameters.Provider != null && string.CompareOrdinal(this.Provider.Name, this.parameters.Provider.Name) == 0)
-			{
-				if (!string.IsNullOrEmpty(this.parameters.Provider.InvariantName))
-					this.Provider.InvariantName = this.parameters.Provider.InvariantName;
-
-				foreach (Script s in this.parameters.Provider.Scripts)
-				{
-					this.Provider.Scripts[s.Type].CommandText = s.CommandText;
-				}
-			}
-
-			this.Exists = this.CheckExists(this.parameters.Database);
+			this.client = BaseClient.Create(this.parameters);
+			this.Exists = this.client.CheckExists();
 
             if (!Directory.Exists(this.parameters.ScriptPath))
                 throw new ArgumentException(Resources.MissingScriptDir + this.parameters.ScriptPath);
@@ -132,7 +91,7 @@ namespace SQLInstaller.Core
 
             if (this.Exists && (this.parameters.Options & Options.Drop) != Options.Drop)
             {
-				string[] version = this.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
+				string[] version = this.client.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (version.Length == 2)
                 {
@@ -169,7 +128,7 @@ namespace SQLInstaller.Core
 				if (this.Exists && (this.parameters.Options & Options.Drop) == Options.Drop)
 				{
 					SetProgress(StatusMessage.Start, Resources.StatusDroppingDatabase + this.parameters.Database);
-					this.DropDatabase();
+					this.client.DropDatabase();
 					SetProgress(StatusMessage.Complete, Resources.StatusDone);
 					if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
 						SetProgress(StatusMessage.Progress, string.Empty, 50);
@@ -184,7 +143,7 @@ namespace SQLInstaller.Core
 					if ((this.parameters.Options & Options.Create) == Options.Create)
 					{
 						SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
-						this.CreateDatabase();
+						this.client.CreateDatabase();
 
 						if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
 							SetProgress(StatusMessage.Progress, string.Empty, 100);
@@ -212,7 +171,7 @@ namespace SQLInstaller.Core
 					else
 						SetProgress(StatusMessage.Complete, Resources.WarnMissingInstall);
 
-					this.SetVersion(this.Upgrade, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
+					this.client.SetVersion(this.Upgrade, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
 				}
 				else
 				{
@@ -254,7 +213,7 @@ namespace SQLInstaller.Core
 							if (this.Errors > 0)
 								break;
 
-							this.SetVersion(upgradeDir.Name, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
+							this.client.SetVersion(upgradeDir.Name, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
 						}
 					}
 				}
@@ -302,49 +261,6 @@ namespace SQLInstaller.Core
 
 		#endregion
 
-		private bool CheckExists(string databaseName)
-		{
-			return Convert.ToInt32(this.ExecuteScalar(string.Format(this.Provider.Scripts[ScriptType.Exists].CommandText, this.parameters.Database), false)) > 0;
-		}
-
-		private string GetVersion()
-		{
-			return this.ExecuteScalar(string.Format(this.Provider.Scripts[ScriptType.GetVersion].CommandText, this.parameters.Database), this.IsNotOracle) as string;
-		}
-
-		private void SetVersion(string version, string details)
-		{
-			this.Execute(string.Format(this.Provider.Scripts[ScriptType.SetVersion].CommandText, this.parameters.Database, version, details), this.IsNotOracle);
-		}
-
-		private void DropDatabase()
-		{
-			string script = string.Format(this.Provider.Scripts[ScriptType.Drop].CommandText, this.parameters.Database);
-			if (string.CompareOrdinal(this.Provider.Name, Constants.SqlServer) == 0)
-				this.ExecuteSMO(script, false);
-			else
-				this.Execute(script, false);
-		}
-
-		private void CreateDatabase()
-		{
-			string script = string.Format(this.Provider.Scripts[ScriptType.Create].CommandText, this.parameters.Database);
-			if (string.CompareOrdinal(this.Provider.Name, Constants.SqlServer) == 0)
-				this.ExecuteSMO(script, false);
-			else
-				this.Execute(script, false);
-		}
-
-		private void ExecuteScript(string script)
-		{
-			if (string.CompareOrdinal(this.Provider.Name, Constants.SqlServer) == 0)
-				this.ExecuteSMO(script, true);
-			else if (string.CompareOrdinal(this.Provider.Name, Constants.Oracle) == 0)
-				this.ExecuteOra(script);
-			else
-				this.Execute(script, true);
-		}
-
 		private void ExecuteScripts(FileInfo[] files)
 		{
 			ExecuteScripts(files, false);
@@ -362,7 +278,7 @@ namespace SQLInstaller.Core
 					if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
 						SetProgress(StatusMessage.Detail, Resources.StatusExecutingScript + pre.Name);
 					sr = new StreamReader(pre.FullName);
-					this.ExecuteScript(sr.ReadToEnd());
+					this.client.Execute(sr.ReadToEnd());
 					sr.Close();
 				}
 				catch (Exception ex)
@@ -382,96 +298,6 @@ namespace SQLInstaller.Core
 						SetProgress(StatusMessage.Progress, string.Empty, Convert.ToInt32(decimal.Divide((decimal)this.ScriptsRun, (decimal)this.ScriptsTotal) * 100));
 					if (sr != null)
 						sr.Close();
-				}
-			}
-		}
-
-		private object ExecuteScalar(string script, bool changeDb)
-		{
-			object scalar = null;
-
-			using (DbConnection connection = this.providerFactory.CreateConnection())
-			{
-				connection.ConnectionString = this.parameters.ConnectionString;
-				connection.Open();
-				if (changeDb)
-					connection.ChangeDatabase(this.parameters.Database);
-				DbCommand cmd = this.providerFactory.CreateCommand();
-				cmd.Connection = connection;
-				cmd.CommandText = script;
-				scalar = cmd.ExecuteScalar();
-			}
-
-			return scalar;
-		}
-
-		private void Execute(string commandText, bool changeDb)
-		{
-			using (DbConnection connection = this.providerFactory.CreateConnection())
-			{
-				connection.ConnectionString = this.parameters.ConnectionString;
-				connection.Open();
-				if (changeDb)
-					connection.ChangeDatabase(this.parameters.Database);
-				DbCommand cmd = this.providerFactory.CreateCommand();
-				cmd.Connection = connection;
-				cmd.CommandText = commandText;
-				cmd.ExecuteNonQuery();
-			}
-		}
-
-		private void ExecuteSMO(string script, bool changeDb)
-		{
-			using (SqlConnection conn = new SqlConnection(this.parameters.ConnectionString))
-			{
-				conn.Open();
-				if (changeDb)
-					conn.ChangeDatabase(this.parameters.Database);
-				Server server = new Server(new ServerConnection(conn));
-				server.ConnectionContext.ExecuteNonQuery(script);
-			}
-		}
-
-		private void ExecuteOra(string script)
-		{
-			// The .NET provider for Oracle does not support everthing you can do
-			// in SQL*PLUS when executing DDL. We provide for two variants which
-			// should cover all DDL types but there is little tolerance for variation.
-			using (DbConnection connection = this.providerFactory.CreateConnection())
-			{
-				connection.ConnectionString = this.parameters.ConnectionString;
-				connection.Open();
-				DbCommand cmd = this.providerFactory.CreateCommand();
-				cmd.Connection = connection;
-				cmd.CommandText = Constants.OracleAlterSession + this.parameters.Database.ToUpper();
-				cmd.ExecuteNonQuery();
-
-				// If the script has a begin/end block, then assume it is a sproc, trigger or
-				// anonymous/adhoc. These can have multiple statements terminated by semi-colons.
-				string[] scripts = null;
-				int begin = script.IndexOf(Constants.OracleBegin, StringComparison.OrdinalIgnoreCase);
-				if (begin >= 0)
-				{
-					// Treat script starting with BEGIN special case for data loading/inserts.
-					// Otherwise, split statement on special delimiter for these types (/).
-					if (begin == 0)
-					{
-						scripts = new string[1];
-						scripts[0] = script;
-					}
-					else
-						scripts = script.Split(new char[] { Constants.ForwardSlash }, StringSplitOptions.RemoveEmptyEntries);
-				}
-				else // Should handle all other types of create/alter DDL
-					scripts = script.Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
-
-				foreach (string sqlLine in scripts)
-				{
-					if (sqlLine.Trim().Length > 0)
-					{
-						cmd.CommandText = sqlLine;
-						cmd.ExecuteNonQuery();
-					}
 				}
 			}
 		}

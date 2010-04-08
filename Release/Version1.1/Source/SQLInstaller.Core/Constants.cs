@@ -14,6 +14,9 @@ namespace SQLInstaller.Core
         public const string SqlServer = "SqlServer";
         public const string Oracle = "Oracle";
         public const string PostGres = "PostGres";
+		public const string Firebird = "Firebird";
+		public const string CreateDatabase = "CreateDatabase";
+		public const string DropDatabase = "DropDatabase";
 
 		public const string DefaultConfigFile = @".\SQLInstaller.xml";
 		public const string DefaultDbName = "DbName";
@@ -49,6 +52,11 @@ namespace SQLInstaller.Core
 
 		public const string OracleBegin = "BEGIN";
 		public const string OracleAlterSession = "ALTER SESSION SET CURRENT_SCHEMA=";
+
+		public const string FbScript = "FirebirdSql.Data.Isql.FbScript";
+		public const string FbBatchExecution = "FirebirdSql.Data.Isql.FbBatchExecution";
+		public const string Parse = "Parse";
+		public const string Execute = "Execute";
 	
 		private Constants()
 		{

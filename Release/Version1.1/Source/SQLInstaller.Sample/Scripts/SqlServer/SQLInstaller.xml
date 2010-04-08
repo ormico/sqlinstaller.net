@@ -1,5 +1,5 @@
 ﻿<Parameters Options="Create Drop Verbose" IsProtected="true" NoPrompt="true">
 	<Database>Northwind</Database>
 	<Provider Name="SqlServer" />
-	<ConnectionString>KyMSztx2YIpIWSsIoP7OAweCRmqJFZiRer4cRjl51Yfiu+KP5erSHQ216DHTThjGP/h+M2MhzduGyeLts7aqFA==</ConnectionString>
+	<ConnectionString>Server=hayden;Integrated Security=SSPI;</ConnectionString>
 </Parameters>
