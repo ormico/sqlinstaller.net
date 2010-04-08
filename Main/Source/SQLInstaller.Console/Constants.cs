@@ -16,6 +16,7 @@ namespace SQLInstaller.Console
 		public const double MinSpinTimeout = 250;
 		public const string CarriageReturn = "\r";
 		public const string Wait = "...";
+		public const string SQLInstallerXml = "SQLInstaller.xml";
 
 		private Constants()
 		{

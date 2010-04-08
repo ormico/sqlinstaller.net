@@ -23,6 +23,7 @@ namespace SQLInstaller.Core
 		public Provider()
 		{
 			this.scripts = new ScriptCollection();
+			this.Name = Constants.DefaultProvider;
 		}
 
 		[XmlAttribute]

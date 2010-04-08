@@ -68,6 +68,15 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find connection method: .
+        /// </summary>
+        internal static string ErrorConnectionMethod {
+            get {
+                return ResourceManager.GetString("ErrorConnectionMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not append value from enumerated type &apos;{0}&apos;..
         /// </summary>
         internal static string ErrorEnumAppend {
@@ -95,6 +104,15 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error: this provider requires an Exists SQL statement. None were provided. Check your config file: .
+        /// </summary>
+        internal static string ErrorMissingStatement {
+            get {
+                return ResourceManager.GetString("ErrorMissingStatement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must prepare the schema first..
         /// </summary>
         internal static string ErrorSchemaPrep {
@@ -109,6 +127,15 @@ namespace SQLInstaller.Core {
         internal static string ErrorUnknownProvider {
             get {
                 return ResourceManager.GetString("ErrorUnknownProvider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to . Creating a new template. Please edit as appropriate. Exiting..
+        /// </summary>
+        internal static string ExitingWithNewTemplate {
+            get {
+                return ResourceManager.GetString("ExitingWithNewTemplate", resourceCulture);
             }
         }
         
@@ -136,6 +163,15 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing parameters xml file: .
+        /// </summary>
+        internal static string MissingParmFile {
+            get {
+                return ResourceManager.GetString("MissingParmFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing required parameter..
         /// </summary>
         internal static string MissingReq {
@@ -156,13 +192,12 @@ namespace SQLInstaller.Core {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;ProviderFactory xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns=&quot;ProviderFactory&quot;&gt;
-        ///	&lt;Providers&gt;
-        ///		&lt;Provider Name=&quot;Oracle&quot; InvariantName=&quot;System.Data.OracleClient&quot;&gt;
-        ///			&lt;Scripts&gt;
-        ///				&lt;Script Type=&quot;Exists&quot;&gt;SELECT COUNT(*) FROM all_users WHERE username = UPPER(&apos;{0}&apos;)&lt;/Script&gt;
-        ///				&lt;Script Type=&quot;Drop&quot;&gt;DROP USER {0} CASCADE&lt;/Script&gt;
-        ///				&lt;Script Type=&quot;Create&quot;&gt;BEGIN CREATE USER {0} IDENTIFIED EXTERNALLY; GRANT UNLIMITED TABLESPACE TO {0}; END;&lt;/Script&gt;
-        ///				 [rest of string was truncated]&quot;;.
+        ///	&lt;!--
+        ///	The ProviderFactory configuration XML is used by SQL Installer.NET to control interaction
+        ///	with the underlying ADO.NET data provider. This file is an embedded resource within the
+        ///	binary. However, if you rename the ProviderFactory.xml.orig (remove orig) found within
+        ///	the SQL Installer.NET installation folder, you can customize these per installation. 
+        ///	There ar [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProviderFactory {
             get {
