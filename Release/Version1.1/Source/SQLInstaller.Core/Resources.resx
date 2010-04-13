@@ -224,6 +224,6 @@
     <value>Cannot find connection method: </value>
   </data>
   <data name="ErrorMissingStatement" xml:space="preserve">
-    <value>Error: this provider requires an Exists SQL statement. None were provided. Check your config file: </value>
+    <value>Error: this provider requires an SQL statement. None were provided. Check your config file: </value>
   </data>
 </root>

@@ -20,3 +20,4 @@ VALUES (8, 'Callahan', 'Laura', 'Inside Sales Coordinator', 'Ms.', '01/09/1958',
 INSERT INTO Employees (EmployeeID, LastName, FirstName, Title, TitleOfCourtesy, BirthDate, HireDate, Address, City, Region, PostalCode, Country, HomePhone, Extension, Notes, ReportsTo, PhotoPath, UserID)
 VALUES (9, 'Dodsworth', 'Anne', 'Sales Representative', 'Ms.', '01/27/1966', '11/15/1994', '7 Houndstooth Rd.', 'London', NULL, 'WG2 7LT', 'UK', '(71) 555-4444', '452', 'Anne has a BA degree in English from St. Lawrence College.  She is fluent in French and German.', 5, 'http://accweb/emmployees/davolio.bmp','ADodsworth');
 END;
+/

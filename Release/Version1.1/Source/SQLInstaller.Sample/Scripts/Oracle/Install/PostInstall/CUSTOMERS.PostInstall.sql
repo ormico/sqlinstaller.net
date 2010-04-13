@@ -184,3 +184,4 @@ INSERT INTO Customers (CustomerID, CompanyName, ContactName, ContactTitle, Addre
 VALUES ('WOLZA', 'Wolski  Zajazd', 'Zbyszek Piestrzeniewicz', 'Owner', 'ul. Filtrowa 68', 'Warszawa', NULL, '01-012', 'Poland', '(26) 642-7012', '(26) 642-7012');
 EXECUTE IMMEDIATE 'ALTER TRIGGER CUSTOMERS_BIU ENABLE';
 END;
+/

@@ -16,3 +16,4 @@ VALUES (7, 'Produce', 'Dried fruit and bean curd');
 INSERT INTO Categories (CategoryID, CategoryName, Description)
 VALUES (8, 'Seafood', 'Seaweed and fish');
 END;
+/
