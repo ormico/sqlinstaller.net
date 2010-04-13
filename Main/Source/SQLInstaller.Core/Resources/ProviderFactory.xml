@@ -29,6 +29,21 @@
 	support for other ADO.NET data providers as necessary.
 	-->
 	<Providers>
+		<Provider Name="DB2" InvariantName="IBM.Data.DB2.9.5.0">
+			<Scripts>
+				<Script Type="Exists">SELECT COUNT(*) FROM SYSCAT.SCHEMATA WHERE SCHEMANAME='{0}'</Script>
+				<Script Type="Drop">
+					BEGIN ATOMIC
+						DECLARE ERRSCH VARCHAR(30) DEFAULT 'ERRORSCHEMA';
+						DECLARE ERRTAB VARCHAR(30) DEFAULT '{0}';
+						CALL SYSPROC.ADMIN_DROP_SCHEMA('{0}', NULL, ERRSCH, ERRTAB);
+					END;/
+					DROP TABLE ERRORSCHEMA.{0};/
+				</Script>
+				<Script Type="GetVersion">SELECT VERSION_INFO || ';' || UPGRADEBY FROM DB_VERSION</Script>
+				<Script Type="SetVersion">CREATE OR REPLACE VIEW DB_VERSION AS SELECT '{1}' AS VERSION_INFO, '{2}' AS UPGRADEBY FROM SYSIBM.SYSDUMMY1</Script>
+			</Scripts>
+		</Provider>
 		<Provider Name="Firebird" InvariantName="FirebirdSql.Data.FirebirdClient">
 			<Scripts>
 				<Script Type="GetVersion">SELECT version_info FROM db_version</Script>

@@ -30,6 +30,9 @@ namespace SQLInstaller.Core
 				case Constants.Oracle:
 					client = new OracleClient();
 					break;
+				case Constants.DB2:
+					client = new DB2Client();
+					break;
 				case Constants.SqlServer:
 					client = new SqlServerClient();
 					break;

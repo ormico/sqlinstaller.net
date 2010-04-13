@@ -1,0 +1,5 @@
+﻿<Parameters Options="Create Drop Verbose" IsProtected="true" NoPrompt="true">
+	<Database>NORTHWIND</Database>
+	<Provider Name="DB2" />
+	<ConnectionString>TRPtu1likB00Qwtufd9Uk2UwBWmEY0kTOCNsjZTv8VcMF8UzPcyNfQQMOTPbQZrGqs1Qqz5uP1TZigdHHaVXLw==</ConnectionString>
+</Parameters>
