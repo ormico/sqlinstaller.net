@@ -154,3 +154,4 @@ VALUES (76, 'Lakkalik??ri', 23, 1, '500 ml', 18, 57, 0, 20, 0);
 INSERT INTO Products (ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
 VALUES (77, 'Original Frankfurter gr?ne So?e', 12, 2, '12 boxes', 13, 32, 0, 15, 0);
 END;
+/

@@ -104,7 +104,7 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error: this provider requires an Exists SQL statement. None were provided. Check your config file: .
+        ///   Looks up a localized string similar to Error: this provider requires an SQL statement. None were provided. Check your config file: .
         /// </summary>
         internal static string ErrorMissingStatement {
             get {

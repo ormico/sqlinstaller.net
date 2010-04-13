@@ -1663,3 +1663,4 @@ INSERT INTO Orders (OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, Sh
 VALUES (11077, 'RATTC', 1, '05/06/1998 00:00:00', '06/03/1998 00:00:00', NULL, 2, 8, 'Rattlesnake Canyon Grocery', '2817 Milton Dr.', 'Albuquerque', 'NM', '87110', 'USA');
 EXECUTE IMMEDIATE 'ALTER TRIGGER ORDERS_BIU ENABLE';
 END;
+/
