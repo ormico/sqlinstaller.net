@@ -14,24 +14,25 @@ namespace SQLInstaller.Core
 	/// <summary>
 	/// Oracle client class.
 	/// </summary>
-	public sealed class OracleClient : BaseClient
+	public sealed class DB2Client : BaseClient
 	{
-		public OracleClient()
+		public DB2Client()
 		{
+		}
+
+		public override void CreateDatabase()
+		{			
 		}
 
 		public override void Execute(string script, bool changeDatabase)
 		{
-			// The .NET provider for Oracle does not support everthing you can do
-			// in SQL*PLUS when executing DDL. We provide for two variants which
-			// should cover all DDL types but there is little tolerance for variation.
 			using (DbConnection connection = this.DbProviderFactory.CreateConnection())
 			{
 				connection.ConnectionString = this.ConnectionString;
 				connection.Open();
 				DbCommand cmd = this.DbProviderFactory.CreateCommand();
 				cmd.Connection = connection;
-				cmd.CommandText = Constants.OracleAlterSession + this.Database.ToUpper();
+				cmd.CommandText = Constants.DB2AlterSession + this.Database.ToUpper();
 				cmd.ExecuteNonQuery();
 
 				// If the script has a begin/end block, then assume it is a sproc, trigger or
