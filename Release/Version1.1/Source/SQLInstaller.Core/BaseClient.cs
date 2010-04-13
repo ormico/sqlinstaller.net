@@ -28,10 +28,10 @@ namespace SQLInstaller.Core
 					client = new FirebirdClient();
 					break;
 				case Constants.Oracle:
-					client = new OracleClient();
+					client = new CommercialClient(Constants.OracleAlterSession);
 					break;
 				case Constants.DB2:
-					client = new DB2Client();
+					client = new CommercialClient(Constants.DB2AlterSession);
 					break;
 				case Constants.SqlServer:
 					client = new SqlServerClient();
@@ -117,22 +117,20 @@ namespace SQLInstaller.Core
 
 		public virtual void DropDatabase()
 		{
-			if (!this.Provider.Scripts.Contains(ScriptType.Drop))
-				throw new ArgumentException(Resources.ErrorMissingStatement + ScriptType.Drop.ToString());
-
-			string commandText = string.Format(this.Provider.Scripts[ScriptType.Drop].CommandText, this.Database);
-
-			this.Execute(commandText, false);
+			if (this.Provider.Scripts.Contains(ScriptType.Drop))
+			{
+				string commandText = string.Format(this.Provider.Scripts[ScriptType.Drop].CommandText, this.Database);
+				this.Execute(commandText, false);
+			}
 		}
 
 		public virtual void CreateDatabase()
 		{
-			if (!this.Provider.Scripts.Contains(ScriptType.Create))
-				throw new ArgumentException(Resources.ErrorMissingStatement + ScriptType.Create.ToString());
-
-			string commandText = string.Format(this.Provider.Scripts[ScriptType.Create].CommandText, this.Database);
-
-			this.Execute(commandText, false);
+			if (this.Provider.Scripts.Contains(ScriptType.Create))
+			{
+				string commandText = string.Format(this.Provider.Scripts[ScriptType.Create].CommandText, this.Database);
+				this.Execute(commandText, false);
+			}
 		}
 
 		public void Execute(string script)

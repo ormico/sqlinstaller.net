@@ -57,9 +57,8 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="BaseClient.cs" />
-    <Compile Include="DB2Client.cs" />
     <Compile Include="FirebirdClient.cs" />
-    <Compile Include="OracleClient.cs" />
+    <Compile Include="CommercialClient.cs" />
     <Compile Include="SqlServerClient.cs" />
     <Compile Include="Parameters.cs" />
     <Compile Include="ScriptCollection.cs" />

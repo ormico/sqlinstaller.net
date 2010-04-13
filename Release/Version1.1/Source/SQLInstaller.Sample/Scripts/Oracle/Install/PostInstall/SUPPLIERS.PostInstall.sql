@@ -58,3 +58,4 @@ VALUES (28, 'Gai p?turage', 'Eliane Noz', 'Sales Representative', 'Bat. B 3, rue
 INSERT INTO Suppliers (SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage)
 VALUES (29, 'For?ts d''?rables', 'Chantal Goulet', 'Accounting Manager', '148 rue Chasseur', 'Ste-Hyacinthe', 'Qu?bec', 'J2S 7S8', 'Canada', '(514) 555-2955', '(514) 555-2921', NULL);
 END;
+/
