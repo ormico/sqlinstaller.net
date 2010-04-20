@@ -104,6 +104,15 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing Data Source key from connection string.
+        /// </summary>
+        internal static string ErrorMissingDataSource {
+            get {
+                return ResourceManager.GetString("ErrorMissingDataSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error: this provider requires an SQL statement. None were provided. Check your config file: .
         /// </summary>
         internal static string ErrorMissingStatement {

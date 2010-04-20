@@ -36,6 +36,9 @@ namespace SQLInstaller.Core
 				case Constants.SqlServer:
 					client = new SqlServerClient();
 					break;
+				case Constants.SQLite:
+					client = new SQLiteClient();
+					break;
 				default:
 					client = new BaseClient();
 					break;
@@ -153,7 +156,7 @@ namespace SQLInstaller.Core
 			}
 		}
 
-		protected object ExecuteScalar(string script, bool changeDatabase)
+		public virtual object ExecuteScalar(string script, bool changeDatabase)
 		{
 			object scalar = 0;
 

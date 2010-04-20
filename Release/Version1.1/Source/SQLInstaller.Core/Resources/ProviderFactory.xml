@@ -82,6 +82,12 @@
 				<Script Type="SetVersion">CREATE OR REPLACE VIEW db_version AS SELECT CAST('{1};{2}' AS VARCHAR(512)) AS version_info</Script>
 			</Scripts>
 		</Provider>
+		<Provider Name="SQLite" InvariantName="System.Data.SQLite">
+			<Scripts>
+				<Script Type="GetVersion">SELECT version_info FROM db_version</Script>
+				<Script Type="SetVersion">DROP VIEW IF EXISTS db_version; CREATE VIEW db_version AS SELECT CAST('{1};{2}' AS VARCHAR(512)) AS version_info</Script>
+			</Scripts>
+		</Provider>
 		<Provider Name="SqlServer" InvariantName="System.Data.SqlClient">
 			<Scripts>
 				<Script Type="Exists">SELECT COUNT(*) FROM sysdatabases WHERE '[' + name + ']' = QUOTENAME('{0}')</Script>

@@ -226,4 +226,7 @@
   <data name="ErrorMissingStatement" xml:space="preserve">
     <value>Error: this provider requires an SQL statement. None were provided. Check your config file: </value>
   </data>
+  <data name="ErrorMissingDataSource" xml:space="preserve">
+    <value>Missing Data Source key from connection string</value>
+  </data>
 </root>
