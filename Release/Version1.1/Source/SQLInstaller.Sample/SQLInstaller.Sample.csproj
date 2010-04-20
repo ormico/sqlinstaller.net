@@ -55,6 +55,7 @@
     <PostBuildEvent>sqlinstaller ..\..\SQLInstaller.xml</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Scripts\SQLite\SQLInstaller.xml" />
     <Content Include="Scripts\DB2\SQLInstaller.xml" />
     <Content Include="Scripts\Firebird\SQLInstaller.xml" />
     <Content Include="Scripts\MySql\SQLInstaller.xml" />
@@ -63,6 +64,9 @@
     <Content Include="Scripts\SqlServer\SQLInstaller.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\SQLite\Install\PostInstall\EMPLOYEES.PostInstall.sql" />
+    <None Include="Scripts\SQLite\Install\Tables\CUSTOMERS.Table.sql" />
+    <None Include="Scripts\SQLite\Install\Tables\EMPLOYEES.Table.sql" />
     <None Include="Scripts\DB2\Install\PostInstall\EMPLOYEES.PostInstall.sql" />
     <None Include="Scripts\DB2\Install\Tables\CUSTOMERS.Table.sql" />
     <None Include="Scripts\DB2\Install\Tables\EMPLOYEES.Table.sql" />

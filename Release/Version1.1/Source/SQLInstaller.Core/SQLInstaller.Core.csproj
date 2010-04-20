@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="BaseClient.cs" />
+    <Compile Include="SQLiteClient.cs" />
     <Compile Include="FirebirdClient.cs" />
     <Compile Include="CommercialClient.cs" />
     <Compile Include="SqlServerClient.cs" />

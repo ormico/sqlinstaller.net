@@ -12,12 +12,14 @@ namespace SQLInstaller.Core
 	{
         public const string RTM = "RTM";
         public const string SqlServer = "SqlServer";
-        public const string Oracle = "Oracle";
+		public const string SQLite = "SQLite";
+		public const string Oracle = "Oracle";
         public const string PostGres = "PostGres";
 		public const string Firebird = "Firebird";
 		public const string DB2 = "DB2";
 		public const string CreateDatabase = "CreateDatabase";
 		public const string DropDatabase = "DropDatabase";
+		public const string DataSource = "Data Source";
 
 		public const string DefaultConfigFile = @".\SQLInstaller.xml";
 		public const string DefaultDbName = "DbName";
