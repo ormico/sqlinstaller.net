@@ -124,5 +124,14 @@
 				</Script>
 			</Scripts>
 		</Provider>
+		<Provider Name="Teradata" InvariantName="Teradata.Client.Provider">
+			<Scripts>
+				<Script Type="Exists">SELECT COUNT(*) FROM dbc.dbase WHERE databasename='{0}'</Script>
+				<Script Type="Drop">MODIFY DATABASE {0} AS DROP DEFAULT JOURNAL TABLE; DELETE DATABASE {0}; DROP DATABASE {0};</Script>
+				<Script Type="Create">CREATE DATABASE {0} AS PERM=10e6, SPOOL=20e6</Script>
+				<Script Type="GetVersion">SELECT VERSION_INFO || ';' || UPGRADEBY FROM DB_VERSION</Script>
+				<Script Type="SetVersion">REPLACE VIEW DB_VERSION AS SELECT '{1}' AS VERSION_INFO, '{2}' AS UPGRADEBY</Script>
+			</Scripts>
+		</Provider>
 	</Providers>
 </ProviderFactory>

@@ -17,6 +17,7 @@ namespace SQLInstaller.Core
         public const string PostGres = "PostGres";
 		public const string Firebird = "Firebird";
 		public const string DB2 = "DB2";
+		public const string Teradata = "Teradata";
 		public const string CreateDatabase = "CreateDatabase";
 		public const string DropDatabase = "DropDatabase";
 		public const string DataSource = "Data Source";
@@ -57,6 +58,7 @@ namespace SQLInstaller.Core
 		public const string OracleAlterSession = "ALTER SESSION SET CURRENT_SCHEMA=";
 
 		public const string DB2AlterSession = "SET SCHEMA ";
+		public const string TeradataAlterSession = "DATABASE ";
 
 		public const string FbScript = "FirebirdSql.Data.Isql.FbScript";
 		public const string FbBatchExecution = "FirebirdSql.Data.Isql.FbBatchExecution";
