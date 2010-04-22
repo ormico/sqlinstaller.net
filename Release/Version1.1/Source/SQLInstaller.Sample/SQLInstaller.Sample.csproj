@@ -55,6 +55,7 @@
     <PostBuildEvent>sqlinstaller ..\..\SQLInstaller.xml</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Scripts\Teradata\SQLInstaller.xml" />
     <Content Include="Scripts\SQLite\SQLInstaller.xml" />
     <Content Include="Scripts\DB2\SQLInstaller.xml" />
     <Content Include="Scripts\Firebird\SQLInstaller.xml" />
@@ -64,6 +65,9 @@
     <Content Include="Scripts\SqlServer\SQLInstaller.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\Teradata\Install\PostInstall\EMPLOYEES.PostInstall.sql" />
+    <None Include="Scripts\Teradata\Install\Tables\CUSTOMERS.Table.sql" />
+    <None Include="Scripts\Teradata\Install\Tables\EMPLOYEES.Table.sql" />
     <None Include="Scripts\SQLite\Install\PostInstall\EMPLOYEES.PostInstall.sql" />
     <None Include="Scripts\SQLite\Install\Tables\CUSTOMERS.Table.sql" />
     <None Include="Scripts\SQLite\Install\Tables\EMPLOYEES.Table.sql" />

@@ -1,0 +1,5 @@
+﻿<Parameters Options="Create Drop Verbose" IsProtected="true" NoPrompt="true">
+	<Database>Northwind</Database>
+	<Provider Name="Teradata" />
+	<ConnectionString>Data Source=hayden;User ID=dbc;Password=dbc;</ConnectionString>
+</Parameters>

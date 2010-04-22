@@ -33,6 +33,9 @@ namespace SQLInstaller.Core
 				case Constants.DB2:
 					client = new CommercialClient(Constants.DB2AlterSession);
 					break;
+				case Constants.Teradata:
+					client = new CommercialClient(Constants.TeradataAlterSession);
+					break;
 				case Constants.SqlServer:
 					client = new SqlServerClient();
 					break;
