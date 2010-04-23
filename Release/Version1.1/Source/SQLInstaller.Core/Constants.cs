@@ -36,6 +36,7 @@ namespace SQLInstaller.Core
 		public const char Space = ' ';
 		public const char BackSlash = '\\';
 		public const char ForwardSlash = '/';
+		public const string CrLf = "\r\n";
 		public const string Tab = "\t";
 		public const string CurrentDir = @".\";
 		public const string SqlPattern = "*.sql";

@@ -11,6 +11,7 @@ namespace SQLInstaller.Core
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Reflection;
 	using System.Security.Principal;
 	using System.Threading;
 
@@ -29,6 +30,8 @@ namespace SQLInstaller.Core
 			this.Upgrade = Constants.RTM;
 			this.messages = new Queue<Progress>();
 			this.parameters = parameters;
+
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 		}
 
 		public bool Exists { get; private set; }
@@ -54,6 +57,11 @@ namespace SQLInstaller.Core
 				else
 					return string.Compare(this.Version, this.Upgrade, true) >= 0;
 			}
+		}
+
+		public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			throw new FileLoadException(string.Format(Resources.ErrorAssembly, args.Name, Constants.CrLf));
 		}
 
 		public void Prepare()
