@@ -154,6 +154,7 @@ namespace SQLInstaller.Core
 					connection.ChangeDatabase(this.Database);
 				DbCommand cmd = this.DbProviderFactory.CreateCommand();
 				cmd.Connection = connection;
+				cmd.CommandTimeout = 0;
 				cmd.CommandText = script;
 				cmd.ExecuteNonQuery();
 			}

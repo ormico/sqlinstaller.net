@@ -32,6 +32,7 @@ namespace SQLInstaller.Core
 				connection.Open();
 				DbCommand cmd = this.DbProviderFactory.CreateCommand();
 				cmd.Connection = connection;
+				cmd.CommandTimeout = 0;
 				if (changeDatabase)
 				{
 					cmd.CommandText = this.alterStatement + this.Database.ToUpper();
