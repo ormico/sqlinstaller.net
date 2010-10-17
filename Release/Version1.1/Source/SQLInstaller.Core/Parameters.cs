@@ -9,6 +9,7 @@
 namespace SQLInstaller.Core
 {
 	using System;
+	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.IO;
 	using System.IO.IsolatedStorage;
@@ -28,6 +29,7 @@ namespace SQLInstaller.Core
 		#region Fields
 
 		private bool isDisposed;
+		private List<FileType> fileTypes;
 
 		[NonSerializedAttribute]
 		private RSACryptoServiceProvider rsa;
@@ -42,6 +44,7 @@ namespace SQLInstaller.Core
 			this.ConnectionString = Constants.DefaultConnString;
 			this.Options = this.Options.Add(Options.Create | Options.Drop | Options.Verbose);
 			this.Provider = new Provider();
+			this.fileTypes = new List<FileType>();
 
 			CspParameters csp = new CspParameters();
 			csp.Flags = CspProviderFlags.UseMachineKeyStore;
@@ -52,6 +55,11 @@ namespace SQLInstaller.Core
 		#endregion
 
 		#region Properties
+
+		public List<FileType> FileTypes
+		{
+			get { return this.fileTypes; }
+		}
 
 		[XmlIgnore]
 		public string ConfigPath { get; set; }
@@ -87,6 +95,15 @@ namespace SQLInstaller.Core
 
 		[XmlAttribute]
 		public Options Options { get; set; }
+
+		[XmlAttribute]
+		public string ScriptExtension { get; set; }
+
+		[XmlAttribute]
+		public string InstallPath { get; set; }
+
+		[XmlAttribute]
+		public string UpgradePath { get; set; }
 
 		[XmlAttribute]
 		public bool IsProtected { get; set; }

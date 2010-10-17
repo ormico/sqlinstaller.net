@@ -39,21 +39,15 @@ namespace SQLInstaller.Core
 		public const string CrLf = "\r\n";
 		public const string Tab = "\t";
 		public const string CurrentDir = @".\";
-		public const string SqlPattern = "*.sql";
 		public const string XmlExt = ".xml";
 		public const string OpenBracket = "[";
+		public const string Dot = ".";
+		public const string Asterisk = "*";
 		public const string CloseBracketHyphen = "] - ";
 
-		public const string InstallDirectory = "Install";
-		public const string UpgradeDirectory = "Upgrade";
-		public const string PreInstallFilter = "*.PreInstall.sql";
-		public const string TableFilter = "*.Table.sql";
-		public const string FunctionFilter = "*.UserDefinedFunction.sql";
-		public const string ViewFilter = "*.View.sql";
-		public const string StoredProcedureFilter = "*.StoredProcedure.sql";
-		public const string TriggerFilter = "*.Trigger.sql";
-		public const string PostInstallFilter = "*.PostInstall.sql";
-		public const string ForeignKeyFilter = "*.ForeignKey.sql";
+		public const string DefaultInstallPath = "Install";
+		public const string DefaultUpgradePath = "Upgrade";
+		public const string DefaultScriptExtension = ".sql";
 
 		public const string Begin = "BEGIN";
 		public const string OracleAlterSession = "ALTER SESSION SET CURRENT_SCHEMA=";
