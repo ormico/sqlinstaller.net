@@ -128,34 +128,34 @@ namespace SQLInstaller.Core
                 }
             }
 
-            if (this.Exists && (this.parameters.Options & Options.Drop) != Options.Drop)
-            {
+			if (this.Exists && (this.parameters.Options & Options.Drop) != Options.Drop)
+			{
 				string[] version = this.client.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (version.Length == 2)
-                {
-                    this.Version = version[0];
-                    this.UpgradeBy = version[1];
-                }
+				if (version.Length == 2)
+				{
+					this.Version = version[0];
+					this.UpgradeBy = version[1];
+				}
 
-                if (upgradeScripts.Exists)
-                {
-                    if (candidates != null)
-                    {
-                        foreach (DirectoryInfo di in candidates)
-                        {
-                            int comp = string.Compare(this.Version, di.Name, true);
-                            bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
-                            if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
-                                this.ScriptsTotal += di.GetFiles(Constants.Asterisk + this.parameters.ScriptExtension, SearchOption.AllDirectories).Length;
-                        }
-                    }
-                }
-                else if (installScripts.Exists)
-					this.ScriptsTotal = installScripts.GetFiles(Constants.Asterisk + this.parameters.ScriptExtension, SearchOption.AllDirectories).Length;
-            }
-            else if (installScripts.Exists)
-				this.ScriptsTotal = installScripts.GetFiles(Constants.Asterisk + this.parameters.ScriptExtension, SearchOption.AllDirectories).Length;
+				if (upgradeScripts.Exists)
+				{
+					if (candidates != null)
+					{
+						foreach (DirectoryInfo di in candidates)
+						{
+							int comp = string.Compare(this.Version, di.Name, true);
+							bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
+							if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
+								this.ScriptsTotal += this.GetCandidateCount(di);
+						}
+					}
+				}
+				else if (installScripts.Exists)
+					this.ScriptsTotal = this.GetCandidateCount(installScripts);
+			}
+			else if (installScripts.Exists)
+				this.ScriptsTotal = this.GetCandidateCount(installScripts);
         }
 
 		public void Create()
@@ -365,6 +365,19 @@ namespace SQLInstaller.Core
 				messages.Enqueue(new Progress(status, percent, message));
 				Monitor.Pulse(messages);
 			}
+		}
+
+		private int GetCandidateCount(DirectoryInfo di)
+		{
+			int count = 0;
+
+			foreach (FileType fileType in this.parameters.FileTypes)
+			{
+				string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
+				count += di.GetFiles(searchPattern, SearchOption.AllDirectories).Length;
+			}
+
+			return count;
 		}
 	}
 }
