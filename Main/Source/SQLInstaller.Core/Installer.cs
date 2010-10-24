@@ -11,6 +11,7 @@ namespace SQLInstaller.Core
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using System.Reflection;
 	using System.Security.Principal;
 	using System.Threading;
 
@@ -29,6 +30,8 @@ namespace SQLInstaller.Core
 			this.Upgrade = Constants.RTM;
 			this.messages = new Queue<Progress>();
 			this.parameters = parameters;
+
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 		}
 
 		public bool Exists { get; private set; }
@@ -56,6 +59,11 @@ namespace SQLInstaller.Core
 			}
 		}
 
+		public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			throw new FileLoadException(string.Format(Resources.ErrorAssembly, args.Name, Constants.CrLf));
+		}
+
 		public void Prepare()
         {
 			if (this.parameters.Provider == null 
@@ -64,14 +72,45 @@ namespace SQLInstaller.Core
 				|| string.IsNullOrEmpty(this.parameters.Database))
                 throw new ArgumentException(Resources.MissingReq);
 
+			if (this.parameters.FileTypes.Count == 0)
+			{
+				this.parameters.FileTypes.Add(new FileType() { Name = "PreInstall", HaltOnError = true });
+				this.parameters.FileTypes.Add(new FileType() { Name = "Table" });
+				this.parameters.FileTypes.Add(new FileType() { Name = "UserDefinedFunction" });
+				this.parameters.FileTypes.Add(new FileType() { Name = "View" });
+				this.parameters.FileTypes.Add(new FileType() { Name = "StoredProcedure" });
+				this.parameters.FileTypes.Add(new FileType() { Name = "Trigger" });
+				this.parameters.FileTypes.Add(new FileType() { Name = "PostInstall" });
+				this.parameters.FileTypes.Add(new FileType() { Name = "ForeignKey" });
+			}
+
+			if (string.IsNullOrEmpty(this.parameters.InstallPath))
+			{
+				this.parameters.InstallPath = Constants.DefaultInstallPath;
+			}
+
+			if (string.IsNullOrEmpty(this.parameters.UpgradePath))
+			{
+				this.parameters.UpgradePath = Constants.DefaultUpgradePath;
+			}
+
+			if (string.IsNullOrEmpty(this.parameters.ScriptExtension))
+			{
+				this.parameters.ScriptExtension = Constants.DefaultScriptExtension;
+			}
+			else if (!this.parameters.ScriptExtension.StartsWith(Constants.Dot))
+			{
+				this.parameters.ScriptExtension = Constants.Dot + this.parameters.ScriptExtension;
+			}
+
 			this.client = BaseClient.Create(this.parameters);
 			this.Exists = this.client.CheckExists();
 
             if (!Directory.Exists(this.parameters.ScriptPath))
                 throw new ArgumentException(Resources.MissingScriptDir + this.parameters.ScriptPath);
 
-            DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, Constants.InstallDirectory));
-            DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, Constants.UpgradeDirectory));
+            DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.InstallPath));
+            DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.UpgradePath));
 
             DirectoryInfo[] candidates = null;
             if (upgradeScripts.Exists)
@@ -89,34 +128,34 @@ namespace SQLInstaller.Core
                 }
             }
 
-            if (this.Exists && (this.parameters.Options & Options.Drop) != Options.Drop)
-            {
+			if (this.Exists && (this.parameters.Options & Options.Drop) != Options.Drop)
+			{
 				string[] version = this.client.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (version.Length == 2)
-                {
-                    this.Version = version[0];
-                    this.UpgradeBy = version[1];
-                }
+				if (version.Length == 2)
+				{
+					this.Version = version[0];
+					this.UpgradeBy = version[1];
+				}
 
-                if (upgradeScripts.Exists)
-                {
-                    if (candidates != null)
-                    {
-                        foreach (DirectoryInfo di in candidates)
-                        {
-                            int comp = string.Compare(this.Version, di.Name, true);
-                            bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
-                            if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
-                                this.ScriptsTotal += di.GetFiles(Constants.SqlPattern, SearchOption.AllDirectories).Length;
-                        }
-                    }
-                }
-                else if (installScripts.Exists)
-                    this.ScriptsTotal = installScripts.GetFiles(Constants.SqlPattern, SearchOption.AllDirectories).Length;
-            }
-            else if (installScripts.Exists)
-                this.ScriptsTotal = installScripts.GetFiles(Constants.SqlPattern, SearchOption.AllDirectories).Length;
+				if (upgradeScripts.Exists)
+				{
+					if (candidates != null)
+					{
+						foreach (DirectoryInfo di in candidates)
+						{
+							int comp = string.Compare(this.Version, di.Name, true);
+							bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
+							if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
+								this.ScriptsTotal += this.GetCandidateCount(di);
+						}
+					}
+				}
+				else if (installScripts.Exists)
+					this.ScriptsTotal = this.GetCandidateCount(installScripts);
+			}
+			else if (installScripts.Exists)
+				this.ScriptsTotal = this.GetCandidateCount(installScripts);
         }
 
 		public void Create()
@@ -135,8 +174,8 @@ namespace SQLInstaller.Core
 					this.Exists = false;
 				}
 
-				DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, Constants.InstallDirectory));
-				DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, Constants.UpgradeDirectory));
+				DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.InstallPath));
+				DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.UpgradePath));
 
 				if (!this.Exists || !upgradeScripts.Exists)
 				{
@@ -156,14 +195,22 @@ namespace SQLInstaller.Core
 
 						if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
 							SetProgress(StatusMessage.Detail, string.Empty);
-						ExecuteScripts(installScripts.GetFiles(Constants.PreInstallFilter, SearchOption.AllDirectories), true);
-						ExecuteScripts(installScripts.GetFiles(Constants.TableFilter, SearchOption.AllDirectories));
-						ExecuteScripts(installScripts.GetFiles(Constants.FunctionFilter, SearchOption.AllDirectories));
-						ExecuteScripts(installScripts.GetFiles(Constants.ViewFilter, SearchOption.AllDirectories));
-						ExecuteScripts(installScripts.GetFiles(Constants.StoredProcedureFilter, SearchOption.AllDirectories));
-						ExecuteScripts(installScripts.GetFiles(Constants.TriggerFilter, SearchOption.AllDirectories));
-						ExecuteScripts(installScripts.GetFiles(Constants.PostInstallFilter, SearchOption.AllDirectories));
-						ExecuteScripts(installScripts.GetFiles(Constants.ForeignKeyFilter, SearchOption.AllDirectories));
+
+						foreach (FileType fileType in this.parameters.FileTypes)
+						{
+							if (!fileType.IsDisabled)
+							{
+								if (!string.IsNullOrEmpty(fileType.Description))
+								{
+									SetProgress(StatusMessage.Detail, string.Empty);
+									SetProgress(StatusMessage.Detail, fileType.Description);
+								}
+
+								string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
+								ExecuteScripts(installScripts.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
+							}
+						}
+
 						SetProgress(StatusMessage.Complete, Resources.StatusDone);
 						if (this.ScriptsRun == 0)
 							SetProgress(StatusMessage.Complete, Resources.WarnNoScripts);
@@ -201,14 +248,22 @@ namespace SQLInstaller.Core
 							SetProgress(StatusMessage.Start, Resources.StatusUpgradingDatabase + upgradeDir.Name);
 							if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
 								SetProgress(StatusMessage.Detail, string.Empty);
-							ExecuteScripts(upgradeDir.GetFiles(Constants.PreInstallFilter, SearchOption.AllDirectories), true);
-							ExecuteScripts(upgradeDir.GetFiles(Constants.TableFilter, SearchOption.AllDirectories));
-							ExecuteScripts(upgradeDir.GetFiles(Constants.FunctionFilter, SearchOption.AllDirectories));
-							ExecuteScripts(upgradeDir.GetFiles(Constants.ViewFilter, SearchOption.AllDirectories));
-							ExecuteScripts(upgradeDir.GetFiles(Constants.StoredProcedureFilter, SearchOption.AllDirectories));
-							ExecuteScripts(upgradeDir.GetFiles(Constants.TriggerFilter, SearchOption.AllDirectories));
-							ExecuteScripts(upgradeDir.GetFiles(Constants.PostInstallFilter, SearchOption.AllDirectories));
-							ExecuteScripts(upgradeDir.GetFiles(Constants.ForeignKeyFilter, SearchOption.AllDirectories));
+
+							foreach (FileType fileType in this.parameters.FileTypes)
+							{
+								if (!fileType.IsDisabled)
+								{
+									if (!string.IsNullOrEmpty(fileType.Description))
+									{
+										SetProgress(StatusMessage.Detail, string.Empty);
+										SetProgress(StatusMessage.Detail, fileType.Description);
+									}
+
+									string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name;
+									ExecuteScripts(upgradeDir.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
+								}
+							}
+
 							SetProgress(StatusMessage.Complete, Resources.StatusDone);
 							if (this.Errors > 0)
 								break;
@@ -261,12 +316,7 @@ namespace SQLInstaller.Core
 
 		#endregion
 
-		private void ExecuteScripts(FileInfo[] files)
-		{
-			ExecuteScripts(files, false);
-		}
-
-		private void ExecuteScripts(FileInfo[] files, bool throwOnError)
+		private void ExecuteScripts(FileInfo[] files, bool throwOnError, bool isGlobal)
 		{
 			Array.Sort(files, new FileInfoSorter());
 
@@ -278,8 +328,9 @@ namespace SQLInstaller.Core
 					if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
 						SetProgress(StatusMessage.Detail, Resources.StatusExecutingScript + pre.Name);
 					sr = new StreamReader(pre.FullName);
-					this.client.Execute(sr.ReadToEnd());
+					string script = sr.ReadToEnd();
 					sr.Close();
+					this.client.Execute(script, !isGlobal);
 				}
 				catch (Exception ex)
 				{
@@ -314,6 +365,19 @@ namespace SQLInstaller.Core
 				messages.Enqueue(new Progress(status, percent, message));
 				Monitor.Pulse(messages);
 			}
+		}
+
+		private int GetCandidateCount(DirectoryInfo di)
+		{
+			int count = 0;
+
+			foreach (FileType fileType in this.parameters.FileTypes)
+			{
+				string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
+				count += di.GetFiles(searchPattern, SearchOption.AllDirectories).Length;
+			}
+
+			return count;
 		}
 	}
 }

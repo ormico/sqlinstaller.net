@@ -33,8 +33,14 @@ namespace SQLInstaller.Core
 				case Constants.DB2:
 					client = new CommercialClient(Constants.DB2AlterSession);
 					break;
+				case Constants.Teradata:
+					client = new CommercialClient(Constants.TeradataAlterSession);
+					break;
 				case Constants.SqlServer:
 					client = new SqlServerClient();
+					break;
+				case Constants.SQLite:
+					client = new SQLiteClient();
 					break;
 				default:
 					client = new BaseClient();
@@ -148,12 +154,13 @@ namespace SQLInstaller.Core
 					connection.ChangeDatabase(this.Database);
 				DbCommand cmd = this.DbProviderFactory.CreateCommand();
 				cmd.Connection = connection;
+				cmd.CommandTimeout = 0;
 				cmd.CommandText = script;
 				cmd.ExecuteNonQuery();
 			}
 		}
 
-		protected object ExecuteScalar(string script, bool changeDatabase)
+		public virtual object ExecuteScalar(string script, bool changeDatabase)
 		{
 			object scalar = 0;
 

@@ -226,4 +226,10 @@
   <data name="ErrorMissingStatement" xml:space="preserve">
     <value>Error: this provider requires an SQL statement. None were provided. Check your config file: </value>
   </data>
+  <data name="ErrorMissingDataSource" xml:space="preserve">
+    <value>Missing Data Source key from connection string</value>
+  </data>
+  <data name="ErrorAssembly" xml:space="preserve">
+    <value>{1}Could not load file or assembly '{0}'{1}{1}NOTE: for SQL Server, you will need to install the SMO toolkit.{1}A link to SMO is provided for you at http://sqlinstaller.codeplex.com.{1}</value>
+  </data>
 </root>

@@ -68,6 +68,15 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {1}Could not load file or assembly &apos;{0}&apos;{1}{1}NOTE: for SQL Server, you will need to install the SMO toolkit.{1}A link to SMO is provided for you at http://sqlinstaller.codeplex.com.{1}.
+        /// </summary>
+        internal static string ErrorAssembly {
+            get {
+                return ResourceManager.GetString("ErrorAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find connection method: .
         /// </summary>
         internal static string ErrorConnectionMethod {
@@ -100,6 +109,15 @@ namespace SQLInstaller.Core {
         internal static string ErrorInvalidCipherData {
             get {
                 return ResourceManager.GetString("ErrorInvalidCipherData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing Data Source key from connection string.
+        /// </summary>
+        internal static string ErrorMissingDataSource {
+            get {
+                return ResourceManager.GetString("ErrorMissingDataSource", resourceCulture);
             }
         }
         
