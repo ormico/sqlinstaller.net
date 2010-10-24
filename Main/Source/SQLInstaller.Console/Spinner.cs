@@ -60,8 +60,8 @@ namespace SQLInstaller.Console
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e)
 		{
 			counter++;
-			System.Console.Write(frame[counter % frame.Length]);
-			System.Console.SetCursorPosition(System.Console.CursorLeft - frame[counter % frame.Length].Length, System.Console.CursorTop);
+			Console.Write(frame[counter % frame.Length]);
+			Console.SetCursorPosition(Console.CursorLeft - frame[counter % frame.Length].Length, Console.CursorTop);
 		}
 	}
 }

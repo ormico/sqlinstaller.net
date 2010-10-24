@@ -42,22 +42,19 @@ namespace SQLInstaller.Console
 
 				Parameters p = Parameters.Load(configPath);
 
-				if (p.NoPrompt)
-					spinCycle = double.MinValue;
-
 				spin.Start(spinCycle);
-				System.Console.Write(Resources.StatusConnecting);
+				Console.Write(Resources.StatusConnecting);
 
 				installer = new Installer(p);
 				installer.Prepare();
 				spin.Stop();
-				System.Console.WriteLine(Resources.StatusDone);
+				Console.WriteLine(Resources.StatusDone);
 
 				if (installer.Exists && !p.Options.Has(Options.Drop))
 				{
                     if (installer.IsCurrent && !p.Options.Has(Options.Retry))
 					{
-                        System.Console.WriteLine(p.Database + Resources.StatusAlreadyUpgraded + installer.Version + Resources.StatusBy + installer.UpgradeBy);
+                        Console.WriteLine(p.Database + Resources.StatusAlreadyUpgraded + installer.Version + Resources.StatusBy + installer.UpgradeBy);
 						return 0;
 					}
 					else
@@ -67,19 +64,18 @@ namespace SQLInstaller.Console
 							ConsoleKey key = ConsoleKey.NoName;
 							while (key != ConsoleKey.N && key != ConsoleKey.Y)
 							{
-								System.Console.WriteLine();
-                                System.Console.Write(Resources.AskUpgrade + p.Database + Resources.AskToVersion + installer.Upgrade + Resources.AskYesNo);
-								key = System.Console.ReadKey(true).Key;
+								Console.WriteLine();
+                                Console.Write(Resources.AskUpgrade + p.Database + Resources.AskToVersion + installer.Upgrade + Resources.AskYesNo);
+								key = Console.ReadKey(true).Key;
 							}
 
-							System.Console.WriteLine(key);
+							Console.WriteLine(key);
 							if (key == ConsoleKey.N)
 								return 0;
 						}
 					}
 				}
 
-				spin.Start(spinCycle);
 				InstallMethod im = new InstallMethod(installer.Create);
 				AsyncCallback cb = new AsyncCallback(InstallCallback);
 
@@ -93,14 +89,18 @@ namespace SQLInstaller.Console
 					switch (prog.Status)
 					{
 						case StatusMessage.Start:
-							System.Console.Write(Constants.CarriageReturn + prog.Message + Constants.Wait);
+							Console.Write(Constants.CarriageReturn + prog.Message + Constants.Wait);
+							spin.Start(spinCycle);
 							break;
 						case StatusMessage.Complete:
 						case StatusMessage.Detail:
-							System.Console.WriteLine(prog.Message);
+							spin.Stop();
+							Console.WriteLine(prog.Message);
+							spin.Start(spinCycle);
 							break;
 						case StatusMessage.Exit:
-							System.Console.WriteLine(Resources.StatusCompletedWith + prog.Percent + Resources.StatusErrorCount);
+							spin.Stop();
+							Console.WriteLine(Resources.StatusCompletedWith + prog.Percent + Resources.StatusErrorCount);
 							returnCode = prog.Percent;
 							break;
 						case StatusMessage.Running:
@@ -113,8 +113,8 @@ namespace SQLInstaller.Console
 			catch (Exception ex)
 			{
 				returnCode = -1;
-				System.Console.WriteLine();
-				System.Console.WriteLine(ex.Message);
+				Console.WriteLine();
+				Console.WriteLine(ex.Message);
 			}
 			finally
 			{

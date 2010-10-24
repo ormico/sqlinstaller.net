@@ -1,5 +1,12 @@
-﻿<Parameters Options="Create Drop Verbose" IsProtected="true" NoPrompt="true">
+﻿<Parameters Options="Create Drop Verbose" IsProtected="true" NoPrompt="true" ScriptExtension="sql" InstallPath="Install">
 	<Database>Northwind</Database>
 	<Provider Name="SqlServer" />
 	<ConnectionString>Server=hayden;Integrated Security=SSPI;</ConnectionString>
+	<FileTypes>
+		<FileType Name="Table" Description="TABLES" />
+		<FileType Name="StoredProcedure" Description="STORED PROCEDURES" IsDisabled="false" />
+		<FileType Name="UserDefinedFunction" Description="USER DEFINED FUNCTIONS" />
+		<FileType Name="PostInstall" Description="BOOTSTRAP DATA" IsGlobal="false" HaltOnError="true" />
+		<FileType Name="ForeignKey" Description="FOREIGN KEYS" />
+	</FileTypes>
 </Parameters>

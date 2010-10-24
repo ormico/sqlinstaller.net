@@ -30,6 +30,7 @@ namespace SQLInstaller.Core
 				if (changeDatabase)
 					conn.ChangeDatabase(this.Database);
 				Server server = new Server(new ServerConnection(conn));
+				server.ConnectionContext.StatementTimeout = 0;
 				server.ConnectionContext.ExecuteNonQuery(script);
 			}
 		}

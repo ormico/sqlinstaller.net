@@ -82,6 +82,12 @@
 				<Script Type="SetVersion">CREATE OR REPLACE VIEW db_version AS SELECT CAST('{1};{2}' AS VARCHAR(512)) AS version_info</Script>
 			</Scripts>
 		</Provider>
+		<Provider Name="SQLite" InvariantName="System.Data.SQLite">
+			<Scripts>
+				<Script Type="GetVersion">SELECT version_info FROM db_version</Script>
+				<Script Type="SetVersion">DROP VIEW IF EXISTS db_version; CREATE VIEW db_version AS SELECT CAST('{1};{2}' AS VARCHAR(512)) AS version_info</Script>
+			</Scripts>
+		</Provider>
 		<Provider Name="SqlServer" InvariantName="System.Data.SqlClient">
 			<Scripts>
 				<Script Type="Exists">SELECT COUNT(*) FROM sysdatabases WHERE '[' + name + ']' = QUOTENAME('{0}')</Script>
@@ -116,6 +122,15 @@
 					ELSE
 					EXEC sp_updateextendedproperty 'UpdatedBy', '{2}'
 				</Script>
+			</Scripts>
+		</Provider>
+		<Provider Name="Teradata" InvariantName="Teradata.Client.Provider">
+			<Scripts>
+				<Script Type="Exists">SELECT COUNT(*) FROM dbc.dbase WHERE databasename='{0}'</Script>
+				<Script Type="Drop">MODIFY DATABASE {0} AS DROP DEFAULT JOURNAL TABLE; DELETE DATABASE {0}; DROP DATABASE {0};</Script>
+				<Script Type="Create">CREATE DATABASE {0} AS PERM=10e6, SPOOL=20e6</Script>
+				<Script Type="GetVersion">SELECT VERSION_INFO || ';' || UPGRADEBY FROM DB_VERSION</Script>
+				<Script Type="SetVersion">REPLACE VIEW DB_VERSION AS SELECT '{1}' AS VERSION_INFO, '{2}' AS UPGRADEBY</Script>
 			</Scripts>
 		</Provider>
 	</Providers>
