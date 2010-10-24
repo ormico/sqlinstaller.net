@@ -1,0 +1,8 @@
+CREATE OR REPLACE TRIGGER CATEGORIES_BI BEFORE INSERT ON categories
+     FOR EACH ROW 
+BEGIN
+	IF :NEW.categoryid IS NULL THEN
+		SELECT categories_categoryid_seq.NEXTVAL INTO :NEW.categoryid FROM DUAL;
+	END IF;
+END;
+/
