@@ -1,0 +1,5 @@
+﻿<Parameters Options="Create Drop Verbose" IsProtected="true">
+	<Database>Northwind</Database>
+	<Provider Name="MySql" />
+	<ConnectionString>fQTrPJNAAt1VJmNFQyZyhUNWDJx7+gg1T/kyvAQUJmjk59ji0Zn57CKX6hYylgas</ConnectionString>
+</Parameters>

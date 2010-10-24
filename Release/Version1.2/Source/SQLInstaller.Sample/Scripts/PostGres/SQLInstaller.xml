@@ -1,0 +1,5 @@
+﻿<Parameters Options="Create Drop Verbose" IsProtected="true" NoPrompt="true">
+	<Database>northwind</Database>
+	<Provider Name="PostGres" />
+	<ConnectionString>Aj2biuP0ibQU5qkVyy3Cs/m+45gWNva6jE5liHCe8H+ml+bg7+Kl/tvDRZFTrKi8EqB75W3nmYBKRUqtf0U0IQ==</ConnectionString>
+</Parameters>

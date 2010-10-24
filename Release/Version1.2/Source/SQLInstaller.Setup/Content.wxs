@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder" Name="PFiles">
+				<Directory Id="ROOTINSTALL" Name="SQLInstaller" />
+			</Directory>
+			<Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
+				<Directory Id="RootShortcut" Name="SQL Installer.NET" />
+			</Directory>
+		</Directory>
+		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Core.TargetDir)">
+			<Component Id="SQLInstaller.Core.dll" Guid="{807BEB2A-AC36-4f90-9126-074B5C10C2A1}">
+				<File Id="SQLInstaller.Core.dll" KeyPath="yes"/>
+			</Component>
+		</DirectoryRef>
+		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Console.TargetDir)">
+			<Component Id="SqlInstaller.exe" Guid="{E4A5EE25-AFC4-4409-945A-04262EF63492}">
+				<File Id="SqlInstaller.exe" KeyPath="yes"/>
+				<File Id="ProviderFactory.xml.orig" Name="ProviderFactory.xml.orig" Source="$(var.SQLInstaller.Core.ProjectDir)Resources\ProviderFactory.xml"/>
+			</Component>
+			<Component Id="SQLInstaller.reg" Guid="{A082D4E0-E238-43bd-915A-54734039DFCE}">
+				<RegistryKey Id="SQLInstaller.regkey" Root="HKLM" Key="SOFTWARE\JHOB Technologies\SQLInstaller" Action="createAndRemoveOnUninstall">
+					<RegistryValue Id="SQLInstaller.regval" Name="Path" Value="[ROOTINSTALL]SQLInstaller.exe" Type="string" />
+				</RegistryKey>
+				<Environment Id="SQLInstaller.setpath" Action="set" Name="PATH" Part="last" System="yes" Value="[ROOTINSTALL]" />
+			</Component>
+		</DirectoryRef>
+		<ComponentGroup Id="Binaries">
+			<ComponentRef Id="SqlInstaller.exe"/>
+			<ComponentRef Id="SQLInstaller.Core.dll"/>
+			<ComponentRef Id="SQLInstaller.reg"/>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
