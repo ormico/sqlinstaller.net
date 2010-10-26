@@ -259,7 +259,7 @@ namespace SQLInstaller.Core
 										SetProgress(StatusMessage.Detail, fileType.Description);
 									}
 
-									string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name;
+									string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
 									ExecuteScripts(upgradeDir.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
 								}
 							}

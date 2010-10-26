@@ -9,11 +9,13 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SQLInstaller.Setup", "SQLIn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Sample", "SQLInstaller.Sample\SQLInstaller.Sample.csproj", "{02E2C154-5D5F-43F0-9827-C82D274AA475}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0149F9CB-CE8A-41FF-AB9B-AE68F146EA75}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs05.codeplex.com/
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/TFS05
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = SQLInstaller.Core\\SQLInstaller.Core.csproj
 		SccProjectName1 = SQLInstaller.Core

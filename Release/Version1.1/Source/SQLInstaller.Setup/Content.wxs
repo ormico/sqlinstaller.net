@@ -14,7 +14,7 @@
 				<File Id="SQLInstaller.Core.dll" KeyPath="yes"/>
 			</Component>
 		</DirectoryRef>
-		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Console.TargetDir)">
+		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Console.TargetDir)Dotfuscated">
 			<Component Id="SqlInstaller.exe" Guid="{E4A5EE25-AFC4-4409-945A-04262EF63492}">
 				<File Id="SqlInstaller.exe" KeyPath="yes"/>
 				<File Id="ProviderFactory.xml.orig" Name="ProviderFactory.xml.orig" Source="$(var.SQLInstaller.Core.ProjectDir)Resources\ProviderFactory.xml"/>
