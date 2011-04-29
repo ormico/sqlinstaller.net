@@ -11,6 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLInstaller.Sample", "SQLI
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56D6DE1A-7960-4CF2-8794-349C7B1167D8}"
 	ProjectSection(SolutionItems) = preProject
+		Settings.StyleCop = Settings.StyleCop
 		SQLInstaller.Dotfuscator.xml = SQLInstaller.Dotfuscator.xml
 	EndProjectSection
 EndProject

@@ -1,11 +1,10 @@
-/*  ----------------------------------------------------------------------------
- *  SQL Installer.NET
- *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
- *  ----------------------------------------------------------------------------
- *  File:       DirInfoSorter.cs
- *  Author:     Brian Schloz
- *  ----------------------------------------------------------------------------
- */
+//-----------------------------------------------------------------------
+// <copyright file="DirInfoSorter.cs" company="JHOB Technologies, LLC">
+//     Copyright © JHOB Technologies, LLC. All rights reserved.
+// </copyright>
+// <license>Microsoft Public License</license>
+// <author>Brian Schloz</author>
+//-----------------------------------------------------------------------
 namespace SQLInstaller.Core
 {
 	using System.Collections;
@@ -18,6 +17,12 @@ namespace SQLInstaller.Core
 	{
 		#region IComparer Members
 
+        /// <summary>
+        /// Compares two objects.
+        /// </summary>
+        /// <param name="x">First object to compare.</param>
+        /// <param name="y">Second object to compare.</param>
+        /// <returns>The relative position in sort order of the two objects.</returns>
 		public int Compare(object x, object y)
 		{
 			return string.Compare(((DirectoryInfo)x).Name, ((DirectoryInfo)y).Name, true);

@@ -1,11 +1,10 @@
-/*  ----------------------------------------------------------------------------
- *  SQL Installer.NET
- *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
- *  ----------------------------------------------------------------------------
- *  File:       CommercialClient.cs
- *  Author:     Brian Schloz
- *  ----------------------------------------------------------------------------
- */
+//-----------------------------------------------------------------------
+// <copyright file="CommercialClient.cs" company="JHOB Technologies, LLC">
+//     Copyright © JHOB Technologies, LLC. All rights reserved.
+// </copyright>
+// <license>Microsoft Public License</license>
+// <author>Brian Schloz</author>
+//-----------------------------------------------------------------------
 namespace SQLInstaller.Core
 {
 	using System;
@@ -17,14 +16,26 @@ namespace SQLInstaller.Core
 	/// </summary>
 	public sealed class CommercialClient : BaseClient
 	{
+        /// <summary>
+        /// The database statement which is used to set the database context.
+        /// </summary>
 		private string alterStatement;
 
+        /// <summary>
+        /// Initializes a new instance of the CommercialClient class.
+        /// </summary>
+        /// <param name="alterStatement">The sql used to set the database context.</param>
 		public CommercialClient(string alterStatement)
 		{
 			this.alterStatement = alterStatement;
 		}
 
-		public override void Execute(string script, bool changeDatabase)
+        /// <summary>
+        /// Method to execute a SQL script using the underlying data provider.
+        /// </summary>
+        /// <param name="script">The text of the script to execute.</param>
+        /// <param name="changeDatabase">Indicates whether or not to change to the new database prior to executing the script.</param>
+        public override void Execute(string script, bool changeDatabase)
 		{
 			using (DbConnection connection = this.DbProviderFactory.CreateConnection())
 			{
@@ -46,19 +57,23 @@ namespace SQLInstaller.Core
 				// this is found, then add all prior lines as a single command.
 				foreach (string line in script.Split(new char[] { Constants.CarriageReturn, Constants.NewLine }, StringSplitOptions.RemoveEmptyEntries))
 				{
-					if (line.Trim().EndsWith(Constants.ForwardSlash.ToString(), StringComparison.OrdinalIgnoreCase))
-					{
-						lines.Add(line.TrimEnd(null).TrimEnd(new char[] { Constants.ForwardSlash }));
-						scripts.Add(string.Join(Constants.NewLine.ToString(), lines.ToArray()));
-						lines.Clear();
-					}
-					else
-						lines.Add(line);
+                    if (line.Trim().EndsWith(Constants.ForwardSlash.ToString(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        lines.Add(line.TrimEnd(null).TrimEnd(new char[] { Constants.ForwardSlash }));
+                        scripts.Add(string.Join(Constants.NewLine.ToString(), lines.ToArray()));
+                        lines.Clear();
+                    }
+                    else
+                    {
+                        lines.Add(line);
+                    }
 				}
 
 				// Any remaining lines will be joined together then re-split on semi-colon
-				if (lines.Count > 0)
-					scripts.AddRange(string.Join(Constants.NewLine.ToString(), lines.ToArray()).Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries));
+                if (lines.Count > 0)
+                {
+                    scripts.AddRange(string.Join(Constants.NewLine.ToString(), lines.ToArray()).Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries));
+                }
 
 				foreach (string sqlLine in scripts)
 				{

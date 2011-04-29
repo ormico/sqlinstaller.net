@@ -1,4 +1,11 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="AssemblyInfo.cs" company="JHOB Technologies, LLC">
+//     Copyright © JHOB Technologies, LLC. All rights reserved.
+// </copyright>
+// <license>Microsoft Public License</license>
+// <author>Brian Schloz</author>
+//-----------------------------------------------------------------------
+using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
@@ -31,6 +38,6 @@ using System.Runtime.InteropServices;
 //      Minor Version 
 //      Build Number
 //      Revision
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.1.0")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

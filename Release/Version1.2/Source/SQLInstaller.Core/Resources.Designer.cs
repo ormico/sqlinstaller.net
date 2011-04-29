@@ -68,6 +68,15 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing parameter: /{0}.
+        /// </summary>
+        internal static string ErrorArgument {
+            get {
+                return ResourceManager.GetString("ErrorArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {1}Could not load file or assembly &apos;{0}&apos;{1}{1}NOTE: for SQL Server, you will need to install the SMO toolkit.{1}A link to SMO is provided for you at http://sqlinstaller.codeplex.com.{1}.
         /// </summary>
         internal static string ErrorAssembly {
@@ -148,15 +157,6 @@ namespace SQLInstaller.Core {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to . Creating a new template. Please edit as appropriate. Exiting..
-        /// </summary>
-        internal static string ExitingWithNewTemplate {
-            get {
-                return ResourceManager.GetString("ExitingWithNewTemplate", resourceCulture);
-            }
-        }
-        
         internal static System.Drawing.Bitmap icon {
             get {
                 object obj = ResourceManager.GetObject("icon", resourceCulture);
@@ -177,15 +177,6 @@ namespace SQLInstaller.Core {
             get {
                 object obj = ResourceManager.GetObject("left", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Missing parameters xml file: .
-        /// </summary>
-        internal static string MissingParmFile {
-            get {
-                return ResourceManager.GetString("MissingParmFile", resourceCulture);
             }
         }
         
