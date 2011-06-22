@@ -1,11 +1,10 @@
-/*  ----------------------------------------------------------------------------
- *  SQL Installer.NET
- *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
- *  ----------------------------------------------------------------------------
- *  File:       ScriptType.cs
- *  Author:     Brian Schloz
- *  ----------------------------------------------------------------------------
- */
+//-----------------------------------------------------------------------
+// <copyright file="ScriptType.cs" company="JHOB Technologies, LLC">
+//     Copyright © JHOB Technologies, LLC. All rights reserved.
+// </copyright>
+// <license>Microsoft Public License</license>
+// <author>Brian Schloz</author>
+//-----------------------------------------------------------------------
 namespace SQLInstaller.Core
 {
 	/// <summary>
