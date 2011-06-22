@@ -1,25 +1,30 @@
-/*  ----------------------------------------------------------------------------
- *  SQL Installer.NET
- *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
- *  ----------------------------------------------------------------------------
- *  File:       Script.cs
- *  Author:     Brian Schloz
- *  ----------------------------------------------------------------------------
- */
+//-----------------------------------------------------------------------
+// <copyright file="Script.cs" company="JHOB Technologies, LLC">
+//     Copyright © JHOB Technologies, LLC. All rights reserved.
+// </copyright>
+// <license>Microsoft Public License</license>
+// <author>Brian Schloz</author>
+//-----------------------------------------------------------------------
 namespace SQLInstaller.Core
 {
 	using System;
 	using System.Xml.Serialization;
 
 	/// <summary>
-	/// SQL Script.
+	/// SQL Scripts for command methods.
 	/// </summary>
 	[Serializable]
 	public sealed class Script
 	{
+        /// <summary>
+        /// Gets or sets the script type.
+        /// </summary>
 		[XmlAttribute]
 		public ScriptType Type { get; set; }
 
+        /// <summary>
+        /// Gets or sets the command text.
+        /// </summary>
 		[XmlText]
 		public string CommandText { get; set; }
 	}

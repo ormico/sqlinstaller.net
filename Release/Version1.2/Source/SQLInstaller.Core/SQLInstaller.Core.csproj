@@ -61,6 +61,7 @@
     <Compile Include="Arguments.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="BaseClient.cs" />
+    <Compile Include="FileTypeConverter.cs" />
     <Compile Include="ProviderConverter.cs" />
     <Compile Include="FileType.cs" />
     <Compile Include="SQLiteClient.cs" />
