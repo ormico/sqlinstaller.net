@@ -28,11 +28,10 @@ namespace SQLInstaller.Console
         /// </summary>
         /// <param name="args">An array of arguments.</param>
         /// <returns>Zero (0) for success and non-zero for failure.</returns>
-		public static int Main(string[] args)
+        public static int Main(string[] args)
 		{
-			int returnCode = 0;
 			double spinCycle = Constants.MinSpinTimeout;
-
+            bool forceWrite = false;
 			Installer installer;
 			Spinner spin = new Spinner();
 
@@ -43,7 +42,11 @@ namespace SQLInstaller.Console
                 // Retain backwards compatability with using just config file as a single parameter.
                 if (args.Length > 0 && !args[0].StartsWith("/", StringComparison.OrdinalIgnoreCase))
                 {
-                    configPath = args[0];                    
+                    configPath = args[0];
+                    if (!File.Exists(configPath))
+                    {
+                        forceWrite = true;
+                    }
                 }
                 else
                 {
@@ -59,12 +62,6 @@ namespace SQLInstaller.Console
                 else
                 {
                     parms = new Arguments<Parameters>(args, new Parameters(configPath));
-                    if (string.IsNullOrWhiteSpace(parms.Instance.Database))
-                    {
-                        parms.Instance.Database = Constants.SingleWhitespace;
-                        parms.Instance.Write();
-                        throw new ArgumentException(Resources.MissingParmFile + configPath + Resources.ExitingWithNewTemplate);
-                    }
                 }
 
                 if (!parms.IsValid)
@@ -72,7 +69,7 @@ namespace SQLInstaller.Console
                     throw new ApplicationException(parms.ValidationErrors);
                 }
 
-                if (parms.Instance.WriteConfig)
+                if (parms.Instance.WriteConfig || forceWrite)
                 {
                     if (!parms.Instance.IsProtected)
                     {
@@ -85,12 +82,11 @@ namespace SQLInstaller.Console
                 }
 
 				spin.Start(spinCycle);
-				Console.Write(Resources.StatusConnecting);
+				Console.WriteLine(Resources.StatusConnecting);
 
 				installer = new Installer(parms.Instance);
 				installer.Prepare();
 				spin.Stop();
-				Console.WriteLine(Resources.StatusDone);
 
                 if (installer.Exists && !parms.Instance.Options.Has(Options.Drop))
 				{
@@ -133,21 +129,20 @@ namespace SQLInstaller.Console
 					switch (prog.Status)
 					{
 						case StatusMessage.Start:
-							Console.Write(Constants.CarriageReturn + prog.Message + Constants.Wait);
+							Console.WriteLine(prog.Message + Constants.Wait);
 							spin.Start(spinCycle);
 							break;
-						case StatusMessage.Complete:
-						case StatusMessage.Detail:
+                        case StatusMessage.Detail:
 							spin.Stop();
 							Console.WriteLine(prog.Message);
 							spin.Start(spinCycle);
 							break;
-						case StatusMessage.Exit:
+                        case StatusMessage.Exit:
 							spin.Stop();
 							Console.WriteLine(Resources.StatusCompletedWith + prog.Percent + Resources.StatusErrorCount);
-							returnCode = prog.Percent;
 							break;
-						case StatusMessage.Running:
+                        case StatusMessage.Complete:
+                        case StatusMessage.Running:
 						case StatusMessage.Progress:
 						default:
 							break;
@@ -156,9 +151,7 @@ namespace SQLInstaller.Console
 			}
 			catch (Exception ex)
 			{
-				returnCode = -1;
-				Console.Error.WriteLine();
-				Console.Error.WriteLine(ex.Message);
+				Console.WriteLine(string.Format(Resources.ErrorGeneric, ex.Message));
 			}
 			finally
 			{
@@ -168,7 +161,7 @@ namespace SQLInstaller.Console
                 }
 			}
 
-			return returnCode;
+            return 0;
 		}
 
         /// <summary>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="{BAB1F4A8-9049-4609-993A-3EA8C8ACADEF}" Codepage="1252" Language="1033" Manufacturer="JHOB Technologies, LLC" Name="SQL Installer.NET" UpgradeCode="{7F6E19C9-161F-47e6-804F-E1A0C30E8A31}" Version="1.2.1">
+  <Product Id="{BAB1F4A8-9049-4609-993A-3EA8C8ACADEF}" Codepage="1252" Language="1033" Manufacturer="JHOB Technologies, LLC" Name="SQL Installer.NET" UpgradeCode="{7F6E19C9-161F-47e6-804F-E1A0C30E8A31}" Version="1.2.2">
     <Package Comments="SQL Installer.NET" Compressed="yes" InstallerVersion="200" Languages="1033" Manufacturer="JHOB Technologies, LLC" Platform="x86" />
     <!--<Condition Message="[SQLSMOMSG]">INSTALLED OR SQLSMO</Condition>-->
     <Feature Id="Default" ConfigurableDirectory="ROOTINSTALL" Level="1" Title="Binaries" Description="Binaries, Documentation, and Samples">
