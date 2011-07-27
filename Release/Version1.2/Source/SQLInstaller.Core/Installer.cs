@@ -231,7 +231,6 @@ namespace SQLInstaller.Core
 		public void Create()
 		{
 			string errorMessage = string.Empty;
-            bool dropped = false;
 
 			try
 			{
@@ -246,7 +245,6 @@ namespace SQLInstaller.Core
                     }
 
 					this.Exists = false;
-                    dropped = true;
 				}
 
 				DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.InstallPath));
@@ -254,7 +252,7 @@ namespace SQLInstaller.Core
 
 				if (!this.Exists || !upgradeScripts.Exists)
 				{
-					if ((this.parameters.Options.HasFlag(Options.Create) || dropped))
+                    if (this.parameters.Options.HasFlag(Options.Create) || this.parameters.Options.HasFlag(Options.Drop))
 					{
 						this.SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
 						this.client.CreateDatabase();
