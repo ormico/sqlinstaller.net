@@ -136,10 +136,10 @@
   <data name="InvalidReserved" xml:space="preserve">
     <value>You cannot have an Upgrade directory with the reserved name:</value>
   </data>
-  <data name="MissingReq" xml:space="preserve">
+  <data name="WarnMissingReq" xml:space="preserve">
     <value>Missing required parameter.</value>
   </data>
-  <data name="MissingScriptDir" xml:space="preserve">
+  <data name="WarnMissingScriptDir" xml:space="preserve">
     <value>Script directory is missing:</value>
   </data>
   <data name="StatusCreatingDatabase" xml:space="preserve">
@@ -167,19 +167,19 @@
     <value>Upgrading Database to version </value>
   </data>
   <data name="WarnMissingInstall" xml:space="preserve">
-    <value>WARNING: missing Install directory. An empty database was created.</value>
+    <value>Missing Install directory. An empty database was created.</value>
   </data>
   <data name="WarnMissingUpgrade" xml:space="preserve">
-    <value>WARNING: missing Upgrade directory. Nothing to do.</value>
+    <value>Missing Upgrade directory. Nothing to do.</value>
   </data>
   <data name="WarnMissingVersions" xml:space="preserve">
-    <value>WARNING: no version directories found. Nothing to do.</value>
+    <value>No version directories found. Nothing to do.</value>
   </data>
   <data name="WarnNoNewScripts" xml:space="preserve">
-    <value>WARNING: no new scripts found. Nothing to do.</value>
+    <value>No new scripts found. Nothing to do.</value>
   </data>
   <data name="WarnNoScripts" xml:space="preserve">
-    <value>WARNING: no scripts found. An empty database was created.</value>
+    <value>No scripts found. An empty database was created.</value>
   </data>
   <data name="ErrorEnumAppend" xml:space="preserve">
     <value>Could not append value from enumerated type '{0}'.</value>
@@ -228,5 +228,14 @@
   </data>
   <data name="ErrorArgument" xml:space="preserve">
     <value>Missing parameter: /{0}</value>
+  </data>
+  <data name="ErrorFile" xml:space="preserve">
+    <value>{0} : error : {1}</value>
+  </data>
+  <data name="ErrorGeneric" xml:space="preserve">
+    <value>sqlinstaller : error : {0}</value>
+  </data>
+  <data name="WarningGeneric" xml:space="preserve">
+    <value>sqlinstaller : warning : {0}</value>
   </data>
 </root>

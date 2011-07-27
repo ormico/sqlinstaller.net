@@ -149,12 +149,15 @@
     <value>Done.</value>
   </data>
   <data name="StatusErrorCount" xml:space="preserve">
-    <value> errors.</value>
+    <value> error(s).</value>
   </data>
   <data name="ExitingWithNewTemplate" xml:space="preserve">
     <value>. Creating a new template. Please edit as appropriate. Exiting.</value>
   </data>
   <data name="MissingParmFile" xml:space="preserve">
     <value>Missing parameters xml file:</value>
+  </data>
+  <data name="ErrorGeneric" xml:space="preserve">
+    <value>sqlinstaller : error : {0}</value>
   </data>
 </root>

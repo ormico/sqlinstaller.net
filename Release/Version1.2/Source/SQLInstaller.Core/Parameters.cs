@@ -60,7 +60,7 @@ namespace SQLInstaller.Core
 		public Parameters()
 		{
             this.ConnectionString = Constants.DefaultConnString;
-            this.Options = this.Options.Add(Options.Create | Options.Drop | Options.Verbose);
+            this.Options = this.Options.Add(Options.Create | Options.Verbose);
             this.Provider = new Provider();
             this.FileTypes = new List<FileType>();
 
