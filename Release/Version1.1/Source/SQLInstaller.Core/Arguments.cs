@@ -16,13 +16,10 @@ namespace SQLInstaller.Core
 
     public sealed class Arguments<T> where T : new()
     {
-        private Collection<ValidationResult> validationResults;
-
         public Arguments(IEnumerable<string> args, T instance)
         {
             this.OriginalArgs = args;
             this.Instance = instance;
-            this.validationResults = new Collection<ValidationResult>();
 
             this.Parse();
         }
@@ -38,22 +35,12 @@ namespace SQLInstaller.Core
 
         public bool IsValid
         {
-            get { return this.validationResults.Count == 0; }
+            get { return true; }
         }
 
         public string ValidationErrors
         {
-            get
-            {
-                StringBuilder error = new StringBuilder();
-                foreach (ValidationResult result in this.validationResults)
-                {
-                    error.Append(result.ErrorMessage);
-                    error.Append(" ");
-                }
-
-                return error.ToString();
-            }
+            get { return string.Empty; }
         }
 
         private void Parse()
@@ -99,8 +86,6 @@ namespace SQLInstaller.Core
                     }
                 }
             }
-
-            Validator.TryValidateObject(this.Instance, new ValidationContext(this.Instance, null, null), this.validationResults, true);
         }
 
         /// <summary>

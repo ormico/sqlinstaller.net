@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>SQLInstaller.Setup</OutputName>
     <OutputType>Package</OutputType>
-    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix2010.targets</WixTargetsPath>
-    <WixToolPath>$(ProgramFiles)\Windows Installer XML v3.5\bin\</WixToolPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
+    <WixToolPath>$(ProgramFiles)\Windows Installer XML v3\bin\</WixToolPath>
     <SccProjectName>SAK</SccProjectName>
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
@@ -109,8 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
-      <HintPath>..\..\..\..\..\..\Program Files\Windows Installer XML v3.5\bin\WixUIExtension.dll</HintPath>
-      <Name>WixUIExtension</Name>
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
