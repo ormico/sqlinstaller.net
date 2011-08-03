@@ -14,10 +14,10 @@
 				<File Id="SQLInstaller.Core.dll" KeyPath="yes"/>
 			</Component>
 		</DirectoryRef>
-		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Console.TargetDir)Dotfuscated">
+		<DirectoryRef Id="ROOTINSTALL" FileSource="$(var.SQLInstaller.Console.TargetDir)">
 			<Component Id="SqlInstaller.exe" Guid="{E4A5EE25-AFC4-4409-945A-04262EF63492}">
-				<File Id="SqlInstaller.exe" KeyPath="yes"/>
-				<File Id="ProviderFactory.xml.orig" Name="ProviderFactory.xml.orig" Source="$(var.SQLInstaller.Core.ProjectDir)Resources\ProviderFactory.xml"/>
+        <File Id="SQLInstaller.exe" KeyPath="yes" />
+        <File Id="ProviderFactory.xml.orig" Name="ProviderFactory.xml.orig" Source="$(var.SQLInstaller.Core.ProjectDir)Resources\ProviderFactory.xml"/>
 			</Component>
 			<Component Id="SQLInstaller.reg" Guid="{A082D4E0-E238-43bd-915A-54734039DFCE}">
 				<RegistryKey Id="SQLInstaller.regkey" Root="HKLM" Key="SOFTWARE\JHOB Technologies\SQLInstaller" Action="createAndRemoveOnUninstall">

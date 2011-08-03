@@ -112,12 +112,12 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="back" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\back.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -136,10 +136,10 @@
   <data name="InvalidReserved" xml:space="preserve">
     <value>You cannot have an Upgrade directory with the reserved name:</value>
   </data>
-  <data name="MissingReq" xml:space="preserve">
+  <data name="WarnMissingReq" xml:space="preserve">
     <value>Missing required parameter.</value>
   </data>
-  <data name="MissingScriptDir" xml:space="preserve">
+  <data name="WarnMissingScriptDir" xml:space="preserve">
     <value>Script directory is missing:</value>
   </data>
   <data name="StatusCreatingDatabase" xml:space="preserve">
@@ -167,19 +167,19 @@
     <value>Upgrading Database to version </value>
   </data>
   <data name="WarnMissingInstall" xml:space="preserve">
-    <value>WARNING: missing Install directory. An empty database was created.</value>
+    <value>Missing Install directory. An empty database was created.</value>
   </data>
   <data name="WarnMissingUpgrade" xml:space="preserve">
-    <value>WARNING: missing Upgrade directory. Nothing to do.</value>
+    <value>Missing Upgrade directory. Nothing to do.</value>
   </data>
   <data name="WarnMissingVersions" xml:space="preserve">
-    <value>WARNING: no version directories found. Nothing to do.</value>
+    <value>No version directories found. Nothing to do.</value>
   </data>
   <data name="WarnNoNewScripts" xml:space="preserve">
-    <value>WARNING: no new scripts found. Nothing to do.</value>
+    <value>No new scripts found. Nothing to do.</value>
   </data>
   <data name="WarnNoScripts" xml:space="preserve">
-    <value>WARNING: no scripts found. An empty database was created.</value>
+    <value>No scripts found. An empty database was created.</value>
   </data>
   <data name="ErrorEnumAppend" xml:space="preserve">
     <value>Could not append value from enumerated type '{0}'.</value>
@@ -214,12 +214,6 @@
   <data name="ProviderFactory" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\providerfactory.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="ExitingWithNewTemplate" xml:space="preserve">
-    <value>. Creating a new template. Please edit as appropriate. Exiting.</value>
-  </data>
-  <data name="MissingParmFile" xml:space="preserve">
-    <value>Missing parameters xml file: </value>
-  </data>
   <data name="ErrorConnectionMethod" xml:space="preserve">
     <value>Cannot find connection method: </value>
   </data>
@@ -231,5 +225,17 @@
   </data>
   <data name="ErrorAssembly" xml:space="preserve">
     <value>{1}Could not load file or assembly '{0}'{1}{1}NOTE: for SQL Server, you will need to install the SMO toolkit.{1}A link to SMO is provided for you at http://sqlinstaller.codeplex.com.{1}</value>
+  </data>
+  <data name="ErrorArgument" xml:space="preserve">
+    <value>Missing parameter: /{0}</value>
+  </data>
+  <data name="ErrorFile" xml:space="preserve">
+    <value>{0} : error : {1}</value>
+  </data>
+  <data name="ErrorGeneric" xml:space="preserve">
+    <value>sqlinstaller : error : {0}</value>
+  </data>
+  <data name="WarningGeneric" xml:space="preserve">
+    <value>sqlinstaller : warning : {0}</value>
   </data>
 </root>
