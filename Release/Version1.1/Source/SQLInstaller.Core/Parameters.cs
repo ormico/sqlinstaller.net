@@ -103,7 +103,6 @@ namespace SQLInstaller.Core
         /// Gets or sets the database name.
         /// </summary>
 		[XmlElement]
-        [Required(ErrorMessageResourceName = "ErrorArgument", ErrorMessageResourceType = typeof(Resources))]
         public string Database { get; set; }
 
         /// <summary>

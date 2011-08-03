@@ -252,7 +252,7 @@ namespace SQLInstaller.Core
 
 				if (!this.Exists || !upgradeScripts.Exists)
 				{
-                    if (this.parameters.Options.HasFlag(Options.Create) || this.parameters.Options.HasFlag(Options.Drop))
+                    if (this.parameters.Options.Has<Options>(Options.Create) || this.parameters.Options.Has<Options>(Options.Drop))
 					{
 						this.SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
 						this.client.CreateDatabase();
