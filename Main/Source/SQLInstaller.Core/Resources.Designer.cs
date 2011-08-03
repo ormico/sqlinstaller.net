@@ -113,6 +113,24 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} : error : {1}.
+        /// </summary>
+        internal static string ErrorFile {
+            get {
+                return ResourceManager.GetString("ErrorFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to sqlinstaller : error : {0}.
+        /// </summary>
+        internal static string ErrorGeneric {
+            get {
+                return ResourceManager.GetString("ErrorGeneric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The cipher data is invalid. Cannot decrypt connection string..
         /// </summary>
         internal static string ErrorInvalidCipherData {
@@ -177,24 +195,6 @@ namespace SQLInstaller.Core {
             get {
                 object obj = ResourceManager.GetObject("left", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Missing required parameter..
-        /// </summary>
-        internal static string MissingReq {
-            get {
-                return ResourceManager.GetString("MissingReq", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Script directory is missing:.
-        /// </summary>
-        internal static string MissingScriptDir {
-            get {
-                return ResourceManager.GetString("MissingScriptDir", resourceCulture);
             }
         }
         
@@ -348,7 +348,16 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: missing Install directory. An empty database was created..
+        ///   Looks up a localized string similar to sqlinstaller : warning : {0}.
+        /// </summary>
+        internal static string WarningGeneric {
+            get {
+                return ResourceManager.GetString("WarningGeneric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing Install directory. An empty database was created..
         /// </summary>
         internal static string WarnMissingInstall {
             get {
@@ -357,7 +366,25 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: missing Upgrade directory. Nothing to do..
+        ///   Looks up a localized string similar to Missing required parameter..
+        /// </summary>
+        internal static string WarnMissingReq {
+            get {
+                return ResourceManager.GetString("WarnMissingReq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Script directory is missing:.
+        /// </summary>
+        internal static string WarnMissingScriptDir {
+            get {
+                return ResourceManager.GetString("WarnMissingScriptDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing Upgrade directory. Nothing to do..
         /// </summary>
         internal static string WarnMissingUpgrade {
             get {
@@ -366,7 +393,7 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: no version directories found. Nothing to do..
+        ///   Looks up a localized string similar to No version directories found. Nothing to do..
         /// </summary>
         internal static string WarnMissingVersions {
             get {
@@ -375,7 +402,7 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: no new scripts found. Nothing to do..
+        ///   Looks up a localized string similar to No new scripts found. Nothing to do..
         /// </summary>
         internal static string WarnNoNewScripts {
             get {
@@ -384,7 +411,7 @@ namespace SQLInstaller.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: no scripts found. An empty database was created..
+        ///   Looks up a localized string similar to No scripts found. An empty database was created..
         /// </summary>
         internal static string WarnNoScripts {
             get {
