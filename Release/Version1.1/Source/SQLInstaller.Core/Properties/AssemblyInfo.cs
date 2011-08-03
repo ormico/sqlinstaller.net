@@ -1,4 +1,11 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="AssemblyInfo.cs" company="JHOB Technologies, LLC">
+//     Copyright © JHOB Technologies, LLC. All rights reserved.
+// </copyright>
+// <license>Microsoft Public License</license>
+// <author>Brian Schloz</author>
+//-----------------------------------------------------------------------
+using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
@@ -34,6 +41,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.1.10.0")]
-[assembly: AssemblyFileVersion("1.1.10.0")]
+[assembly: AssemblyVersion("1.1.11.0")]
+[assembly: AssemblyFileVersion("1.1.11.0")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

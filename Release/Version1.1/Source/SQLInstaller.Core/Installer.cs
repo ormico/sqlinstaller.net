@@ -1,11 +1,10 @@
-/*  ----------------------------------------------------------------------------
- *  SQL Installer.NET
- *  Microsoft Public License (http://www.microsoft.com/opensource/licenses.mspx#Ms-PL)
- *  ----------------------------------------------------------------------------
- *  File:       Installer.cs
- *  Author:     Brian Schloz
- *  ----------------------------------------------------------------------------
- */
+//-----------------------------------------------------------------------
+// <copyright file="Installer.cs" company="JHOB Technologies, LLC">
+//     Copyright © JHOB Technologies, LLC. All rights reserved.
+// </copyright>
+// <license>Microsoft Public License</license>
+// <author>Brian Schloz</author>
+//-----------------------------------------------------------------------
 namespace SQLInstaller.Core
 {
 	using System;
@@ -20,57 +19,115 @@ namespace SQLInstaller.Core
 	/// </summary>
 	public sealed class Installer : IDisposable
 	{
+        /// <summary>
+        /// Indicates whether or not the class has been disposed.
+        /// </summary>
 		private bool isDisposed;
+        
+        /// <summary>
+        /// The message queue for writing console messages from the main calling thread.
+        /// </summary>
 		private Queue<Progress> messages;
+
+        /// <summary>
+        /// The parameters used for this install.
+        /// </summary>
 		private Parameters parameters;
+
+        /// <summary>
+        /// The client used for this install.
+        /// </summary>
 		private BaseClient client;
 
+        /// <summary>
+        /// Initializes a new instance of the Installer class.
+        /// </summary>
+        /// <param name="parameters">The parameters to use.</param>
 		public Installer(Parameters parameters)
 		{
 			this.Upgrade = Constants.RTM;
 			this.messages = new Queue<Progress>();
 			this.parameters = parameters;
 
-			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(this.CurrentDomain_AssemblyResolve);
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether the database exists.
+        /// </summary>
 		public bool Exists { get; private set; }
 
+        /// <summary>
+        /// Gets the version.
+        /// </summary>
 		public string Version { get; private set; }
 
+        /// <summary>
+        /// Gets the upgrade version.
+        /// </summary>
 		public string Upgrade { get; private set; }
 
+        /// <summary>
+        /// Gets the user who ran the last install/upgrad.
+        /// </summary>
 		public string UpgradeBy { get; private set; }
 
+        /// <summary>
+        /// Gets the count of errors that occurred during the install/upgrade.
+        /// </summary>
 		public int Errors { get; private set; }
 
+        /// <summary>
+        /// Gets the total number of scripts found.
+        /// </summary>
 		public int ScriptsTotal { get; private set; }
 
+        /// <summary>
+        /// Gets the total number of scripts that were executed.
+        /// </summary>
 		public int ScriptsRun { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the database is current.
+        /// </summary>
 		public bool IsCurrent
 		{
 			get
 			{
-				if (string.Compare(this.Version, Constants.RTM, true) == 0)
-					return string.Compare(this.Upgrade, Constants.RTM, true) == 0;
-				else
-					return string.Compare(this.Version, this.Upgrade, true) >= 0;
+                if (string.Compare(this.Version, Constants.RTM, true) == 0)
+                {
+                    return string.Compare(this.Upgrade, Constants.RTM, true) == 0;
+                }
+                else
+                {
+                    return string.Compare(this.Version, this.Upgrade, true) >= 0;
+                }
 			}
 		}
 
+        /// <summary>
+        /// Method called when an attempt is made to resolve an assembly reference.
+        /// </summary>
+        /// <param name="sender">The caller of this method.</param>
+        /// <param name="args">The method arguments</param>
+        /// <returns>A matching assembly.</returns>
 		public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
 			throw new FileLoadException(string.Format(Resources.ErrorAssembly, args.Name, Constants.CrLf));
 		}
 
+        /// <summary>
+        /// Prepares the installation/upgrade by selecting which files to run and upgrade path to take.
+        /// </summary>
 		public void Prepare()
         {
-			if (this.parameters.Provider == null 
-				|| string.IsNullOrEmpty(this.parameters.Provider.Name) 
-				|| string.IsNullOrEmpty(this.parameters.ConnectionString) 
-				|| string.IsNullOrEmpty(this.parameters.Database))
-                throw new ArgumentException(Resources.MissingReq);
+            if (this.parameters.Provider == null
+                || string.IsNullOrEmpty(this.parameters.Provider.Name)
+                || string.IsNullOrEmpty(this.parameters.ConnectionString)
+                || string.IsNullOrEmpty(this.parameters.Database))
+            {
+                throw new ArgumentException(Resources.WarnMissingReq);
+            }
 
 			if (this.parameters.FileTypes.Count == 0)
 			{
@@ -107,7 +164,9 @@ namespace SQLInstaller.Core
 			this.Exists = this.client.CheckExists();
 
             if (!Directory.Exists(this.parameters.ScriptPath))
-                throw new ArgumentException(Resources.MissingScriptDir + this.parameters.ScriptPath);
+            {
+                throw new ArgumentException(Resources.WarnMissingScriptDir + this.parameters.ScriptPath);
+            }
 
             DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.InstallPath));
             DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.UpgradePath));
@@ -123,7 +182,9 @@ namespace SQLInstaller.Core
                     foreach (DirectoryInfo di in candidates)
                     {
                         if (string.Compare(di.Name, Constants.RTM, true) == 0)
+                        {
                             throw new ArgumentException(Resources.InvalidReserved + Constants.RTM);
+                        }
                     }
                 }
             }
@@ -146,18 +207,27 @@ namespace SQLInstaller.Core
 						{
 							int comp = string.Compare(this.Version, di.Name, true);
 							bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
-							if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
-								this.ScriptsTotal += this.GetCandidateCount(di);
+                            if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
+                            {
+                                this.ScriptsTotal += this.GetCandidateCount(di);
+                            }
 						}
 					}
 				}
-				else if (installScripts.Exists)
-					this.ScriptsTotal = this.GetCandidateCount(installScripts);
+                else if (installScripts.Exists)
+                {
+                    this.ScriptsTotal = this.GetCandidateCount(installScripts);
+                }
 			}
-			else if (installScripts.Exists)
-				this.ScriptsTotal = this.GetCandidateCount(installScripts);
+            else if (installScripts.Exists)
+            {
+                this.ScriptsTotal = this.GetCandidateCount(installScripts);
+            }
         }
 
+        /// <summary>
+        /// Executes the installation/upgrade process.
+        /// </summary>
 		public void Create()
 		{
 			string errorMessage = string.Empty;
@@ -166,11 +236,14 @@ namespace SQLInstaller.Core
 			{
 				if (this.Exists && (this.parameters.Options & Options.Drop) == Options.Drop)
 				{
-					SetProgress(StatusMessage.Start, Resources.StatusDroppingDatabase + this.parameters.Database);
+					this.SetProgress(StatusMessage.Start, Resources.StatusDroppingDatabase + this.parameters.Database);
 					this.client.DropDatabase();
-					SetProgress(StatusMessage.Complete, Resources.StatusDone);
-					if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-						SetProgress(StatusMessage.Progress, string.Empty, 50);
+					this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
+                    if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
+                    {
+                        SetProgress(StatusMessage.Progress, string.Empty, 50);
+                    }
+
 					this.Exists = false;
 				}
 
@@ -179,44 +252,49 @@ namespace SQLInstaller.Core
 
 				if (!this.Exists || !upgradeScripts.Exists)
 				{
-					if ((this.parameters.Options & Options.Create) == Options.Create)
+                    if (this.parameters.Options.HasFlag(Options.Create) || this.parameters.Options.HasFlag(Options.Drop))
 					{
-						SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
+						this.SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
 						this.client.CreateDatabase();
 
-						if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-							SetProgress(StatusMessage.Progress, string.Empty, 100);
-						SetProgress(StatusMessage.Complete, Resources.StatusDone);
+                        if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
+                        {
+                            SetProgress(StatusMessage.Progress, string.Empty, 100);
+                        }
+
+						this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
 					}
 
-					if (installScripts.Exists)
-					{
-						SetProgress(StatusMessage.Start, Resources.StatusInstallingDatabase + this.parameters.Database);
+                    if (installScripts.Exists)
+                    {
+                        this.SetProgress(StatusMessage.Start, Resources.StatusInstallingDatabase + this.parameters.Database);
 
-						if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-							SetProgress(StatusMessage.Detail, string.Empty);
+                        foreach (FileType fileType in this.parameters.FileTypes)
+                        {
+                            if (!fileType.IsDisabled)
+                            {
+                                if (!string.IsNullOrEmpty(fileType.Description))
+                                {
+                                    this.SetProgress(StatusMessage.Detail, fileType.Description);
+                                }
 
-						foreach (FileType fileType in this.parameters.FileTypes)
-						{
-							if (!fileType.IsDisabled)
-							{
-								if (!string.IsNullOrEmpty(fileType.Description))
-								{
-									SetProgress(StatusMessage.Detail, string.Empty);
-									SetProgress(StatusMessage.Detail, fileType.Description);
-								}
+                                string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
+                                this.ExecuteScripts(installScripts.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
+                            }
+                        }
 
-								string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
-								ExecuteScripts(installScripts.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
-							}
-						}
-
-						SetProgress(StatusMessage.Complete, Resources.StatusDone);
-						if (this.ScriptsRun == 0)
-							SetProgress(StatusMessage.Complete, Resources.WarnNoScripts);
-					}
-					else
-						SetProgress(StatusMessage.Complete, Resources.WarnMissingInstall);
+                        this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
+                        if (this.ScriptsRun == 0)
+                        {
+                            this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoScripts));
+                            this.SetProgress(StatusMessage.Complete);
+                        }
+                    }
+                    else
+                    {
+                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingInstall));
+                        this.SetProgress(StatusMessage.Complete);
+                    }
 
 					this.client.SetVersion(this.Upgrade, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
 				}
@@ -224,20 +302,30 @@ namespace SQLInstaller.Core
 				{
 					DirectoryInfo[] candidates = new DirectoryInfo[] { };
 
-					if (upgradeScripts.Exists)
-					{
-						candidates = upgradeScripts.GetDirectories();
-						if (candidates.Length > 0)
-						{
-							if (this.ScriptsTotal == 0)
-								SetProgress(StatusMessage.Complete, Resources.WarnNoNewScripts);
-							Array.Sort(candidates, new DirInfoSorter());
-						}
-						else
-							SetProgress(StatusMessage.Complete, Resources.WarnMissingVersions);
-					}
-					else
-						SetProgress(StatusMessage.Complete, Resources.WarnMissingUpgrade);
+                    if (upgradeScripts.Exists)
+                    {
+                        candidates = upgradeScripts.GetDirectories();
+                        if (candidates.Length > 0)
+                        {
+                            if (this.ScriptsTotal == 0)
+                            {
+                                this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoNewScripts));
+                                this.SetProgress(StatusMessage.Complete);
+                            }
+
+                            Array.Sort(candidates, new DirInfoSorter());
+                        }
+                        else
+                        {
+                            this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingVersions));
+                            this.SetProgress(StatusMessage.Complete);
+                        }
+                    }
+                    else
+                    {
+                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingUpgrade));
+                        this.SetProgress(StatusMessage.Complete);
+                    }
 
 					foreach (DirectoryInfo upgradeDir in candidates)
 					{
@@ -245,28 +333,27 @@ namespace SQLInstaller.Core
 						bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
 						if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
 						{
-							SetProgress(StatusMessage.Start, Resources.StatusUpgradingDatabase + upgradeDir.Name);
-							if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-								SetProgress(StatusMessage.Detail, string.Empty);
+							this.SetProgress(StatusMessage.Start, Resources.StatusUpgradingDatabase + upgradeDir.Name);
 
-							foreach (FileType fileType in this.parameters.FileTypes)
+                            foreach (FileType fileType in this.parameters.FileTypes)
 							{
 								if (!fileType.IsDisabled)
 								{
 									if (!string.IsNullOrEmpty(fileType.Description))
 									{
-										SetProgress(StatusMessage.Detail, string.Empty);
-										SetProgress(StatusMessage.Detail, fileType.Description);
+										this.SetProgress(StatusMessage.Detail, fileType.Description);
 									}
 
-									string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
-									ExecuteScripts(upgradeDir.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
+                                    string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
+                                    this.ExecuteScripts(upgradeDir.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
 								}
 							}
 
-							SetProgress(StatusMessage.Complete, Resources.StatusDone);
-							if (this.Errors > 0)
-								break;
+							this.SetProgress(StatusMessage.Complete);
+                            if (this.Errors > 0)
+                            {
+                                break;
+                            }
 
 							this.client.SetVersion(upgradeDir.Name, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
 						}
@@ -276,46 +363,67 @@ namespace SQLInstaller.Core
 			catch (Exception ex)
 			{
 				this.Errors++;
-				SetProgress(StatusMessage.Complete, Resources.StatusError);
+				this.SetProgress(StatusMessage.Complete);
 				errorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-				SetProgress(StatusMessage.Detail, errorMessage);
+				this.SetProgress(StatusMessage.Detail, string.Format(Resources.ErrorGeneric, errorMessage));
 			}
 			finally
 			{
-				SetProgress(StatusMessage.Exit, errorMessage, this.Errors);
+				this.SetProgress(StatusMessage.Exit, errorMessage, this.Errors);
 			}
 		}
 
+        /// <summary>
+        /// Returns the latest progress.
+        /// </summary>
+        /// <param name="isRunning">Indicates whether or not we are still in the middle of an install/upgrade.</param>
+        /// <returns>The latest progress.</returns>
 		public Progress GetProgress(bool isRunning)
 		{
 			Progress prog = null;
-			lock (messages)
+			lock (this.messages)
 			{
-				if (messages.Count == 0)
-					Monitor.Wait(messages, 30000);
+                if (this.messages.Count == 0)
+                {
+                    Monitor.Wait(this.messages, 30000);
+                }
 
-				if (messages.Count > 0)
-					prog = messages.Dequeue();
+                if (this.messages.Count > 0)
+                {
+                    prog = this.messages.Dequeue();
+                }
 			}
 
-			if (prog == null)
-				prog = new Progress(isRunning ? StatusMessage.Running : StatusMessage.Exit, 0);
+            if (prog == null)
+            {
+                prog = new Progress(isRunning ? StatusMessage.Running : StatusMessage.Exit, 0);
+            }
+
 			return prog;
 		}
 
 		#region IDisposable Members
 
+        /// <summary>
+        /// Disposes the object.
+        /// </summary>
 		public void Dispose()
 		{
-			if (!isDisposed)
+			if (!this.isDisposed)
 			{
 				GC.SuppressFinalize(this);
-				isDisposed = true;
+				this.isDisposed = true;
 			}
 		}
 
 		#endregion
 
+        /// <summary>
+        /// Helper method to execute a set of database scripts.
+        /// </summary>
+        /// <param name="files">An array of files to execute.</param>
+        /// <param name="throwOnError">Indicates whether or not to throw an exception or just log and continue.</param>
+        /// <param name="isGlobal">Indicates whether or not the script is local to the database or global to the database engine.</param>
 		private void ExecuteScripts(FileInfo[] files, bool throwOnError, bool isGlobal)
 		{
 			Array.Sort(files, new FileInfoSorter());
@@ -325,8 +433,11 @@ namespace SQLInstaller.Core
 				StreamReader sr = null;
 				try
 				{
-					if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-						SetProgress(StatusMessage.Detail, Resources.StatusExecutingScript + pre.Name);
+                    if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
+                    {
+                        this.SetProgress(StatusMessage.Detail, Resources.StatusExecutingScript + pre.Name);
+                    }
+
 					sr = new StreamReader(pre.FullName);
 					string script = sr.ReadToEnd();
 					sr.Close();
@@ -335,38 +446,67 @@ namespace SQLInstaller.Core
 				catch (Exception ex)
 				{
 					this.Errors++;
-					SetProgress(StatusMessage.Complete, Resources.StatusError);
-					SetProgress(StatusMessage.Detail, Constants.OpenBracket + pre.Name + Constants.CloseBracketHyphen + (ex.InnerException != null ? ex.InnerException.Message : ex.Message));
-					if (throwOnError)
-						throw;
-					if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-						SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase);
+                    this.SetProgress(StatusMessage.Detail, string.Format(Resources.ErrorFile, pre.FullName, (ex.InnerException != null ? ex.InnerException.Message : ex.Message)));
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
 				}
 				finally
 				{
 					this.ScriptsRun++;
-					if ((this.parameters.Options & Options.Verbose) == Options.Verbose && this.ScriptsTotal > 0)
-						SetProgress(StatusMessage.Progress, string.Empty, Convert.ToInt32(decimal.Divide((decimal)this.ScriptsRun, (decimal)this.ScriptsTotal) * 100));
-					if (sr != null)
-						sr.Close();
+                    if ((this.parameters.Options & Options.Verbose) == Options.Verbose && this.ScriptsTotal > 0)
+                    {
+                        this.SetProgress(StatusMessage.Progress, string.Empty, Convert.ToInt32(decimal.Divide((decimal)this.ScriptsRun, (decimal)this.ScriptsTotal) * 100));
+                    }
+
+                    if (sr != null)
+                    {
+                        sr.Close();
+                    }
 				}
 			}
 		}
 
+        /// <summary>
+        /// Method to alter the progress of the install/upgrade.
+        /// </summary>
+        /// <param name="status">The status information.</param>
+        private void SetProgress(StatusMessage status)            
+        {
+            this.SetProgress(status, string.Empty, 0);
+        }
+
+        /// <summary>
+        /// Method to alter the progress of the install/upgrade.
+        /// </summary>
+        /// <param name="status">The status information.</param>
+        /// <param name="message">A message to go along with the status.</param>
 		private void SetProgress(StatusMessage status, string message)
 		{
-			SetProgress(status, message, 0);
+            this.SetProgress(status, message, 0);
 		}
 
-		private void SetProgress(StatusMessage status, string message, int percent)
+        /// <summary>
+        /// Method to alter the progress of the install/upgrade.
+        /// </summary>
+        /// <param name="status">The status information.</param>
+        /// <param name="message">A message to go along with the status.</param>
+        /// <param name="percent">The percent complete.</param>
+        private void SetProgress(StatusMessage status, string message, int percent)
 		{
-			lock (messages)
+            lock (this.messages)
 			{
-				messages.Enqueue(new Progress(status, percent, message));
-				Monitor.Pulse(messages);
+                this.messages.Enqueue(new Progress(status, percent, message));
+                Monitor.Pulse(this.messages);
 			}
 		}
 
+        /// <summary>
+        /// Gets the count of candidate files from a directory.
+        /// </summary>
+        /// <param name="di">The directory from which to select candidate files.</param>
+        /// <returns>The count of candidate files found.</returns>
 		private int GetCandidateCount(DirectoryInfo di)
 		{
 			int count = 0;
