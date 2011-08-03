@@ -34,11 +34,6 @@ namespace SQLInstaller.Core
 		private bool isDisposed;
 
         /// <summary>
-        /// A collection of file types.
-        /// </summary>
-		private List<FileType> fileTypes;
-
-        /// <summary>
         /// The RSA service provider.
         /// </summary>
 		[NonSerializedAttribute]
@@ -65,9 +60,9 @@ namespace SQLInstaller.Core
 		public Parameters()
 		{
             this.ConnectionString = Constants.DefaultConnString;
-            this.Options = this.Options.Add(Options.Create | Options.Drop | Options.Verbose);
+            this.Options = this.Options.Add(Options.Create | Options.Verbose);
             this.Provider = new Provider();
-            this.fileTypes = new List<FileType>();
+            this.FileTypes = new List<FileType>();
 
             CspParameters csp = new CspParameters();
             csp.Flags = CspProviderFlags.UseMachineKeyStore;
@@ -75,6 +70,7 @@ namespace SQLInstaller.Core
             this.rsa = new RSACryptoServiceProvider(csp);
 
             TypeDescriptor.AddAttributes(typeof(Provider), new TypeConverterAttribute(typeof(ProviderConverter)));
+            TypeDescriptor.AddAttributes(typeof(List<FileType>), new TypeConverterAttribute(typeof(FileTypeConverter)));
         }
 
 		#endregion
@@ -84,10 +80,7 @@ namespace SQLInstaller.Core
         /// <summary>
         /// Gets the list of file types.
         /// </summary>
-		public List<FileType> FileTypes
-		{
-			get { return this.fileTypes; }
-		}
+		public List<FileType> FileTypes { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether to serialize.

@@ -95,6 +95,15 @@ namespace SQLInstaller.Console {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to sqlinstaller : error : {0}.
+        /// </summary>
+        internal static string ErrorGeneric {
+            get {
+                return ResourceManager.GetString("ErrorGeneric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to . Creating a new template. Please edit as appropriate. Exiting..
         /// </summary>
         internal static string ExitingWithNewTemplate {
@@ -168,7 +177,7 @@ namespace SQLInstaller.Console {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  errors..
+        ///   Looks up a localized string similar to  error(s)..
         /// </summary>
         internal static string StatusErrorCount {
             get {

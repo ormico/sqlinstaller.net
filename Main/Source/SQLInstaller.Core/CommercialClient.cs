@@ -31,6 +31,35 @@ namespace SQLInstaller.Core
 		}
 
         /// <summary>
+        /// Method to execute a SQL script which returns a scalar value using the underlying data provider.
+        /// </summary>
+        /// <param name="script">The text of the script to execute.</param>
+        /// <param name="changeDatabase">Indicates whether or not to change to the new database prior to executing the script.</param>
+        /// <returns>A scalar value.</returns>
+        public override object ExecuteScalar(string script, bool changeDatabase)
+        {
+            object scalar = 0;
+
+            using (DbConnection connection = this.DbProviderFactory.CreateConnection())
+            {
+                connection.ConnectionString = this.ConnectionString;
+                connection.Open();
+                DbCommand cmd = this.DbProviderFactory.CreateCommand();
+                cmd.Connection = connection;
+                if (changeDatabase)
+                {
+                    cmd.CommandText = this.alterStatement + this.Database.ToUpper();
+                    cmd.ExecuteNonQuery();
+                }
+
+                cmd.CommandText = script;
+                scalar = cmd.ExecuteScalar();
+            }
+
+            return scalar;
+        }
+
+        /// <summary>
         /// Method to execute a SQL script using the underlying data provider.
         /// </summary>
         /// <param name="script">The text of the script to execute.</param>

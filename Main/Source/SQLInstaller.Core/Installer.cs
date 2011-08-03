@@ -126,7 +126,7 @@ namespace SQLInstaller.Core
                 || string.IsNullOrEmpty(this.parameters.ConnectionString)
                 || string.IsNullOrEmpty(this.parameters.Database))
             {
-                throw new ArgumentException(Resources.MissingReq);
+                throw new ArgumentException(Resources.WarnMissingReq);
             }
 
 			if (this.parameters.FileTypes.Count == 0)
@@ -165,7 +165,7 @@ namespace SQLInstaller.Core
 
             if (!Directory.Exists(this.parameters.ScriptPath))
             {
-                throw new ArgumentException(Resources.MissingScriptDir + this.parameters.ScriptPath);
+                throw new ArgumentException(Resources.WarnMissingScriptDir + this.parameters.ScriptPath);
             }
 
             DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.InstallPath));
@@ -252,7 +252,7 @@ namespace SQLInstaller.Core
 
 				if (!this.Exists || !upgradeScripts.Exists)
 				{
-					if ((this.parameters.Options & Options.Create) == Options.Create)
+                    if (this.parameters.Options.HasFlag(Options.Create) || this.parameters.Options.HasFlag(Options.Drop))
 					{
 						this.SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
 						this.client.CreateDatabase();
@@ -269,18 +269,12 @@ namespace SQLInstaller.Core
                     {
                         this.SetProgress(StatusMessage.Start, Resources.StatusInstallingDatabase + this.parameters.Database);
 
-                        if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-                        {
-                            this.SetProgress(StatusMessage.Detail, string.Empty);
-                        }
-
                         foreach (FileType fileType in this.parameters.FileTypes)
                         {
                             if (!fileType.IsDisabled)
                             {
                                 if (!string.IsNullOrEmpty(fileType.Description))
                                 {
-                                    this.SetProgress(StatusMessage.Detail, string.Empty);
                                     this.SetProgress(StatusMessage.Detail, fileType.Description);
                                 }
 
@@ -292,12 +286,14 @@ namespace SQLInstaller.Core
                         this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
                         if (this.ScriptsRun == 0)
                         {
-                            this.SetProgress(StatusMessage.Complete, Resources.WarnNoScripts);
+                            this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoScripts));
+                            this.SetProgress(StatusMessage.Complete);
                         }
                     }
                     else
                     {
-                        this.SetProgress(StatusMessage.Complete, Resources.WarnMissingInstall);
+                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingInstall));
+                        this.SetProgress(StatusMessage.Complete);
                     }
 
 					this.client.SetVersion(this.Upgrade, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
@@ -313,19 +309,22 @@ namespace SQLInstaller.Core
                         {
                             if (this.ScriptsTotal == 0)
                             {
-                                this.SetProgress(StatusMessage.Complete, Resources.WarnNoNewScripts);
+                                this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoNewScripts));
+                                this.SetProgress(StatusMessage.Complete);
                             }
 
                             Array.Sort(candidates, new DirInfoSorter());
                         }
                         else
                         {
-                            this.SetProgress(StatusMessage.Complete, Resources.WarnMissingVersions);
+                            this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingVersions));
+                            this.SetProgress(StatusMessage.Complete);
                         }
                     }
                     else
                     {
-                        this.SetProgress(StatusMessage.Complete, Resources.WarnMissingUpgrade);
+                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingUpgrade));
+                        this.SetProgress(StatusMessage.Complete);
                     }
 
 					foreach (DirectoryInfo upgradeDir in candidates)
@@ -335,18 +334,13 @@ namespace SQLInstaller.Core
 						if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
 						{
 							this.SetProgress(StatusMessage.Start, Resources.StatusUpgradingDatabase + upgradeDir.Name);
-                            if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-                            {
-                                this.SetProgress(StatusMessage.Detail, string.Empty);
-                            }
 
-							foreach (FileType fileType in this.parameters.FileTypes)
+                            foreach (FileType fileType in this.parameters.FileTypes)
 							{
 								if (!fileType.IsDisabled)
 								{
 									if (!string.IsNullOrEmpty(fileType.Description))
 									{
-										this.SetProgress(StatusMessage.Detail, string.Empty);
 										this.SetProgress(StatusMessage.Detail, fileType.Description);
 									}
 
@@ -355,7 +349,7 @@ namespace SQLInstaller.Core
 								}
 							}
 
-							this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
+							this.SetProgress(StatusMessage.Complete);
                             if (this.Errors > 0)
                             {
                                 break;
@@ -369,9 +363,9 @@ namespace SQLInstaller.Core
 			catch (Exception ex)
 			{
 				this.Errors++;
-				this.SetProgress(StatusMessage.Complete, Resources.StatusError);
+				this.SetProgress(StatusMessage.Complete);
 				errorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-				this.SetProgress(StatusMessage.Detail, errorMessage);
+				this.SetProgress(StatusMessage.Detail, string.Format(Resources.ErrorGeneric, errorMessage));
 			}
 			finally
 			{
@@ -452,16 +446,10 @@ namespace SQLInstaller.Core
 				catch (Exception ex)
 				{
 					this.Errors++;
-					this.SetProgress(StatusMessage.Complete, Resources.StatusError);
-                    this.SetProgress(StatusMessage.Detail, Constants.OpenBracket + pre.Name + Constants.CloseBracketHyphen + (ex.InnerException != null ? ex.InnerException.Message : ex.Message));
+                    this.SetProgress(StatusMessage.Detail, string.Format(Resources.ErrorFile, pre.FullName, (ex.InnerException != null ? ex.InnerException.Message : ex.Message)));
                     if (throwOnError)
                     {
                         throw;
-                    }
-
-                    if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
-                    {
-                        this.SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase);
                     }
 				}
 				finally
@@ -479,6 +467,15 @@ namespace SQLInstaller.Core
 				}
 			}
 		}
+
+        /// <summary>
+        /// Method to alter the progress of the install/upgrade.
+        /// </summary>
+        /// <param name="status">The status information.</param>
+        private void SetProgress(StatusMessage status)            
+        {
+            this.SetProgress(status, string.Empty, 0);
+        }
 
         /// <summary>
         /// Method to alter the progress of the install/upgrade.

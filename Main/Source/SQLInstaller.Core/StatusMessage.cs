@@ -17,10 +17,10 @@ namespace SQLInstaller.Core
 		/// </summary>
 		Start,
 
-		/// <summary>
-		/// Output detailed status message.
-		/// </summary>
-		Detail,
+        /// <summary>
+        /// Output detailed status message.
+        /// </summary>
+        Detail,
 
 		/// <summary>
 		/// Provide progress indicator (e.g. percentage complete)
