@@ -113,7 +113,13 @@ namespace SQLInstaller.Core
         /// <returns>A matching assembly.</returns>
 		public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
-			throw new FileLoadException(string.Format(Resources.ErrorAssembly, args.Name, Constants.CrLf));
+            // Fix: do not throw exception if attempting to locate satellite resource assembly.
+            if (!args.Name.StartsWith(string.Concat(Assembly.GetExecutingAssembly().GetName().Name, Constants.ResourcesExt), StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new FileLoadException(string.Format(Resources.ErrorAssembly, args.Name, Constants.CrLf));
+            }
+            
+            return null;
 		}
 
         /// <summary>
