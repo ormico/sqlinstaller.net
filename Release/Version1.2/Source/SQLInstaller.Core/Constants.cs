@@ -43,6 +43,7 @@ namespace SQLInstaller.Core
 		public const string Dot = ".";
 		public const string Asterisk = "*";
 		public const string CloseBracketHyphen = "] - ";
+        public const string ResourcesExt = ".resources";
 
 		public const string DefaultInstallPath = "Install";
 		public const string DefaultUpgradePath = "Upgrade";

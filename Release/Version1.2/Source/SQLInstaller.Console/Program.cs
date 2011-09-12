@@ -8,6 +8,7 @@
 namespace SQLInstaller.Console
 {
 	using System;
+    using System.Configuration;
     using System.IO;
 	using System.Threading;
 
@@ -24,17 +25,23 @@ namespace SQLInstaller.Console
 		public delegate void InstallMethod();
 
         /// <summary>
+        /// Allow runtime usage data to be collected by external webservice. Set to false to disable.
+        /// </summary>
+        public static bool OptIn { get; private set; }
+
+        /// <summary>
         /// Console application entry point.
         /// </summary>
         /// <param name="args">An array of arguments.</param>
         /// <returns>Zero (0) for success and non-zero for failure.</returns>
         public static int Main(string[] args)
 		{
-			double spinCycle = Constants.MinSpinTimeout;
+            double spinCycle = Constants.MinSpinTimeout;
             bool forceWrite = false;
 			Installer installer;
 			Spinner spin = new Spinner();
-
+            Program.OptIn = Convert.ToBoolean(ConfigurationManager.AppSettings[Constants.OptIn]); 
+            
 			try
 			{
 				string configPath = string.Empty;

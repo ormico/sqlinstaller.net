@@ -61,14 +61,14 @@
         <method name="Main" signature="int32(string[])" />
       </type>
       <propertylist>
-        <property name="OptInSourceElement" value="None" />
+        <property name="OptInSourceElement" value="Property" />
         <property name="InstanceIdSourceName" value="" />
         <property name="ExtendedKeySourceName" value="" />
         <property name="UseSSL" value="False" />
-        <property name="OptInSourceOwner" value="" />
+        <property name="OptInSourceOwner" value="SQLInstaller.Console.Program" />
         <property name="CustomEndpoint" value="so-s.info/PreEmptive.Web.Services.Messaging/MessagingServiceV2.asmx" />
         <property name="ExtendedKeySourceElement" value="None" />
-        <property name="OptInSourceName" value="" />
+        <property name="OptInSourceName" value="OptIn" />
         <property name="InstanceIdSourceElement" value="None" />
         <property name="ExtendedKeySourceOwner" value="" />
         <property name="InstanceIdSourceOwner" value="" />

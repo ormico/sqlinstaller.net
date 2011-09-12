@@ -38,6 +38,11 @@ namespace SQLInstaller.Console
         public const string SingleWhitespace = " ";
 
         /// <summary>
+        /// The OptIn application setting.
+        /// </summary>
+        public const string OptIn = "OptIn";
+
+        /// <summary>
         /// Prevents a default instance of the Constants class from being created.
         /// </summary>
 		private Constants()
