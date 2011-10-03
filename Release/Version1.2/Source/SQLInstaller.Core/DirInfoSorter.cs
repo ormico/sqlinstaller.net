@@ -25,7 +25,7 @@ namespace SQLInstaller.Core
         /// <returns>The relative position in sort order of the two objects.</returns>
 		public int Compare(object x, object y)
 		{
-			return string.Compare(((DirectoryInfo)x).Name, ((DirectoryInfo)y).Name, true);
+            return FileInfoSorter.NaturalCompare(((DirectoryInfo)x).Name.ToLowerInvariant(), ((DirectoryInfo)y).Name.ToLowerInvariant());
 		}
 
 		#endregion
