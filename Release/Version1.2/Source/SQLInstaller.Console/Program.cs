@@ -104,7 +104,7 @@ namespace SQLInstaller.Console
 					}
 					else
 					{
-                        if (!parms.Instance.NoPrompt)
+                        if (!parms.Instance.NoPrompt && !installer.CleanInstall)
 						{
 							ConsoleKey key = ConsoleKey.NoName;
 							while (key != ConsoleKey.N && key != ConsoleKey.Y)

@@ -53,9 +53,9 @@ namespace SQLInstaller.Core
 		}
 
         /// <summary>
-        /// Gets a value indicating whether the database exists.
+        /// Gets a value indicating whether the database exists
         /// </summary>
-		public bool Exists { get; private set; }
+        public bool Exists { get; private set; }
 
         /// <summary>
         /// Gets the version.
@@ -104,6 +104,14 @@ namespace SQLInstaller.Core
                 }
 			}
 		}
+
+        /// <summary>
+        /// Gets a value indicating whether this is a clean install.
+        /// </summary>
+        public bool CleanInstall
+        {
+            get { return !this.Exists || this.parameters.Options.HasFlag(Options.Drop); }
+        }
 
         /// <summary>
         /// Method called when an attempt is made to resolve an assembly reference.
@@ -177,55 +185,45 @@ namespace SQLInstaller.Core
             DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.InstallPath));
             DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.UpgradePath));
 
-            DirectoryInfo[] candidates = null;
+            if (this.Exists && !this.CleanInstall)
+            {
+                string[] version = this.client.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (version.Length == 2)
+                {
+                    this.Version = version[0];
+                    this.UpgradeBy = version[1];
+                }
+            }
+
             if (upgradeScripts.Exists)
             {
-                candidates = upgradeScripts.GetDirectories();
+                DirectoryInfo[] candidates = upgradeScripts.GetDirectories();
                 if (candidates.Length > 0)
                 {
+                    bool retry = this.parameters.Options.HasFlag(Options.Retry);
+                    bool isRtm = string.Compare(this.Version, Constants.RTM, StringComparison.OrdinalIgnoreCase) == 0;
+
                     Array.Sort(candidates, new DirInfoSorter());
                     this.Upgrade = candidates[candidates.Length - 1].Name;
+
                     foreach (DirectoryInfo di in candidates)
                     {
                         if (string.Compare(di.Name, Constants.RTM, true) == 0)
                         {
                             throw new ArgumentException(Resources.InvalidReserved + Constants.RTM);
                         }
+
+                        int comp = string.Compare(this.Version, di.Name, true);
+                        if (isRtm || this.CleanInstall || (!retry && comp < 0) || (retry && comp <= 0))
+                        {
+                            this.ScriptsTotal += this.GetCandidateCount(di);
+                        }
                     }
                 }
             }
 
-			if (this.Exists && (this.parameters.Options & Options.Drop) != Options.Drop)
-			{
-				string[] version = this.client.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
-
-				if (version.Length == 2)
-				{
-					this.Version = version[0];
-					this.UpgradeBy = version[1];
-				}
-
-				if (upgradeScripts.Exists)
-				{
-					if (candidates != null)
-					{
-						foreach (DirectoryInfo di in candidates)
-						{
-							int comp = string.Compare(this.Version, di.Name, true);
-							bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
-                            if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
-                            {
-                                this.ScriptsTotal += this.GetCandidateCount(di);
-                            }
-						}
-					}
-				}
-                else if (installScripts.Exists)
-                {
-                    this.ScriptsTotal = this.GetCandidateCount(installScripts);
-                }
-			}
-            else if (installScripts.Exists)
+            if (this.CleanInstall && installScripts.Exists)
             {
                 this.ScriptsTotal = this.GetCandidateCount(installScripts);
             }
@@ -240,7 +238,7 @@ namespace SQLInstaller.Core
 
 			try
 			{
-				if (this.Exists && (this.parameters.Options & Options.Drop) == Options.Drop)
+				if (this.Exists && this.CleanInstall)
 				{
 					this.SetProgress(StatusMessage.Start, Resources.StatusDroppingDatabase + this.parameters.Database);
 					this.client.DropDatabase();
@@ -256,90 +254,81 @@ namespace SQLInstaller.Core
 				DirectoryInfo installScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.InstallPath));
 				DirectoryInfo upgradeScripts = new DirectoryInfo(Path.Combine(this.parameters.ScriptPath, this.parameters.UpgradePath));
 
-				if (!this.Exists || !upgradeScripts.Exists)
+				if (this.CleanInstall && (this.parameters.Options.HasFlag(Options.Create) || this.parameters.Options.HasFlag(Options.Drop)))
 				{
-                    if (this.parameters.Options.HasFlag(Options.Create) || this.parameters.Options.HasFlag(Options.Drop))
-					{
-						this.SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
-						this.client.CreateDatabase();
+					this.SetProgress(StatusMessage.Start, Resources.StatusCreatingDatabase + this.parameters.Database);
+					this.client.CreateDatabase();
 
-                        if ((this.parameters.Options & Options.Verbose) == Options.Verbose)
+                    if (this.parameters.Options.HasFlag(Options.Verbose))
+                    {
+                        SetProgress(StatusMessage.Progress, string.Empty, 100);
+                    }
+
+					this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
+                }
+
+                if (this.CleanInstall && installScripts.Exists)
+                {
+                    this.SetProgress(StatusMessage.Start, Resources.StatusInstallingDatabase + this.parameters.Database);
+
+                    foreach (FileType fileType in this.parameters.FileTypes)
+                    {
+                        if (!fileType.IsDisabled)
                         {
-                            SetProgress(StatusMessage.Progress, string.Empty, 100);
+                            if (!string.IsNullOrEmpty(fileType.Description))
+                            {
+                                this.SetProgress(StatusMessage.Detail, fileType.Description);
+                            }
+
+                            string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
+                            this.ExecuteScripts(installScripts.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
                         }
+                    }
 
-						this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
-					}
+                    this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
+                    if (this.ScriptsRun == 0)
+                    {
+                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoScripts));
+                        this.SetProgress(StatusMessage.Complete);
+                    }
 
-                    if (installScripts.Exists)
+    				this.client.SetVersion(this.Upgrade, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
+                }
+				else if (upgradeScripts.Exists)
+				{
+                    if (this.CleanInstall)
                     {
                         this.SetProgress(StatusMessage.Start, Resources.StatusInstallingDatabase + this.parameters.Database);
-
-                        foreach (FileType fileType in this.parameters.FileTypes)
-                        {
-                            if (!fileType.IsDisabled)
-                            {
-                                if (!string.IsNullOrEmpty(fileType.Description))
-                                {
-                                    this.SetProgress(StatusMessage.Detail, fileType.Description);
-                                }
-
-                                string searchPattern = Constants.Asterisk + Constants.Dot + fileType.Name + this.parameters.ScriptExtension;
-                                this.ExecuteScripts(installScripts.GetFiles(searchPattern, SearchOption.AllDirectories), fileType.HaltOnError, fileType.IsGlobal);
-                            }
-                        }
-
-                        this.SetProgress(StatusMessage.Complete, Resources.StatusDone);
-                        if (this.ScriptsRun == 0)
-                        {
-                            this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoScripts));
-                            this.SetProgress(StatusMessage.Complete);
-                        }
-                    }
-                    else
-                    {
-                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingInstall));
-                        this.SetProgress(StatusMessage.Complete);
                     }
 
-					this.client.SetVersion(this.Upgrade, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
-				}
-				else
-				{
 					DirectoryInfo[] candidates = new DirectoryInfo[] { };
 
-                    if (upgradeScripts.Exists)
+                    candidates = upgradeScripts.GetDirectories();
+                    if (candidates.Length > 0)
                     {
-                        candidates = upgradeScripts.GetDirectories();
-                        if (candidates.Length > 0)
+                        if (this.ScriptsTotal == 0)
                         {
-                            if (this.ScriptsTotal == 0)
-                            {
-                                this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoNewScripts));
-                                this.SetProgress(StatusMessage.Complete);
-                            }
-
-                            Array.Sort(candidates, new DirInfoSorter());
-                        }
-                        else
-                        {
-                            this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingVersions));
+                            this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnNoNewScripts));
                             this.SetProgress(StatusMessage.Complete);
                         }
+
+                        Array.Sort(candidates, new DirInfoSorter());
                     }
                     else
                     {
-                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingUpgrade));
+                        this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingVersions));
                         this.SetProgress(StatusMessage.Complete);
                     }
 
-					foreach (DirectoryInfo upgradeDir in candidates)
+                    bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
+                    bool isRtm = string.Compare(this.Version, Constants.RTM, true) == 0;
+
+                    foreach (DirectoryInfo upgradeDir in candidates)
 					{
-						int comp = string.Compare(this.Version, upgradeDir.Name, true);
-						bool retry = (this.parameters.Options & Options.Retry) == Options.Retry;
-						if ((!retry && comp < 0) || (retry && comp <= 0) || (string.Compare(this.Version, Constants.RTM, true) == 0))
+						int comp = string.Compare(this.Version, upgradeDir.Name, StringComparison.OrdinalIgnoreCase);
+						if ((!retry && comp < 0) || (retry && comp <= 0) || isRtm)
 						{
-							this.SetProgress(StatusMessage.Start, Resources.StatusUpgradingDatabase + upgradeDir.Name);
+                            this.SetProgress(StatusMessage.Start, Resources.StatusUpgradingDatabase + upgradeDir.Name);
 
                             foreach (FileType fileType in this.parameters.FileTypes)
 							{
@@ -356,16 +345,17 @@ namespace SQLInstaller.Core
 							}
 
 							this.SetProgress(StatusMessage.Complete);
-                            if (this.Errors > 0)
-                            {
-                                break;
-                            }
 
 							this.client.SetVersion(upgradeDir.Name, WindowsIdentity.GetCurrent().Name.Replace(Constants.BackSlash, Constants.ForwardSlash) + Resources.StatusOnSeparator + DateTime.Now);
 						}
 					}
 				}
-			}
+                else
+                {
+                    this.SetProgress(StatusMessage.Detail, string.Format(Resources.WarningGeneric, Resources.WarnMissingUpgrade));
+                    this.SetProgress(StatusMessage.Complete);
+                }
+            }
 			catch (Exception ex)
 			{
 				this.Errors++;
