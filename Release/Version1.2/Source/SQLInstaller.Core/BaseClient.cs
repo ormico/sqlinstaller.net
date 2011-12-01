@@ -136,6 +136,7 @@ namespace SQLInstaller.Core
         /// <returns>The database version.</returns>
 		public virtual string GetVersion()
 		{
+            string version = string.Empty;
             if (!this.Provider.Scripts.Contains(ScriptType.GetVersion))
             {
                 throw new ArgumentException(Resources.ErrorMissingStatement + ScriptType.GetVersion.ToString());
@@ -143,7 +144,19 @@ namespace SQLInstaller.Core
 
 			string commandText = string.Format(this.Provider.Scripts[ScriptType.GetVersion].CommandText, this.Database);
 
-			return this.ExecuteScalar(commandText, true) as string;
+            try
+            {
+                object scalar = this.ExecuteScalar(commandText, true);
+                if (scalar != null)
+                {
+                    version = scalar.ToString();
+                }
+            }
+            catch
+            {
+            }
+
+            return version;
 		}
 
         /// <summary>
