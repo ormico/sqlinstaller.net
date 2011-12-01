@@ -187,12 +187,17 @@ namespace SQLInstaller.Core
 
             if (this.Exists && !this.CleanInstall)
             {
-                string[] version = this.client.GetVersion().Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
+                string version = this.client.GetVersion();
 
-                if (version.Length == 2)
+                if (!string.IsNullOrWhiteSpace(version))
                 {
-                    this.Version = version[0];
-                    this.UpgradeBy = version[1];
+                    string[] existingVersion = version.Split(new char[] { Constants.SplitChar }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (existingVersion.Length == 2)
+                    {
+                        this.Version = existingVersion[0];
+                        this.UpgradeBy = existingVersion[1];
+                    }
                 }
             }
 
