@@ -59,7 +59,12 @@ namespace SQLInstaller.Core
 		public const string FbBatchExecution = "FirebirdSql.Data.Isql.FbBatchExecution";
 		public const string Parse = "Parse";
 		public const string Execute = "Execute";
-	
+
+        public const string BatchParser1 = "Microsoft.SqlServer.BatchParser, Version=";
+        public const string BatchParser2 = ".0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91";
+
+        public const int BatchParserVer = 10;
+
 		private Constants()
 		{
 		}

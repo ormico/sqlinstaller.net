@@ -121,13 +121,33 @@ namespace SQLInstaller.Core
         /// <returns>A matching assembly.</returns>
 		public Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
-            // Fix: do not throw exception if attempting to locate satellite resource assembly.
-            if (!args.Name.StartsWith(string.Concat(Assembly.GetExecutingAssembly().GetName().Name, Constants.ResourcesExt), StringComparison.InvariantCultureIgnoreCase))
+            if (args.Name.Equals(Constants.BatchParser1 + Constants.BatchParserVer + Constants.BatchParser2, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new FileLoadException(string.Format(Resources.ErrorAssembly, args.Name, Constants.CrLf));
+                // Workaround for locating a valid SMO assembly (since they are not distributed with the installer). 
+                Assembly parser = null;
+                for (int i = Constants.BatchParserVer + 1; parser == null && (i < Constants.BatchParserVer + 10); i++)
+                {
+                    try
+                    {
+                        parser = Assembly.Load(Constants.BatchParser1 + i + Constants.BatchParser2);
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                return parser;
             }
-            
-            return null;
+            else
+            {
+                // Fix: do not throw exception if attempting to locate satellite resource assembly.
+                if (!args.Name.StartsWith(string.Concat(Assembly.GetExecutingAssembly().GetName().Name, Constants.ResourcesExt), StringComparison.InvariantCultureIgnoreCase))
+                {
+                    throw new FileLoadException(string.Format(Resources.ErrorAssembly, args.Name, Constants.CrLf));
+                }
+
+                return null;
+            }
 		}
 
         /// <summary>
