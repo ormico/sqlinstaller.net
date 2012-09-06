@@ -101,9 +101,9 @@
 					WHERE database_id = 1 AND file_id = 1);
 					-- Create database
 					EXECUTE( 'CREATE DATABASE [{0}] ON  PRIMARY
-					( NAME = [{0}], FILENAME = ''' + @data_path + '{0}.mdf'' , SIZE = 3072KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
+					( NAME = [{0}], FILENAME = ''' + @data_path + '{0}.mdf'' )
 					LOG ON
-					( NAME = [{0}_log], FILENAME = ''' + @data_path + '{0}_log.ldf'' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)'
+					( NAME = [{0}_log], FILENAME = ''' + @data_path + '{0}_log.ldf'' )'
 					)
 					GO
 				</Script>
