@@ -21,7 +21,7 @@
         <File Id="ProviderFactory.xml.orig" Name="ProviderFactory.xml.orig" Source="$(var.SQLInstaller.Core.ProjectDir)Resources\ProviderFactory.xml"/>
 			</Component>
 			<Component Id="SQLInstaller.reg" Guid="{A082D4E0-E238-43bd-915A-54734039DFCE}">
-				<RegistryKey Id="SQLInstaller.regkey" Root="HKLM" Key="SOFTWARE\JHOB Technologies\SQLInstaller" Action="createAndRemoveOnUninstall">
+				<RegistryKey Id="SQLInstaller.regkey" Root="HKLM" Key="SOFTWARE\JHOB Technologies\SQLInstaller" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
 					<RegistryValue Id="SQLInstaller.regval" Name="Path" Value="[ROOTINSTALL]SQLInstaller.exe" Type="string" />
 				</RegistryKey>
 				<Environment Id="SQLInstaller.setpath" Action="set" Name="PATH" Part="last" System="yes" Value="[ROOTINSTALL]" />

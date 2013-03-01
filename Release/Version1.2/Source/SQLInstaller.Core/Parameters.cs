@@ -351,10 +351,19 @@ namespace SQLInstaller.Core
 				isf = IsolatedStorageFile.GetMachineStoreForAssembly();
 			}
 
-			using (IsolatedStorageFileStream ifs = new IsolatedStorageFileStream(Constants.CipherFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, isf))
+            FileMode fm = FileMode.Open;
+            FileAccess fa = FileAccess.Read;
+
+            if (!isf.FileExists(Constants.CipherFile))
+            {
+                fm = FileMode.CreateNew;
+                fa = FileAccess.ReadWrite;
+            }
+       
+			using (IsolatedStorageFileStream ifs = new IsolatedStorageFileStream(Constants.CipherFile, fm, fa, isf))
 			{
 				string cipherData = string.Empty;
-				if (ifs.Length > 0)
+				if (fm == FileMode.Open)
 				{
 					using (StreamReader sr = new StreamReader(ifs))
 					{
