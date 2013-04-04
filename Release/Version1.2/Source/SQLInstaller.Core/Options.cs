@@ -39,5 +39,10 @@ namespace SQLInstaller.Core
 		/// Output all status messages.
 		/// </summary>
 		Verbose = 0x08,
-	}
+
+        /// <summary>
+        /// Sets the process exit code to non-zero for all errors including SQL.
+        /// </summary>
+        ExitCode = 0x10,
+    }
 }

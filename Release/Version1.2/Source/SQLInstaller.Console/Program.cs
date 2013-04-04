@@ -36,6 +36,7 @@ namespace SQLInstaller.Console
         /// <returns>Zero (0) for success and non-zero for failure.</returns>
         public static int Main(string[] args)
 		{
+            int exitCode = 0;
             double spinCycle = Constants.MinSpinTimeout;
             bool forceWrite = false;
 			Installer installer;
@@ -155,10 +156,16 @@ namespace SQLInstaller.Console
 							break;
 					}
 				}
+
+                if (parms.Instance.Options.HasFlag(Options.ExitCode) && installer.Errors > 0)
+                {
+                    exitCode = -1;
+                }
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine(string.Format(Resources.ErrorGeneric, ex.Message));
+                exitCode = -1;
 			}
 			finally
 			{
@@ -168,7 +175,7 @@ namespace SQLInstaller.Console
                 }
 			}
 
-            return 0;
+            return exitCode;
 		}
 
         /// <summary>
